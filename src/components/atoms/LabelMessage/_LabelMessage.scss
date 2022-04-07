@@ -1,0 +1,29 @@
+@import "../../../scss/general_styling";
+
+.LabelMessage {
+  display: flex;
+  border-radius: 6px;
+  padding: 0.75em;
+  background: $black-2;
+  align-items: center;
+  margin-top: 2em;
+
+  .LabelIcon {
+    margin-right: 1em;
+    width: 35px;
+    height: 35px;
+  }
+
+  .LabelMessageText {
+    text-align: left;
+    .LabelTitle {
+      @include primary-text($h4, $warning-color, 600);
+      line-height: $h4;
+      margin: 0;
+    }
+    .LabelText {
+      @include primary-text($body, $warning-color, 400);
+      margin: 0;
+    }
+  }
+}

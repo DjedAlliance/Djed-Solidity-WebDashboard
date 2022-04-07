@@ -1,0 +1,187 @@
+@import "./scss/_general_styling.scss";
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-right: 2em;
+}
+
+.site-layout-content {
+  padding: 2em 0;
+}
+
+.ant-layout {
+  background: $gradient-theme-1;
+  padding-top: 2em;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.ant-layout-header {
+  display: flex;
+  background: transparent;
+  height: 40px;
+  line-height: 40px;
+  justify-content: space-between;
+
+  .WalletConfig {
+    display: flex;
+    button {
+      width: max-content;
+    }
+  }
+}
+
+.ant-layout-footer {
+  background: transparent;
+  color: $grey-5;
+}
+
+.ant-menu-horizontal {
+  border-bottom: none;
+  width: -webkit-fill-available;
+}
+
+.ant-menu {
+  background: transparent;
+}
+
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-active,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-open,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected {
+  color: white;
+}
+
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover::after,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover::after,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active::after,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-active::after,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-open::after,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open::after,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected::after,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected::after {
+  border-bottom: 2px solid white;
+}
+
+.ant-menu-horizontal > .ant-menu-item a {
+  color: white;
+}
+
+.ant-menu-horizontal > .ant-menu-item a:hover {
+  color: white;
+}
+
+.ant-tabs > .ant-tabs-nav,
+.ant-tabs > div > .ant-tabs-nav {
+  background: $black-2;
+  border-radius: 40px;
+}
+
+.ant-tabs-top > .ant-tabs-nav::before,
+.ant-tabs-bottom > .ant-tabs-nav::before,
+.ant-tabs-top > div > .ant-tabs-nav::before,
+.ant-tabs-bottom > div > .ant-tabs-nav::before {
+  border-bottom: none;
+}
+
+.ant-tabs > .ant-tabs-nav .ant-tabs-nav-list,
+.ant-tabs > div > .ant-tabs-nav .ant-tabs-nav-list {
+  width: 100%;
+}
+
+.ant-tabs-tab {
+  width: 50%;
+  height: 45px;
+  display: block;
+  text-align: center;
+  line-height: 28px;
+  transition: 0.5s;
+  color: $white;
+  padding: 8px;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  background: #4962fc;
+  height: -webkit-fill-available;
+  border-radius: 30px;
+  color: $white;
+}
+
+.ant-tabs-ink-bar {
+  display: none;
+}
+
+.ant-input-affix-wrapper-lg {
+  padding: 10px 14px;
+  background: $black-2;
+  border: none;
+  @include primary-text($body, $grey-4, 400);
+  border-radius: 8px;
+}
+
+.ant-input-affix-wrapper > input.ant-input {
+  background: transparent;
+  @include number-text($numbers, $white, 400);
+}
+
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  box-shadow: none;
+  border: none;
+  outline: none;
+}
+
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+  border: none;
+  outline: none;
+}
+
+.ant-table {
+  background: transparent;
+  color: $white;
+  font-family: "Montserrat", sans-serif;
+}
+
+.ant-table-thead > tr > th {
+  background: transparent;
+  border-bottom: transparent;
+  color: $grey-5;
+  font-size: $label;
+  text-transform: uppercase;
+}
+
+.ant-table-cell .ant-table-cell-row-hover {
+  background: transparent;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td,
+.ant-table-tbody > tr > td.ant-table-cell-row-hover {
+  background: transparent;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: transparent;
+}
+
+.ant-tag{
+  border-radius: 20px;
+  font-weight: 700;
+  padding: 0 10px;
+}
+
+.ant-tag-has-color,
+.ant-tag-has-color a,
+.ant-tag-has-color a:hover,
+.ant-tag-has-color .anticon-close,
+.ant-tag-has-color .anticon-close:hover {
+  color: $black-1;
+}

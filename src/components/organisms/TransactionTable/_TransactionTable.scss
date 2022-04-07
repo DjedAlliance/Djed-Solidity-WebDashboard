@@ -1,0 +1,27 @@
+@import "../../../scss/general_styling";
+
+.TransactionTable {
+  background: #222433;
+  border-radius: 8px;
+  border: 1px solid $grey-5;
+  padding: 1em;
+  margin-top: 2em;
+
+  h3 {
+    @include primary-text($body, $grey-5, 400);
+    text-transform: uppercase;
+    margin-left: 8px;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.Total {
+  font-weight: 700;
+  span {
+    @include primary-text($explain, $white, 400);
+    text-transform: uppercase;
+  }
+}

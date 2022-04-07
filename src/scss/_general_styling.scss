@@ -1,0 +1,81 @@
+$primary-color: #4962fc;
+$secondary-color: #6e5cdc;
+$warning-color: #fec004;
+
+$black-1: #262932;
+$black-2: #2a2c3e;
+$black-3: #41455C;
+$white: #ffffff;
+
+$grey-1: #f4f4f6;
+$grey-2: #e9e9ee;
+$grey-3: #b5b0b0;
+$grey-4: #bbbbbb;
+$grey-5: #5f606e;
+
+$gradient-theme-1: linear-gradient(212.41deg, #12173a 1.12%, #0c0c0c 94.46%);
+$gradient-theme-2: linear-gradient(
+  70.09deg,
+  #00e29a 0%,
+  rgba(0, 226, 154, 0) 100%
+);
+$gradient-theme-3: linear-gradient(
+  91.41deg,
+  rgba(255, 255, 255, 0.3) 0%,
+  rgba(255, 255, 255, 0) 100%
+);
+
+$gradient-theme-4: linear-gradient(70.09deg, #212121 0%, #1a192e 100%);
+
+$shadow: 0px 4px 4px 0px #00000040;
+
+$title: 75px;
+$subtitle: 50px;
+$numbers: 22px;
+$h1: 30px;
+$h2: 20px;
+$h3: 18px;
+$h4: 16px;
+$button: 14px;
+$body: 14px;
+$label: 12px;
+$explain: 10px;
+
+@mixin primary-text($font-size, $font-color, $font-weight) {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: $font-size;
+  font-weight: $font-weight;
+  @if $font-color {
+    color: $font-color;
+  }
+}
+
+@mixin number-text($font-size, $font-color, $font-weight) {
+  margin: 0;
+  font-family: "Roboto Mono", monospace;
+  font-size: $font-size;
+  font-weight: $font-weight;
+  @if $font-color {
+    color: $font-color;
+  }
+}
+
+/* Buttons */
+
+@mixin buttonBase($padding, $borderRad) {
+  padding: $padding;
+  border-radius: $borderRad;
+  cursor: pointer;
+}
+
+@mixin ButtonPrimary($color, $background) {
+  color: $color;
+  background-color: $background;
+  cursor: pointer;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

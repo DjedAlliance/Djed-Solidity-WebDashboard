@@ -1,0 +1,18 @@
+@import "../../../scss/general_styling";
+
+.CoinIndicator {
+  display: flex;
+  border-radius: 6px;
+  padding-bottom: 0.5em;
+
+  .CoinIcon {
+    margin-right: 0.5em;
+    width: 30px;
+    height: 30px;
+  }
+
+  .CoinTitle {
+    @include primary-text($h4, $white, 600);
+    margin: 0;
+  }
+}

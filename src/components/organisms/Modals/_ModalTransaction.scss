@@ -1,0 +1,48 @@
+@import "../../../scss/general_styling";
+
+.CustomModal {
+  .ant-modal-content {
+    background: $gradient-theme-4;
+    border-radius: 10px;
+
+    .ant-modal-close-x {
+      .anticon {
+        color: $grey-5;
+      }
+    }
+  }
+
+  .ant-modal-header {
+    background: transparent;
+    border-bottom: none;
+    .ant-modal-title {
+      color: $white;
+    }
+  }
+
+  .ant-modal-body {
+    text-align: center;
+    padding: 5em 2em 3em 2em;
+    .ModalImg {
+      margin-bottom: 2em;
+    }
+    h3 {
+      @include primary-text($h3, $white, 700);
+      margin-bottom: 0.25em;
+    }
+    p {
+      @include primary-text($body, $white, 400);
+    }
+  }
+  .ant-modal-footer {
+    border-top: 1px solid $grey-5;
+    text-align: center;
+
+    button {
+      span {
+        color: $white;
+        margin-right: 0.25em;
+      }
+    }
+  }
+}

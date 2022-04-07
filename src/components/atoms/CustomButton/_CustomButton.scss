@@ -1,0 +1,59 @@
+@import "../../../scss/general_styling";
+
+.CustomButton {
+  @include buttonBase(0.5em 1.25em, 8px);
+  height: 50px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: $secondary-color;
+  outline: none;
+
+  .ButtonText {
+    @include primary-text($body, $white, 600);
+    margin: 0 1em;
+  }
+}
+
+/*BUTTONS THEMES*/
+
+.primary {
+  background: $gradient-theme-3;
+  border: 2px solid $grey-5;
+  transition: 0.5s;
+  color: $white;
+  .ButtonText {
+    color: $white;
+  }
+
+  &:hover,
+  &:focus {
+    background: darken($grey-5, 10%);
+    border: 2px solid darken($grey-5, 10%);
+    color: $white;
+    .ButtonText {
+      color: $white;
+    }
+  }
+}
+
+.secondary {
+  background: $black-3;
+  border: 2px solid $black-3;
+  transition: 0.5s;
+  color: $white;
+  .ButtonText {
+    color: $white;
+  }
+
+  &:hover,
+  &:focus {
+    background: darken($black-3, 10%);
+    border: 2px solid darken($black-3, 10%);
+    color: $white;
+    .ButtonText {
+      color: $white;
+    }
+  }
+}

@@ -1,0 +1,40 @@
+@import "../../../scss/general_styling";
+
+.ReservesCard {
+  background: #222433;
+  border-radius: 8px;
+  border: 1px solid $grey-5;
+  padding: 1em;
+  hr {
+    border: none;
+    border-top: 1px solid $grey-5;
+  }
+
+  .Content {
+    display: flex;
+    justify-content: space-between;
+
+    .BaseReserves {
+      width: 55%;
+      span {
+        @include primary-text($label, $white, 400);
+        margin: 0;
+      }
+      h3 {
+        @include number-text($numbers, $white, 600);
+        line-height: 1;
+        margin-bottom: 0.25em;
+      }
+      p {
+        @include number-text($h4, $white, 400);
+      }
+    }
+    .ReservesRatio {
+      display: flex;
+      width: 45%;
+      .NumberItem {
+        margin-right: 2em;
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+@import "../scss/general_styling";
+
+.MyBalanceSection {
+  display: flex;
+  flex-direction: column;
+  padding-top: 2em;
+
+  .Top {
+    width: 100%;
+    h1 {
+      @include primary-text($h1, $white, 700);
+      margin-bottom: 0;
+    }
+    p {
+      @include primary-text($h4, $grey-5, 400);
+      margin-bottom: 1em;
+    }
+    .Content {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  .Bottom {
+    width: 100%;
+  }
+}

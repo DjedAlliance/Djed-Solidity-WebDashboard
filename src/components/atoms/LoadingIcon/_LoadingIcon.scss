@@ -1,0 +1,8 @@
+@import "../../../scss/general_styling";
+
+.LoadingIcon {
+  margin-bottom: 2em;
+  .ant-spin {
+    color: $primary-color;
+  }
+}

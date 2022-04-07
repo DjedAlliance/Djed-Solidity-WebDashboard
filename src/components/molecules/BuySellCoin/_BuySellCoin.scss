@@ -1,0 +1,34 @@
+@import "../../../scss/general_styling";
+
+.BuySellCoin {
+  border-top: 1px solid $black-1;
+  padding: 1em 0;
+
+  .AmountInput {
+    margin: 1em 0;
+  }
+
+  h3 {
+    @include primary-text($h4, $white, 400);
+  }
+
+  .FeeInfo {
+    @include primary-text($body, $grey-4, 600);
+    margin: 1em 0;
+    .anticon {
+      margin-right: 0.25em;
+    }
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid $black-1;
+  }
+
+  .AdditionalInfo {
+    margin: 0.5em 0;
+    p {
+      @include number-text($label, $grey-5, 400);
+    }
+  }
+}

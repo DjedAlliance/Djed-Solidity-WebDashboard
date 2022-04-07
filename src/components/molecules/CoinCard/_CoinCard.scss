@@ -1,0 +1,27 @@
+@import "../../../scss/general_styling";
+
+.CoinCard {
+  background: #222433;
+  border-radius: 8px;
+  border: 1px solid $grey-5;
+  padding: 1em;
+
+  hr {
+    border: none;
+    border-top: 1px solid $grey-5;
+  }
+
+  span {
+    @include primary-text($label, $white, 400);
+    margin: 0;
+  }
+  h3 {
+    @include number-text($numbers, $white, 600);
+    line-height: 1;
+    margin-bottom: 0.75em;
+  }
+  p {
+    @include number-text($h4, $white, 600);
+    margin-bottom: 0.75em;
+  }
+}

@@ -1,0 +1,14 @@
+@import "../../../scss/general_styling";
+
+.NumberItem {
+  padding-bottom: 0.5em;
+
+  .Label {
+    @include primary-text($label, $white, 400);
+    margin: 0;
+  }
+  .Amount {
+    @include number-text($numbers, $white, 600);
+    margin: 0;
+  }
+}

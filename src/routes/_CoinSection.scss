@@ -1,0 +1,57 @@
+@import "../scss/general_styling";
+
+.StablecoinSection {
+  display: flex;
+  padding-top: 2em;
+
+  .Left {
+    width: 50%;
+
+    h1 {
+      @include primary-text($subtitle, $white, 400);
+      line-height: $subtitle;
+    }
+    .DescriptionContainer {
+      width: 80%;
+      padding: 2em 0;
+      p {
+        @include primary-text($h4, $grey-5, 400);
+        margin-bottom: 1em;
+      }
+    }
+    .CoinCard {
+      width: 80%;
+      .AdditionalInfo {
+        display: flex;
+        .InfoItem {
+          margin-right: 5em;
+        }
+      }
+    }
+  }
+
+  .Right {
+    width: 50%;
+    padding: 5em 0 0 5em;
+    .SubtTitle {
+      @include primary-text($h2, $white, 400);
+    }
+    .PurchaseContainer {
+      border-top: 1px solid $grey-5;
+      padding: 2em 0 0 0;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .ConnectWallet {
+      width: 100%;
+      .CustomButton {
+        width: 100%;
+      }
+      .Disclaimer {
+        @include primary-text($body, $white, 400);
+        margin-bottom: 1em;
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+@import "../../../scss/general_styling";
+
+.TotalBalance {
+  background: #222433;
+  border-radius: 8px;
+  border: 1px solid $grey-5;
+  padding: 1em 1.5em;
+  width: 32%;
+
+  .Title {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1em;
+    span {
+      @include primary-text($body, $grey-5, 400);
+      margin: 0;
+      text-transform: uppercase;
+    }
+  }
+
+  .ContentInfo {
+    display: flex;
+    align-items: center;
+    img {
+      width: 46px;
+      height: 46px;
+    }
+
+    .Cointext {
+      margin-left: 1em;
+      .CoinTitle {
+        @include primary-text($body, $white, 400);
+        margin: 0;
+      }
+      .CoinAmount {
+        @include number-text($numbers, $white, 600);
+        line-height: 1;
+        margin-bottom: 0.25em;
+      }
+    }
+  }
+}
