@@ -49,7 +49,7 @@ export default function App() {
             /> */}
           </div>
         </Header>
-        <Content style={{ padding: "0 50px" }}>
+        <Content>
           <div className="site-layout-content">
             <Outlet />
           </div>

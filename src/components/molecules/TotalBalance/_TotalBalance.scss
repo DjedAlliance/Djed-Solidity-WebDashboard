@@ -4,7 +4,7 @@
   background: #222433;
   border-radius: 8px;
   border: 1px solid $grey-5;
-  padding: 1em 1.5em;
+  padding: 1em;
   width: 32%;
 
   .Title {
@@ -13,6 +13,10 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1em;
+    img {
+      width: 20px;
+      height: 20px;
+    }
     span {
       @include primary-text($body, $grey-5, 400);
       margin: 0;
@@ -40,5 +44,36 @@
         margin-bottom: 0.25em;
       }
     }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .TotalBalance {
+    .Title {
+      span {
+        font-size: $label;
+      }
+    }
+    .ContentInfo {
+      img {
+        width: 36px;
+        height: 36px;
+      }
+      .Cointext {
+        .CoinTitle {
+          font-size: $label;
+        }
+        .CoinAmount {
+          font-size: $h4;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .TotalBalance {
+    width: 100%;
+    margin-bottom: 1em;
   }
 }

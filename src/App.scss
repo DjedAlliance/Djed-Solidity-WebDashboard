@@ -21,12 +21,17 @@ body {
   overflow-y: auto;
 }
 
+.ant-layout-content {
+  padding: 0 3em;
+}
+
 .ant-layout-header {
   display: flex;
   background: transparent;
   height: 40px;
   line-height: 40px;
   justify-content: space-between;
+  padding: 0 3em;
 
   .WalletConfig {
     display: flex;
@@ -77,6 +82,10 @@ body {
 }
 
 .ant-menu-horizontal > .ant-menu-item a:hover {
+  color: white;
+}
+
+.ant-menu-horizontal > .ant-menu-submenu > .ant-menu-submenu-title {
   color: white;
 }
 
@@ -172,7 +181,7 @@ body {
   border-bottom: transparent;
 }
 
-.ant-tag{
+.ant-tag {
   border-radius: 20px;
   font-weight: 700;
   padding: 0 10px;
@@ -184,4 +193,31 @@ body {
 .ant-tag-has-color .anticon-close,
 .ant-tag-has-color .anticon-close:hover {
   color: $black-1;
+}
+
+@media only screen and (max-width: 425px) {
+  .ant-layout-header,
+  .ant-layout-content {
+    padding: 0 2em;
+  }
+
+  .ant-layout-header {
+    flex-wrap: wrap;
+    height: auto;
+
+    .logo{
+      justify-content: center;
+      margin-right: 0;
+    }
+
+    .ant-menu-horizontal{
+      width: min-content;
+    }
+
+    .WalletConfig {
+      margin-top: 1.5em;
+      justify-content: center;
+      width: 100%;
+    }
+  }
 }

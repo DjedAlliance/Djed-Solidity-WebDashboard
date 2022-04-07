@@ -27,3 +27,23 @@
     }
   }
 }
+
+@media only screen and (max-width: 425px) {
+  .LabelMessage {
+    flex-direction: column;
+    .LabelIcon {
+      margin-right: 0;
+    }
+    .LabelMessageText {
+      margin-top: 1em;
+      text-align: center;
+      width: 70%;
+      .LabelTitle {
+        font-size: $body;
+      }
+      .LabelText {
+        font-size: $label;
+      }
+    }
+  }
+}

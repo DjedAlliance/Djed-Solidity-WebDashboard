@@ -38,3 +38,21 @@
     }
   }
 }
+
+@media only screen and (max-width: 1024px) {
+  .ReservesCard {
+    .Content {
+      .BaseReserves {
+        h3 {
+          @include number-text($h3, $white, 600);
+          line-height: 1;
+          margin-bottom: 0.75em;
+        }
+        p {
+          @include number-text($body, $white, 600);
+          margin-bottom: 0.75em;
+        }
+      }
+    }
+  }
+}

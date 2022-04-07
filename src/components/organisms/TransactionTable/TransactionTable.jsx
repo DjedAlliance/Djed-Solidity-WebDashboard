@@ -8,6 +8,7 @@ const columns = [
     title: "Transaction ID",
     dataIndex: "transactionId",
     key: "transactionId",
+    ellipsis: true,
   },
   {
     title: "Transaction",
@@ -50,6 +51,7 @@ const columns = [
   {
     title: "",
     key: "action",
+    width: 40,
     render: () => (
       <a href="">
         <img src="/external-link.svg" alt="" />
@@ -90,6 +92,7 @@ const TransactionTable = () => (
       dataSource={data}
       size="middle"
       pagination={false}
+      scroll={{ x: 1000}}
     />
   </div>
 );

@@ -43,3 +43,62 @@
     }
   }
 }
+
+@media only screen and (max-width: 1024px) {
+  .ProtocolSection {
+    .Left {
+      h1 {
+        @include primary-text($subtitle, $white, 400);
+        line-height: $subtitle;
+      }
+      .DescriptionContainer {
+        width: 100%;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .ProtocolSection {
+    flex-direction: column;
+    .Left {
+      width: 100%;
+    }
+    .Right {
+      width: 100%;
+      padding: 3em 0 0 0;
+    }
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .ProtocolSection {
+    padding-top: 0;
+    .Left {
+      h1 {
+        @include primary-text($title-mobile, $white, 400);
+        line-height: $title-mobile;
+      }
+    }
+    .Right {
+      .CoinsContainer {
+        flex-direction: column;
+        .CoinCard {
+          width: 100%;
+          &:first-child {
+            margin-bottom: 2em;
+          }
+        }
+        .ReservesCard {
+          .Content {
+            flex-direction: column;
+            .BaseReserves,
+            .ReservesRatio {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}

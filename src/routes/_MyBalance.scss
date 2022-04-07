@@ -25,3 +25,26 @@
     width: 100%;
   }
 }
+
+@media only screen and (max-width: 768px) {
+  .ProtocolSection {
+    flex-direction: column;
+    .Left {
+      width: 100%;
+    }
+    .Right {
+      width: 100%;
+      padding: 3em 0 0 0;
+    }
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .MyBalanceSection {
+    .Top {
+      .Content {
+        flex-direction: column;
+      }
+    }
+  }
+}

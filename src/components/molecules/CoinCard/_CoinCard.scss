@@ -25,3 +25,17 @@
     margin-bottom: 0.75em;
   }
 }
+
+@media only screen and (max-width: 1024px) {
+  .CoinCard {
+    h3 {
+      @include number-text($h3, $white, 600);
+      line-height: 1;
+      margin-bottom: 0.75em;
+    }
+    p {
+      @include number-text($body, $white, 600);
+      margin-bottom: 0.75em;
+    }
+  }
+}
