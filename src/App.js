@@ -1,19 +1,19 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { WalletOutlined } from "@ant-design/icons";
 
-import CustomButton from "./components/atoms/CustomButton/CustomButton";
+//import CustomButton from "./components/atoms/CustomButton/CustomButton";
+import MetamaskStatusButton from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
 
 import { ReactComponent as Logo } from "./images/logoipsum.svg";
-import { ReactComponent as Metamask } from "./images/metamask.svg";
 
 import "antd/dist/antd.css";
 import "./App.scss";
 
 const { Header, Content, Footer } = Layout;
 
-export default function App() {
+export default function App({ accounts }) {
+
   return (
     <div>
       <Layout className="layout">
@@ -36,11 +36,12 @@ export default function App() {
             </Menu.Item>
           </Menu>
           <div className="WalletConfig">
-            <CustomButton
+            <MetamaskStatusButton accounts={accounts} />
+            {/*<CustomButton
               text="Set Wallet"
               theme="primary"
               iconWallet={<WalletOutlined />}
-            />
+            />*/}
             {/* Use this button once Metamask wallet is connected */}
             {/* <CustomButton
               text="0x2d7…3A49"

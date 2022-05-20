@@ -1,13 +1,14 @@
 import React from "react";
-import { ArrowRightOutlined } from "@ant-design/icons";
-import { ReactComponent as Metamask } from "../images/metamask.svg";
-import CustomButton from "../components/atoms/CustomButton/CustomButton";
+//import { ArrowRightOutlined, PropertySafetyFilled } from "@ant-design/icons";
+//import { ReactComponent as Metamask } from "../images/metamask.svg";
+//import CustomButton from "../components/atoms/CustomButton/CustomButton";
+import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 
 import "./_protocol.scss";
 import ReservesCard from "../components/molecules/ReservesCard/ReservesCard";
 
-export default function Protocol() {
+export default function Protocol({ data, accounts, connectFxn }) {
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="ProtocolSection">
@@ -27,14 +28,16 @@ export default function Protocol() {
               electronic typesetting, remaining essentially unchanged.
             </p>
           </div>
-          <CustomButton
-            type="primary"
-            htmlType="submit"
-            text="Connect with Metamask"
-            theme="primary"
-            iconWallet={<Metamask />}
-            icon={<ArrowRightOutlined />}
-          />
+            <MetamaskConnectButton accounts={accounts} connectFxn={connectFxn} />
+
+            {/*<CustomButton
+              type="primary"
+              htmlType="submit"
+              text="Connect with Metamask"
+              theme="primary"
+              iconWallet={<Metamask />}
+              icon={<ArrowRightOutlined />}
+            />*/}
         </div>
         <div className="Right">
           <h2 className="SubtTitle">
@@ -44,22 +47,21 @@ export default function Protocol() {
             <CoinCard
               coinIcon="/coin-icon-one.png"
               coinName="Stablecoin Name"
-              priceAmount="0.31152640"
-              circulatingAmount="1,345,402.15"
-              ratioAmount="1 milkADA ≈ 3.21 Token"
+              priceAmount={data.scaledPriceSc} //"0.31152640"
+              circulatingAmount={data.scaledNumberSc} //"1,345,402.15"
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
               coinName="Reservecoin Name"
-              priceAmount="0.31152640"
-              circulatingAmount="1,345,402.15"
-              ratioAmount="1 milkADA ≈ 3.21 Token"
+              priceAmount={data.scaledPriceRc} //"0.31152640"
+              circulatingAmount={data.scaledNumberRc} //"1,345,402.15"
             />
             <ReservesCard
-              priceAmount="1,453,338"
+              priceAmount={data.scaledReserveBc}
               equivalence="≈ 4.51M StabeCoin"
               coinIcon="/coin-icon-three.png"
               coinName="Reserves"
+              reserveRatio={data.percentReserveRatio}
             />
           </div>
         </div>

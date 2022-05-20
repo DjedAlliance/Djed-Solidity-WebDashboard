@@ -7,7 +7,6 @@ const CoinCard = ({
   coinName,
   priceAmount,
   circulatingAmount,
-  ratioAmount,
 }) => (
   <div className="CoinCard">
     <CoinIndicator coinIcon={coinIcon} coinName={coinName} />
@@ -21,7 +20,7 @@ const CoinCard = ({
       </div>
       <div className="InfoItem">
         <span>Current Ratio</span>
-        <p>{ratioAmount}</p>
+        <p>1 milkADA = {1 / parseFloat(priceAmount)} Token</p>
       </div>
     </div>
   </div>

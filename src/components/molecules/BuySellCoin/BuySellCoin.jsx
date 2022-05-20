@@ -10,13 +10,14 @@ const BuySellCoin = ({
   totalAmount,
   payOrGet,
   buyOrSell,
+  changeFxn
 }) => (
   <div className="BuySellCoin">
     <h3>
       {buyOrSell} {coinName}
     </h3>
     <div className="AmountInput">
-      <Input size="large" placeholder="0.0" suffix={coinName} />
+      <Input size="large" placeholder="0.0" suffix={coinName} onChange={changeFxn} />
     </div>
     <p className="FeeInfo">
       <InfoCircleOutlined /> A fee is charged for currency conversion
@@ -28,7 +29,7 @@ const BuySellCoin = ({
       </p>
       <p>Fee ≈ {feeAmount} milkADA</p>
       <p>
-        {payOrGet} ≈ {totalAmount} milkADA
+        You will {payOrGet} ≈ {totalAmount} milkADA
       </p>
     </div>
     <hr />
