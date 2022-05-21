@@ -9,9 +9,11 @@ import ModalTransaction from "../components/organisms/Modals/ModalTransaction";
 import ModalPending from "../components/organisms/Modals/ModalPending";
 
 import "./_CoinSection.scss";
+import { useAppProvider } from "../context/AppProvider";
 //import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 
-export default function Stablecoin({ data, accounts, connectFxn }) {
+export default function Stablecoin() {
+  const { wrapper } = useAppProvider();
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
@@ -21,21 +23,20 @@ export default function Stablecoin({ data, accounts, connectFxn }) {
           </h1>
           <div className="DescriptionContainer">
             <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
+              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+              industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+              scrambled it to make a type specimen book.
             </p>
             <p>
-              It has survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged.
+              It has survived not only five centuries, but also the leap into electronic typesetting, remaining
+              essentially unchanged.
             </p>
           </div>
           <CoinCard
             coinIcon="/coin-icon-one.png"
             coinName="Stablecoin Name"
-            priceAmount={data.scaledPriceSc} //"0.31152640"
-            circulatingAmount={data.scaledNumberSc} //"1,345,402.15"
+            priceAmount={wrapper?.data.scaledPriceSc} //"0.31152640"
+            circulatingAmount={wrapper?.data.scaledNumberSc} //"1,345,402.15"
           />
         </div>
         <div className="Right">
@@ -46,10 +47,8 @@ export default function Stablecoin({ data, accounts, connectFxn }) {
             <OperationSelector coinName="Stablecoin" />
           </div>
           <div className="ConnectWallet">
-            <p className="Disclaimer">
-              In order to operate you need to connect your wallet
-            </p>
-            <MetamaskConnectButton accounts={accounts} connectFxn={connectFxn} />
+            <p className="Disclaimer">In order to operate you need to connect your wallet</p>
+            <MetamaskConnectButton />
 
             {/*<CustomButton
               type="primary"

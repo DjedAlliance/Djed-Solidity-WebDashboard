@@ -10,8 +10,11 @@ import ModalPending from "../components/organisms/Modals/ModalPending";
 import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 
 import "./_CoinSection.scss";
+import { useAppProvider } from "../context/AppProvider";
 
-export default function ReserveCoin({ data, accounts, connectFxn, wrapper }) {
+export default function ReserveCoin() {
+  const { wrapper } = useAppProvider();
+
   const [buyOrSell, setBuyOrSell] = useState("buy");
   const [amountText, setAmountText] = useState("0.0");
   const [tradeData, setTradeData] = useState({});
@@ -21,13 +24,13 @@ export default function ReserveCoin({ data, accounts, connectFxn, wrapper }) {
       setBuyOrSell("buy");
     } else if (key === "2") {
       setBuyOrSell("sell");
-    } 
-  }
+    }
+  };
 
   const amountChangeCallback = (e) => {
     console.log(e.target.value);
     setAmountText(e.target.value);
-  }
+  };
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -38,21 +41,20 @@ export default function ReserveCoin({ data, accounts, connectFxn, wrapper }) {
           </h1>
           <div className="DescriptionContainer">
             <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
+              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+              industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+              scrambled it to make a type specimen book.
             </p>
             <p>
-              It has survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged.
+              It has survived not only five centuries, but also the leap into electronic typesetting, remaining
+              essentially unchanged.
             </p>
           </div>
           <CoinCard
             coinIcon="/coin-icon-two.png"
             coinName="Reservecoin Name"
-            priceAmount={data.scaledPriceRc} //"0.31152640"
-            circulatingAmount={data.scaledNumberRc} //"1,345,402.15"
+            priceAmount={wrapper.data.scaledPriceRc} //"0.31152640"
+            circulatingAmount={wrapper.data.scaledNumberRc} //"1,345,402.15"
           />
         </div>
         <div className="Right">
@@ -60,13 +62,15 @@ export default function ReserveCoin({ data, accounts, connectFxn, wrapper }) {
             <strong>Buy & Sell</strong> Reservecoin
           </h2>
           <div className="PurchaseContainer">
-            <OperationSelector coinName="Reservecoin" selectionCallback={selectorCallback} changeCallback={amountChangeCallback} />
+            <OperationSelector
+              coinName="Reservecoin"
+              selectionCallback={selectorCallback}
+              changeCallback={amountChangeCallback}
+            />
           </div>
           <div className="ConnectWallet">
-            <p className="Disclaimer">
-              In order to operate you need to connect your wallet
-            </p>
-            <MetamaskConnectButton accounts={accounts} connectFxn={connectFxn} />
+            <p className="Disclaimer">In order to operate you need to connect your wallet</p>
+            <MetamaskConnectButton />
 
             {/*<CustomButton
               type="primary"
