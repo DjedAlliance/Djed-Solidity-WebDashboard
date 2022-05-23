@@ -17,8 +17,28 @@ function decimalScaling(scaledString, decimals) {
     }
 }
 
+function decimalUnscaling(normalizedString, decimals) {
+    let pos = normalizedString.indexOf(".");
+    if (pos < 0) {
+        return parseInt(normalizedString) * (10 ** decimals);
+    }
+    
+    let s = normalizedString.slice(0, pos) + normalizedString.slice(pos + 1, pos + 1 + decimals);
+    if (normalizedString.length - pos - 1 < decimals) {
+        s += "0".repeat(decimals - (normalizedString.length - pos - 1));
+    }
+    return parseInt(s);
+}
+
 function scaledPromise(promise, scaling) {
     return promise.then(value => decimalScaling(value, scaling));
+}
+
+function duoScaledPromise(promise, scaling) {
+    return promise.then(value => ({
+        raw: value,
+        scaled: decimalScaling(value, scaling)
+    }));
 }
 
 function convertInt(promise) {
@@ -117,8 +137,8 @@ export class MinimalDjedWrapper {
     testBuy() {
       console.log("Test buying rc...")
       this.promiseBuyRc(this.accounts[0], 1000000)
-      .then(console.log)
-      .catch(console.err);
+      .then(res => console.log("Success:", res))
+      .catch(err => console.err("Error:", err));
     };
 
     promiseTx(tx) {
@@ -147,18 +167,32 @@ export class MinimalDjedWrapper {
         return this.promiseTx(this.sellRcTx(account, amount));
     }
 
-    buyScaledRc(scaledValue) {
-        let value = scaledValue;
-        this.promiseBuySc(this.accounts[0], value)
-        .then(console.log)
-        .catch(console.err);
+    buyRc(value) {
+        console.log("Attempting to buy RC for", value);
+        this.promiseBuyRc(this.accounts[0], value)
+        .then(res => console.log("Success:", res))
+        .catch(err => console.err("Error:", err));
     }
 
-    sellScaledRc(scaledAmount) {
-        let amount = scaledAmount;
+    sellRc(amount) {
+        console.log("Attempting to sell RC in amount", amount);
+        this.promiseSellRc(this.accounts[0], amount)
+        .then(res => console.log("Success:", res))
+        .catch(err => console.err("Error:", err));
+    }
+
+    buySc(value) {
+        console.log("Attempting to buy SC for", value);
+        this.promiseBuySc(this.accounts[0], value)
+        .then(res => console.log("Success:", res))
+        .catch(err => console.err("Error:", err));
+    }
+
+    sellSc(amount) {
+        console.log("Attempting to sell SC in amount", amount);
         this.promiseSellSc(this.accounts[0], amount)
-        .then(console.log)
-        .catch(console.err);
+        .then(res => console.log("Success:", res))
+        .catch(err => console.err("Error:", err));
     }
 
     /*
@@ -213,6 +247,22 @@ export class MinimalDjedWrapper {
 
     scaleBc(promise) {
         return scaledPromise(promise, BC_DECIMALS);
+    }
+
+    duoScaleFixed(promise) {
+        return duoScaledPromise(promise, this.scalingFixed);
+    }
+
+    duoScaleSc(promise) {
+        return duoScaledPromise(promise, this.scDecimals);
+    }
+
+    duoScaleRc(promise) {
+        return duoScaledPromise(promise, this.rcDecimals);
+    }
+
+    duoScaleBc(promise) {
+        return duoScaledPromise(promise, BC_DECIMALS);
     }
 
     // StableCoin web3 promises:
@@ -324,7 +374,49 @@ export class MinimalDjedWrapper {
         return this.scaleBc(this.promiseReserveBc());
     }
 
-    promiseScaledPriceBuySc(amount) {
-        return this.scaleBc(this.promisePriceBuySc);
+    promiseTradeDataPriceBuySc(amountUnscaled) {
+        const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
+        return this.promisePriceBuySc(amount)
+            .then(value => ({
+                amountText: amountUnscaled,
+                amountInt: amount,
+                totalText: decimalScaling(value, this.rcDecimals),
+                totalInt: value
+            }));
+    }
+
+    promiseTradeDataPriceSellSc(amountUnscaled) {
+        const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
+        //return this.duoScaleBc(this.promisePriceSellSc(amount));
+        return this.promisePriceSellSc(amount)
+        .then(value => ({
+            amountText: amountUnscaled,
+            amountInt: amount,
+            totalText: decimalScaling(value, this.rcDecimals),
+            totalInt: value
+        }));
+    }
+
+    promiseTradeDataPriceBuyRc(amountUnscaled) {
+        const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
+        return this.promisePriceBuyRc(amount)
+            .then(value => ({
+                amountText: amountUnscaled,
+                amountInt: amount,
+                totalText: decimalScaling(value, this.rcDecimals),
+                totalInt: value
+            }));
+    }
+
+    promiseTradeDataPriceSellRc(amountUnscaled) {
+        const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
+        //return this.duoScaleBc(this.promisePriceSellRc(amount));
+        return this.promisePriceSellRc(amount)
+        .then(value => ({
+            amountText: amountUnscaled,
+            amountInt: amount,
+            totalText: decimalScaling(value, this.rcDecimals),
+            totalInt: value
+        }));
     }
 }

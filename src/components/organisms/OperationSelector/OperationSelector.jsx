@@ -9,7 +9,7 @@ const { TabPane } = Tabs;
 //  console.log(key);
 //}
 
-const OperationSelector = ({ coinName, selectionCallback, changeCallback }) => (
+const OperationSelector = ({ coinName, selectionCallback, changeCallback, tradeData }) => (
   <div className="OperationSelector">
     <Tabs defaultActiveKey="1" onChange={selectionCallback}>
       <TabPane tab="Buy" key="1">
@@ -18,7 +18,7 @@ const OperationSelector = ({ coinName, selectionCallback, changeCallback }) => (
           coinName={coinName}
           priceAmount="0.000"
           feeAmount="0.000"
-          totalAmount="0.000"
+          totalAmount={tradeData.totalText}//"0.000"
           payOrGet="pay"
           changeFxn={changeCallback}
         />
@@ -29,7 +29,7 @@ const OperationSelector = ({ coinName, selectionCallback, changeCallback }) => (
           coinName={coinName}
           priceAmount="0.000"
           feeAmount="0.000"
-          totalAmount="0.000"
+          totalAmount={tradeData.totalText}//"0.000"
           payOrGet="get"
           changeFxn={changeCallback}
         />

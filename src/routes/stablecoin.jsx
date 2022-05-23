@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 //import { ArrowRightOutlined } from "@ant-design/icons";
 //import { ReactComponent as Metamask } from "../images/metamask.svg";
 //import CustomButton from "../components/atoms/CustomButton/CustomButton";
@@ -7,6 +7,7 @@ import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import OperationSelector from "../components/organisms/OperationSelector/OperationSelector";
 import ModalTransaction from "../components/organisms/Modals/ModalTransaction";
 import ModalPending from "../components/organisms/Modals/ModalPending";
+import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
@@ -14,6 +15,30 @@ import { useAppProvider } from "../context/AppProvider";
 
 export default function Stablecoin() {
   const { wrapper } = useAppProvider();
+
+  const [buyOrSell, setBuyOrSell] = useState("buy");
+  const [tradeData, setTradeData] = useState({});
+
+  const selectorCallback = (key) => {
+    if (key === "1") {
+      setBuyOrSell("buy");
+    } else if (key === "2") {
+      setBuyOrSell("sell");
+    }
+  };
+
+  const amountChangeCallback = (e) => {
+    let text = e.target.value;
+    let promise = buyOrSell === "buy"
+        ? wrapper.promiseTradeDataPriceBuySc(text)
+        : wrapper.promiseTradeDataPriceSellSc(text);
+    promise.then(data => setTradeData(data));
+  };
+
+  const tradeFxn = buyOrSell === "buy"
+      ? wrapper.buySc.bind(wrapper, tradeData.totalInt)
+      : wrapper.sellSc.bind(wrapper, tradeData.amountInt);
+
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
@@ -44,7 +69,12 @@ export default function Stablecoin() {
             <strong>Buy & Sell</strong> Stablecoin
           </h2>
           <div className="PurchaseContainer">
-            <OperationSelector coinName="Stablecoin" />
+            <OperationSelector
+              coinName="Stablecoin" 
+              selectionCallback={selectorCallback}
+              changeCallback={amountChangeCallback}
+              tradeData={tradeData}
+            />
           </div>
           <div className="ConnectWallet">
             <p className="Disclaimer">In order to operate you need to connect your wallet</p>
@@ -77,6 +107,14 @@ export default function Stablecoin() {
               transactionStatus="/transaction-failed.svg"
               statusText="Failed transaction!"
               statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+            />
+            <BuySellButton
+              testFxn={tradeFxn}
+              //{buyOrSell === "buy" ? : }
+              buyOrSell={buyOrSell}
+              coinName="Stablecoin"
+              coinAmount={tradeData.amountText}
+              value={tradeData.totalText}
             />
           </div>
         </div>

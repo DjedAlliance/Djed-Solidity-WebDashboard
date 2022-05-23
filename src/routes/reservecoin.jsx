@@ -16,7 +16,6 @@ export default function ReserveCoin() {
   const { wrapper } = useAppProvider();
 
   const [buyOrSell, setBuyOrSell] = useState("buy");
-  const [amountText, setAmountText] = useState("0.0");
   const [tradeData, setTradeData] = useState({});
 
   const selectorCallback = (key) => {
@@ -28,9 +27,16 @@ export default function ReserveCoin() {
   };
 
   const amountChangeCallback = (e) => {
-    console.log(e.target.value);
-    setAmountText(e.target.value);
+    let text = e.target.value;
+    let promise = buyOrSell === "buy"
+        ? wrapper.promiseTradeDataPriceBuyRc(text)
+        : wrapper.promiseTradeDataPriceSellRc(text);
+    promise.then(data => setTradeData(data));
   };
+
+  const tradeFxn = buyOrSell === "buy"
+      ? wrapper.buyRc.bind(wrapper, tradeData.totalInt)
+      : wrapper.sellRc.bind(wrapper, tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -53,7 +59,7 @@ export default function ReserveCoin() {
           <CoinCard
             coinIcon="/coin-icon-two.png"
             coinName="Reservecoin Name"
-            priceAmount={wrapper.data.scaledPriceRc} //"0.31152640"
+            priceAmount={tradeData.totalInt} //{wrapper.data.scaledPriceRc} //"0.31152640"
             circulatingAmount={wrapper.data.scaledNumberRc} //"1,345,402.15"
           />
         </div>
@@ -66,6 +72,7 @@ export default function ReserveCoin() {
               coinName="Reservecoin"
               selectionCallback={selectorCallback}
               changeCallback={amountChangeCallback}
+              tradeData={tradeData}
             />
           </div>
           <div className="ConnectWallet">
@@ -101,12 +108,12 @@ export default function ReserveCoin() {
               statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
             />
             <BuySellButton
-              testFxn={wrapper.testBuy.bind(wrapper)}
+              testFxn={tradeFxn}
               //{buyOrSell === "buy" ? : }
               buyOrSell={buyOrSell}
               coinName="Reservecoin"
-              coinAmount={30}
-              value={42}
+              coinAmount={tradeData.amountText}
+              value={tradeData.totalText}
             />
           </div>
         </div>

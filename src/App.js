@@ -13,7 +13,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             {/* TODO: home page */}
-            <Route path="/" element={<Stablecoin />} />
+            <Route path="/" element={<Protocol />} />
             <Route path="stablecoin" element={<Stablecoin />} />
             <Route path="protocol" element={<Protocol />} />
             <Route path="reservecoin" element={<ReserveCoin />} />
