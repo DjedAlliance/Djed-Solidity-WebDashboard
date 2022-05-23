@@ -1,61 +1,34 @@
-import React from "react";
-import { Outlet, Link } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MainLayout from "./MainLayout";
+import Stablecoin from "./routes/stablecoin";
+import Protocol from "./routes/protocol";
+import ReserveCoin from "./routes/reservecoin";
+import MyBalance from "./routes/my-balance";
+import { AppProvider } from "./context/AppProvider";
 
-//import CustomButton from "./components/atoms/CustomButton/CustomButton";
-import MetamaskStatusButton from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
-
-import { ReactComponent as Logo } from "./images/logoipsum.svg";
-
-import "antd/dist/antd.css";
-import "./App.scss";
-
-const { Header, Content, Footer } = Layout;
-
-export default function App({ accounts }) {
-
+export default function App() {
   return (
-    <div>
-      <Layout className="layout">
-        <Header>
-          <div className="logo">
-            <Logo />
-          </div>
-          <Menu mode="horizontal">
-            <Menu.Item key="1">
-              <Link to="/protocol">Protocol</Link>
-            </Menu.Item>
-            <Menu.Item key="2">
-              <Link to="/stablecoin">Stablecoin</Link>
-            </Menu.Item>
-            <Menu.Item key="3">
-              <Link to="/reservecoin">Reservecoin</Link>
-            </Menu.Item>
-            <Menu.Item key="4">
-              <Link to="/my-balance">My Balance</Link>
-            </Menu.Item>
-          </Menu>
-          <div className="WalletConfig">
-            <MetamaskStatusButton accounts={accounts} />
-            {/*<CustomButton
-              text="Set Wallet"
-              theme="primary"
-              iconWallet={<WalletOutlined />}
-            />*/}
-            {/* Use this button once Metamask wallet is connected */}
-            {/* <CustomButton
-              text="0x2d7…3A49"
-              theme="secondary"
-              iconWallet={<Metamask />}
-            /> */}
-          </div>
-        </Header>
-        <Content>
-          <div className="site-layout-content">
-            <Outlet />
-          </div>
-        </Content>
-      </Layout>
-    </div>
+    <BrowserRouter>
+      <AppProvider>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            {/* TODO: home page */}
+            <Route path="/" element={<Stablecoin />} />
+            <Route path="stablecoin" element={<Stablecoin />} />
+            <Route path="protocol" element={<Protocol />} />
+            <Route path="reservecoin" element={<ReserveCoin />} />
+            <Route path="my-balance" element={<MyBalance />} />
+            <Route
+              path="*"
+              element={
+                <main style={{ padding: "1rem" }}>
+                  <p>There's nothing here!</p>
+                </main>
+              }
+            />
+          </Route>
+        </Routes>
+      </AppProvider>
+    </BrowserRouter>
   );
 }
