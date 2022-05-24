@@ -29,13 +29,13 @@ export default function Stablecoin() {
 
   const amountChangeCallback = (e) => {
     let text = e.target.value;
-    let promise = buyOrSell === "buy"
-        ? wrapper.promiseTradeDataPriceBuySc(text)
-        : wrapper.promiseTradeDataPriceSellSc(text);
-    promise.then(data => setTradeData(data));
+    let promise =
+      buyOrSell === "buy" ? wrapper.promiseTradeDataPriceBuySc(text) : wrapper.promiseTradeDataPriceSellSc(text);
+    promise.then((data) => setTradeData(data));
   };
 
-  const tradeFxn = buyOrSell === "buy"
+  const tradeFxn =
+    buyOrSell === "buy"
       ? wrapper.buySc.bind(wrapper, tradeData.totalInt)
       : wrapper.sellSc.bind(wrapper, tradeData.amountInt);
 
@@ -70,7 +70,7 @@ export default function Stablecoin() {
           </h2>
           <div className="PurchaseContainer">
             <OperationSelector
-              coinName="Stablecoin" 
+              coinName="Stablecoin"
               selectionCallback={selectorCallback}
               changeCallback={amountChangeCallback}
               tradeData={tradeData}
@@ -81,10 +81,9 @@ export default function Stablecoin() {
             <MetamaskConnectButton />
 
             {/*<CustomButton
-              type="primary"
-              htmlType="submit"
+              type="submit"
               text="Connect with Metamask"
-              theme="primary"
+              variant="primary"
               iconWallet={<Metamask />}
               icon={<ArrowRightOutlined />}
             />*/}
@@ -109,8 +108,7 @@ export default function Stablecoin() {
               statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
             />
             <BuySellButton
-              testFxn={tradeFxn}
-              //{buyOrSell === "buy" ? : }
+              onClick={tradeFxn}
               buyOrSell={buyOrSell}
               coinName="Stablecoin"
               coinAmount={tradeData.amountText}

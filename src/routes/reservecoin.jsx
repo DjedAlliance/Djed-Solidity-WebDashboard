@@ -28,13 +28,13 @@ export default function ReserveCoin() {
 
   const amountChangeCallback = (e) => {
     let text = e.target.value;
-    let promise = buyOrSell === "buy"
-        ? wrapper.promiseTradeDataPriceBuyRc(text)
-        : wrapper.promiseTradeDataPriceSellRc(text);
-    promise.then(data => setTradeData(data));
+    let promise =
+      buyOrSell === "buy" ? wrapper.promiseTradeDataPriceBuyRc(text) : wrapper.promiseTradeDataPriceSellRc(text);
+    promise.then((data) => setTradeData(data));
   };
 
-  const tradeFxn = buyOrSell === "buy"
+  const tradeFxn =
+    buyOrSell === "buy"
       ? wrapper.buyRc.bind(wrapper, tradeData.totalInt)
       : wrapper.sellRc.bind(wrapper, tradeData.amountInt);
 
@@ -80,10 +80,9 @@ export default function ReserveCoin() {
             <MetamaskConnectButton />
 
             {/*<CustomButton
-              type="primary"
-              htmlType="submit"
+              type="submit"
               text="Connect with Metamask"
-              theme="primary"
+              variant="primary"
               iconWallet={<Metamask />}
               icon={<ArrowRightOutlined />}
             />*/}
@@ -108,7 +107,7 @@ export default function ReserveCoin() {
               statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
             />
             <BuySellButton
-              testFxn={tradeFxn}
+              onClick={tradeFxn}
               //{buyOrSell === "buy" ? : }
               buyOrSell={buyOrSell}
               coinName="Reservecoin"

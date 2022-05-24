@@ -38,13 +38,13 @@ export default function MainLayout() {
             <MetamaskStatusButton />
             {/*<CustomButton
               text="Set Wallet"
-              theme="primary"
+              variant="primary"
               iconWallet={<WalletOutlined />}
             />*/}
             {/* Use this button once Metamask wallet is connected */}
             {/* <CustomButton
               text="0x2d7…3A49"
-              theme="secondary"
+              variant="secondary"
               iconWallet={<Metamask />}
             /> */}
           </div>
