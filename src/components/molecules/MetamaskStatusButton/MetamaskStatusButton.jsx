@@ -3,7 +3,7 @@ import CustomButton from "../../atoms/CustomButton/CustomButton";
 import { WalletOutlined } from "@ant-design/icons";
 import { ReactComponent as Metamask } from "../../../images/metamask.svg";
 import { useAppProvider } from "../../../context/AppProvider";
-import { truncateAddress } from "../../../utils";
+import { truncateAddress } from "../../../utils/address";
 
 const MetamaskStatusButton = () => {
   const { accounts } = useAppProvider();

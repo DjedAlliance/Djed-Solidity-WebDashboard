@@ -4,7 +4,7 @@ import CustomButton from "../../atoms/CustomButton/CustomButton";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { ReactComponent as Metamask } from "../../../images/metamask.svg";
 import { useAppProvider } from "../../../context/AppProvider";
-import { truncateAddress } from "../../../utils";
+import { truncateAddress } from "../../../utils/address";
 
 const MetamaskConnectButton = () => {
   const { accounts, connectMetamask } = useAppProvider();

@@ -11,32 +11,23 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
+import useBuyOrSell from "../utils/hooks/useBuyOrSell";
 
 export default function ReserveCoin() {
   const { wrapper } = useAppProvider();
 
-  const [buyOrSell, setBuyOrSell] = useState("buy");
+  const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
-
-  const selectorCallback = (key) => {
-    if (key === "1") {
-      setBuyOrSell("buy");
-    } else if (key === "2") {
-      setBuyOrSell("sell");
-    }
-  };
 
   const amountChangeCallback = (e) => {
     let text = e.target.value;
-    let promise =
-      buyOrSell === "buy" ? wrapper?.promiseTradeDataPriceBuyRc(text) : wrapper.promiseTradeDataPriceSellRc(text);
+    let promise = isBuyActive ? wrapper?.promiseTradeDataPriceBuyRc(text) : wrapper.promiseTradeDataPriceSellRc(text);
     promise.then((data) => setTradeData(data));
   };
 
-  const tradeFxn =
-    buyOrSell === "buy"
-      ? wrapper?.buyRc.bind(wrapper, tradeData.totalInt)
-      : wrapper?.sellRc.bind(wrapper, tradeData.amountInt);
+  const tradeFxn = isBuyActive
+    ? wrapper?.buyRc.bind(wrapper, tradeData.totalInt)
+    : wrapper?.sellRc.bind(wrapper, tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -70,7 +61,7 @@ export default function ReserveCoin() {
           <div className="PurchaseContainer">
             <OperationSelector
               coinName="Reservecoin"
-              selectionCallback={selectorCallback}
+              selectionCallback={setBuyOrSell}
               changeCallback={amountChangeCallback}
               tradeData={tradeData}
             />
@@ -108,7 +99,6 @@ export default function ReserveCoin() {
             />
             <BuySellButton
               onClick={tradeFxn}
-              //{buyOrSell === "buy" ? : }
               buyOrSell={buyOrSell}
               coinName="Reservecoin"
               coinAmount={tradeData.amountText}

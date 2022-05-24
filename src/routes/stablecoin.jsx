@@ -11,33 +11,23 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
+import useBuyOrSell from "../utils/hooks/useBuyOrSell";
 //import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 
 export default function Stablecoin() {
   const { wrapper } = useAppProvider();
-
-  const [buyOrSell, setBuyOrSell] = useState("buy");
+  const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
-
-  const selectorCallback = (key) => {
-    if (key === "1") {
-      setBuyOrSell("buy");
-    } else if (key === "2") {
-      setBuyOrSell("sell");
-    }
-  };
 
   const amountChangeCallback = (e) => {
     let text = e.target.value;
-    let promise =
-      buyOrSell === "buy" ? wrapper?.promiseTradeDataPriceBuySc(text) : wrapper.promiseTradeDataPriceSellSc(text);
+    let promise = isBuyActive ? wrapper?.promiseTradeDataPriceBuySc(text) : wrapper.promiseTradeDataPriceSellSc(text);
     promise.then((data) => setTradeData(data));
   };
 
-  const tradeFxn =
-    buyOrSell === "buy"
-      ? wrapper?.buySc.bind(wrapper, tradeData.totalInt)
-      : wrapper?.sellSc.bind(wrapper, tradeData.amountInt);
+  const tradeFxn = isBuyActive
+    ? wrapper?.buySc.bind(wrapper, tradeData.totalInt)
+    : wrapper?.sellSc.bind(wrapper, tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -71,7 +61,7 @@ export default function Stablecoin() {
           <div className="PurchaseContainer">
             <OperationSelector
               coinName="Stablecoin"
-              selectionCallback={selectorCallback}
+              selectionCallback={setBuyOrSell}
               changeCallback={amountChangeCallback}
               tradeData={tradeData}
             />
