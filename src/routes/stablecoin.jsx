@@ -30,14 +30,14 @@ export default function Stablecoin() {
   const amountChangeCallback = (e) => {
     let text = e.target.value;
     let promise =
-      buyOrSell === "buy" ? wrapper.promiseTradeDataPriceBuySc(text) : wrapper.promiseTradeDataPriceSellSc(text);
+      buyOrSell === "buy" ? wrapper?.promiseTradeDataPriceBuySc(text) : wrapper.promiseTradeDataPriceSellSc(text);
     promise.then((data) => setTradeData(data));
   };
 
   const tradeFxn =
     buyOrSell === "buy"
-      ? wrapper.buySc.bind(wrapper, tradeData.totalInt)
-      : wrapper.sellSc.bind(wrapper, tradeData.amountInt);
+      ? wrapper?.buySc.bind(wrapper, tradeData.totalInt)
+      : wrapper?.sellSc.bind(wrapper, tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>

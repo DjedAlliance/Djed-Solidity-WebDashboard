@@ -29,14 +29,14 @@ export default function ReserveCoin() {
   const amountChangeCallback = (e) => {
     let text = e.target.value;
     let promise =
-      buyOrSell === "buy" ? wrapper.promiseTradeDataPriceBuyRc(text) : wrapper.promiseTradeDataPriceSellRc(text);
+      buyOrSell === "buy" ? wrapper?.promiseTradeDataPriceBuyRc(text) : wrapper.promiseTradeDataPriceSellRc(text);
     promise.then((data) => setTradeData(data));
   };
 
   const tradeFxn =
     buyOrSell === "buy"
-      ? wrapper.buyRc.bind(wrapper, tradeData.totalInt)
-      : wrapper.sellRc.bind(wrapper, tradeData.amountInt);
+      ? wrapper?.buyRc.bind(wrapper, tradeData.totalInt)
+      : wrapper?.sellRc.bind(wrapper, tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -60,7 +60,7 @@ export default function ReserveCoin() {
             coinIcon="/coin-icon-two.png"
             coinName="Reservecoin Name"
             priceAmount={tradeData.totalInt} //{wrapper.data.scaledPriceRc} //"0.31152640"
-            circulatingAmount={wrapper.data.scaledNumberRc} //"1,345,402.15"
+            circulatingAmount={wrapper?.data.scaledNumberRc} //"1,345,402.15"
           />
         </div>
         <div className="Right">
