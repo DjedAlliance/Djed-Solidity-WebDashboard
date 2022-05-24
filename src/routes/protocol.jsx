@@ -32,10 +32,9 @@ export default function Protocol() {
           <MetamaskConnectButton />
 
           {/*<CustomButton
-              type="primary"
-              htmlType="submit"
+              type="submit"
               text="Connect with Metamask"
-              theme="primary"
+              variant="primary"
               iconWallet={<Metamask />}
               icon={<ArrowRightOutlined />}
             />*/}
