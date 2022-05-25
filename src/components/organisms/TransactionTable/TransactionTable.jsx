@@ -8,7 +8,7 @@ const columns = [
     title: "Transaction ID",
     dataIndex: "transactionId",
     key: "transactionId",
-    ellipsis: true,
+    ellipsis: true
   },
   {
     title: "Transaction",
@@ -16,10 +16,9 @@ const columns = [
     key: "transaction",
     render: (text) => (
       <p>
-        <img src="/caret-up.svg" alt="" /> <img src="/caret-down.svg" alt="" />{" "}
-        {text}
+        <img src="/caret-up.svg" alt="" /> <img src="/caret-down.svg" alt="" /> {text}
       </p>
-    ),
+    )
   },
   {
     title: "Total",
@@ -29,12 +28,12 @@ const columns = [
       <p className="Total">
         {text} <span>milkADA</span>
       </p>
-    ),
+    )
   },
   {
     title: "Date",
     dataIndex: "date",
-    key: "date",
+    key: "date"
   },
   {
     title: "Status",
@@ -46,7 +45,7 @@ const columns = [
         <Tag color="#F7981C">PENDING</Tag>
         <Tag color="#F2316A">FAILED</Tag>
       </div>
-    ),
+    )
   },
   {
     title: "",
@@ -56,8 +55,8 @@ const columns = [
       <a href="">
         <img src="/external-link.svg" alt="" />
       </a>
-    ),
-  },
+    )
+  }
 ];
 
 const data = [
@@ -66,22 +65,22 @@ const data = [
     transactionId: "7680adec8eabcabac676be9e83854ade0bd22cdb",
     transaction: "Stablecoin",
     total: "+0.005456",
-    date: "12/04/21 09:31:06 EST",
+    date: "12/04/21 09:31:06 EST"
   },
   {
     key: "2",
     transactionId: "7680adec8eabcabac676be9e83854ade0bd22abc",
     transaction: "Reservecoin",
     total: "+0.005456",
-    date: "12/04/21 09:31:06 EST",
+    date: "12/04/21 09:31:06 EST"
   },
   {
     key: "3",
     transactionId: "7680adec8eabcabac676be9e83854ade0bd22mnb",
     transaction: "Basecoin",
     total: "+0.005456",
-    date: "12/04/21 09:31:06 EST",
-  },
+    date: "12/04/21 09:31:06 EST"
+  }
 ];
 
 const TransactionTable = () => (
@@ -92,7 +91,7 @@ const TransactionTable = () => (
       dataSource={data}
       size="middle"
       pagination={false}
-      scroll={{ x: 1000}}
+      scroll={{ x: 1000 }}
     />
   </div>
 );

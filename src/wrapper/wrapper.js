@@ -10,413 +10,401 @@ const BC_DECIMALS = 18;
 const SCALING_DECIMALS = 24;
 
 function decimalScaling(scaledString, decimals) {
-    if (scaledString.length <= decimals) {
-        return "0." + "0".repeat(decimals - scaledString.length) + scaledString;
-    } else {
-        return scaledString.slice(0, -decimals) + "." + scaledString.slice(-decimals);
-    }
+  if (scaledString.length <= decimals) {
+    return "0." + "0".repeat(decimals - scaledString.length) + scaledString;
+  } else {
+    return scaledString.slice(0, -decimals) + "." + scaledString.slice(-decimals);
+  }
 }
 
 function decimalUnscaling(normalizedString, decimals) {
-    let pos = normalizedString.indexOf(".");
-    if (pos < 0) {
-        return parseInt(normalizedString) * (10 ** decimals);
-    }
-    
-    let s = normalizedString.slice(0, pos) + normalizedString.slice(pos + 1, pos + 1 + decimals);
-    if (normalizedString.length - pos - 1 < decimals) {
-        s += "0".repeat(decimals - (normalizedString.length - pos - 1));
-    }
-    return parseInt(s);
+  let pos = normalizedString.indexOf(".");
+  if (pos < 0) {
+    return parseInt(normalizedString) * 10 ** decimals;
+  }
+
+  let s =
+    normalizedString.slice(0, pos) + normalizedString.slice(pos + 1, pos + 1 + decimals);
+  if (normalizedString.length - pos - 1 < decimals) {
+    s += "0".repeat(decimals - (normalizedString.length - pos - 1));
+  }
+  return parseInt(s);
 }
 
 function scaledPromise(promise, scaling) {
-    return promise.then(value => decimalScaling(value, scaling));
+  return promise.then((value) => decimalScaling(value, scaling));
 }
 
 function duoScaledPromise(promise, scaling) {
-    return promise.then(value => ({
-        raw: value,
-        scaled: decimalScaling(value, scaling)
-    }));
+  return promise.then((value) => ({
+    raw: value,
+    scaled: decimalScaling(value, scaling)
+  }));
 }
 
 function convertInt(promise) {
-    return promise.then(value => parseInt(value));
+  return promise.then((value) => parseInt(value));
 }
 
 function web3Promise(contract, method, ...args) {
-    return contract.methods[method](...args).call();
+  return contract.methods[method](...args).call();
 }
 
 function buildTx(from_, to_, value_, data_) {
-    return {
-        to: to_,
-        from: from_,
-        value: "0x" + value_.toString(16),
-        data: data_,
-    };
+  return {
+    to: to_,
+    from: from_,
+    value: "0x" + value_.toString(16),
+    data: data_
+  };
 }
 
 export class MinimalDjedWrapper {
-    constructor(web3_, djedAddress_, oracleAddress_) {
-        this.web3 = web3_;
-        //this.chainId = chainId_;
-        this.djedAddress = djedAddress_;
-        this.oracleAddress = oracleAddress_;
-        this.data = {};
-        this.scalingFixed = SCALING_DECIMALS;
+  constructor(web3_, djedAddress_, oracleAddress_) {
+    this.web3 = web3_;
+    //this.chainId = chainId_;
+    this.djedAddress = djedAddress_;
+    this.oracleAddress = oracleAddress_;
+    this.data = {};
+    this.scalingFixed = SCALING_DECIMALS;
+  }
+
+  setMetamask(ethereum_, accounts_) {
+    this.ethereum = ethereum_;
+    this.accounts = accounts_;
+  }
+
+  // Must be called exactly once before using the web3 promises
+  async initialize() {
+    if (typeof window.ethereum !== "undefined") {
+      console.log("MetaMask might be installed!");
+    } else {
+      console.log("MetaMask is not installed!");
     }
 
-    setMetamask(ethereum_, accounts_) {
-        this.ethereum = ethereum_;
-        this.accounts = accounts_;
+    this.djed = new this.web3.eth.Contract(djedArtifact.abi, this.djedAddress);
+    this.oracle = new this.web3.eth.Contract(oracleArtifact.abi, this.oracleAddress);
+
+    [this.stableCoinAddress, this.reserveCoinAddress] = await Promise.all([
+      this.promiseStableCoinAddress(),
+      this.promiseReserveCoinAddress()
+    ]);
+
+    this.stableCoin = new this.web3.eth.Contract(
+      djedStableCoinArtifact.abi,
+      this.stableCoinAddress
+    );
+    this.reserveCoin = new this.web3.eth.Contract(
+      djedReserveCoinArtifact.abi,
+      this.reserveCoinAddress
+    );
+
+    [this.scDecimals, this.rcDecimals] = await Promise.all([
+      this.promiseDecimalsSc(),
+      this.promiseDecimalsRc()
+    ]);
+  }
+
+  async getData() {
+    [
+      this.data.scaledNumberSc,
+      this.data.scaledPriceSc,
+      this.data.scaledNumberRc,
+      this.data.scaledReserveBc,
+      this.data.percentReserveRatio,
+      this.data.scaledPriceRc
+    ] = await Promise.all([
+      this.promiseScaledNumberSc(),
+      this.promiseScaledExchangeRate(),
+      this.promiseScaledNumberRc(),
+      this.promiseScaledReserveBc(),
+      this.promisePercentReserveRatio(),
+      this.promiseScaledBalanceRc("0x1867Cd64DE4F9aEcfbC14846bc736cd7008dca40")
+    ]);
+  }
+
+  testBuy() {
+    console.log("Test buying rc...");
+    this.promiseBuyRc(this.accounts[0], 1000000)
+      .then((res) => console.log("Success:", res))
+      .catch((err) => console.err("Error:", err));
+  }
+
+  promiseTx(tx) {
+    if (this.accounts.length === 0) {
+      return Promise.reject(new Error("Metamask not connected!"));
     }
+    return this.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [tx]
+    });
+  }
 
-    // Must be called exactly once before using the web3 promises
-    async initialize() {
-        if (typeof window.ethereum !== 'undefined') {
-            console.log('MetaMask might be installed!');
-        } else {
-            console.log('MetaMask is not installed!');
-        }
+  promiseBuySc(account, value) {
+    return this.promiseTx(this.buyScTx(account, value));
+  }
 
-        this.djed = new this.web3.eth.Contract(
-            djedArtifact.abi,
-            this.djedAddress
-        );
-        this.oracle = new this.web3.eth.Contract(
-            oracleArtifact.abi,
-            this.oracleAddress
-        );
-        
-        [
-            this.stableCoinAddress,
-            this.reserveCoinAddress
-        ] = await Promise.all([
-            this.promiseStableCoinAddress(),
-            this.promiseReserveCoinAddress()
-        ]);
+  promiseSellSc(account, amount) {
+    return this.promiseTx(this.sellScTx(account, amount));
+  }
 
-        this.stableCoin = new this.web3.eth.Contract(
-            djedStableCoinArtifact.abi,
-            this.stableCoinAddress
-        );
-        this.reserveCoin = new this.web3.eth.Contract(
-            djedReserveCoinArtifact.abi,
-            this.reserveCoinAddress
-        );
+  promiseBuyRc(account, value) {
+    return this.promiseTx(this.buyRcTx(account, value));
+  }
 
-        [
-            this.scDecimals,
-            this.rcDecimals
-        ] = await Promise.all([
-            this.promiseDecimalsSc(),
-            this.promiseDecimalsRc()
-        ]);
-    }
+  promiseSellRc(account, amount) {
+    return this.promiseTx(this.sellRcTx(account, amount));
+  }
 
-    async getData() {    
-        [
-            this.data.scaledNumberSc,
-            this.data.scaledPriceSc,
-            this.data.scaledNumberRc,
-            this.data.scaledReserveBc,
-            this.data.percentReserveRatio,
-            this.data.scaledPriceRc
-        ] = await Promise.all([
-            this.promiseScaledNumberSc(),
-            this.promiseScaledExchangeRate(),
-            this.promiseScaledNumberRc(),
-            this.promiseScaledReserveBc(),
-            this.promisePercentReserveRatio(),
-            this.promiseScaledBalanceRc("0x1867Cd64DE4F9aEcfbC14846bc736cd7008dca40")
-        ]);
-    }
+  buyRc(value) {
+    console.log("Attempting to buy RC for", value);
+    this.promiseBuyRc(this.accounts[0], value)
+      .then((res) => console.log("Success:", res))
+      .catch((err) => console.err("Error:", err));
+  }
 
-    testBuy() {
-      console.log("Test buying rc...")
-      this.promiseBuyRc(this.accounts[0], 1000000)
-      .then(res => console.log("Success:", res))
-      .catch(err => console.err("Error:", err));
-    };
+  sellRc(amount) {
+    console.log("Attempting to sell RC in amount", amount);
+    this.promiseSellRc(this.accounts[0], amount)
+      .then((res) => console.log("Success:", res))
+      .catch((err) => console.err("Error:", err));
+  }
 
-    promiseTx(tx) {
-        if (this.accounts.length === 0) {
-            return Promise.reject(new Error("Metamask not connected!"));
-        }
-        return this.ethereum.request({
-            method: 'eth_sendTransaction',
-            params: [tx]
-        });
-    }
+  buySc(value) {
+    console.log("Attempting to buy SC for", value);
+    this.promiseBuySc(this.accounts[0], value)
+      .then((res) => console.log("Success:", res))
+      .catch((err) => console.err("Error:", err));
+  }
 
-    promiseBuySc(account, value) {
-        return this.promiseTx(this.buyScTx(account, value));
-    }
+  sellSc(amount) {
+    console.log("Attempting to sell SC in amount", amount);
+    this.promiseSellSc(this.accounts[0], amount)
+      .then((res) => console.log("Success:", res))
+      .catch((err) => console.err("Error:", err));
+  }
 
-    promiseSellSc(account, amount) {
-        return this.promiseTx(this.sellScTx(account, amount));
-    }
-
-    promiseBuyRc(account, value) {
-        return this.promiseTx(this.buyRcTx(account, value));
-    }
-
-    promiseSellRc(account, amount) {
-        return this.promiseTx(this.sellRcTx(account, amount));
-    }
-
-    buyRc(value) {
-        console.log("Attempting to buy RC for", value);
-        this.promiseBuyRc(this.accounts[0], value)
-        .then(res => console.log("Success:", res))
-        .catch(err => console.err("Error:", err));
-    }
-
-    sellRc(amount) {
-        console.log("Attempting to sell RC in amount", amount);
-        this.promiseSellRc(this.accounts[0], amount)
-        .then(res => console.log("Success:", res))
-        .catch(err => console.err("Error:", err));
-    }
-
-    buySc(value) {
-        console.log("Attempting to buy SC for", value);
-        this.promiseBuySc(this.accounts[0], value)
-        .then(res => console.log("Success:", res))
-        .catch(err => console.err("Error:", err));
-    }
-
-    sellSc(amount) {
-        console.log("Attempting to sell SC in amount", amount);
-        this.promiseSellSc(this.accounts[0], amount)
-        .then(res => console.log("Success:", res))
-        .catch(err => console.err("Error:", err));
-    }
-
-    /*
+  /*
     sendTransaction(tx, onSuccess = console.log, onError = console.err) {
         this.promiseTx(tx)
         .then(onSuccess)
         .catch(onError);
     }*/
 
-    sendBuySc(value, account = this.accounts[0], onSuccess = console.log, onError = console.err) {
-        this.promiseBuySc(account, value)
-        .then(onSuccess)
-        .catch(onError);
-    }
+  sendBuySc(
+    value,
+    account = this.accounts[0],
+    onSuccess = console.log,
+    onError = console.err
+  ) {
+    this.promiseBuySc(account, value).then(onSuccess).catch(onError);
+  }
 
+  // Transaction building methods:
 
-    // Transaction building methods:
+  buyScTx(account, value) {
+    const data = this.djed.methods.buyStableCoins().encodeABI();
+    return buildTx(account, this.djedAddress, value, data);
+  }
 
-    buyScTx(account, value) {
-        const data = this.djed.methods.buyStableCoins().encodeABI();
-        return buildTx(account, this.djedAddress, value, data);
-    }
+  sellScTx(account, amount) {
+    const data = this.djed.methods.sellStableCoins(amount).encodeABI();
+    return buildTx(account, this.djedAddress, 0, data);
+  }
 
-    sellScTx(account, amount) {
-        const data = this.djed.methods.sellStableCoins(amount).encodeABI();
-        return buildTx(account, this.djedAddress, 0, data);
-    }
+  buyRcTx(account, value) {
+    const data = this.djed.methods.buyReserveCoins().encodeABI();
+    return buildTx(account, this.djedAddress, value, data);
+  }
 
-    buyRcTx(account, value) {
-        const data = this.djed.methods.buyReserveCoins().encodeABI();
-        return buildTx(account, this.djedAddress, value, data);
-    }
+  sellRcTx(account, amount) {
+    const data = this.djed.methods.sellReserveCoins(amount).encodeABI();
+    return buildTx(account, this.djedAddress, 0, data);
+  }
 
-    sellRcTx(account, amount) {
-        const data = this.djed.methods.sellReserveCoins(amount).encodeABI();
-        return buildTx(account, this.djedAddress, 0, data);
-    }
+  // Scaling helper methods:
 
-    // Scaling helper methods:
+  scaleFixed(promise) {
+    return scaledPromise(promise, this.scalingFixed);
+  }
 
-    scaleFixed(promise) {
-        return scaledPromise(promise, this.scalingFixed);
-    }
+  scaleSc(promise) {
+    return scaledPromise(promise, this.scDecimals);
+  }
 
-    scaleSc(promise) {
-        return scaledPromise(promise, this.scDecimals);
-    }
+  scaleRc(promise) {
+    return scaledPromise(promise, this.rcDecimals);
+  }
 
-    scaleRc(promise) {
-        return scaledPromise(promise, this.rcDecimals);
-    }
+  scaleBc(promise) {
+    return scaledPromise(promise, BC_DECIMALS);
+  }
 
-    scaleBc(promise) {
-        return scaledPromise(promise, BC_DECIMALS);
-    }
+  duoScaleFixed(promise) {
+    return duoScaledPromise(promise, this.scalingFixed);
+  }
 
-    duoScaleFixed(promise) {
-        return duoScaledPromise(promise, this.scalingFixed);
-    }
+  duoScaleSc(promise) {
+    return duoScaledPromise(promise, this.scDecimals);
+  }
 
-    duoScaleSc(promise) {
-        return duoScaledPromise(promise, this.scDecimals);
-    }
+  duoScaleRc(promise) {
+    return duoScaledPromise(promise, this.rcDecimals);
+  }
 
-    duoScaleRc(promise) {
-        return duoScaledPromise(promise, this.rcDecimals);
-    }
+  duoScaleBc(promise) {
+    return duoScaledPromise(promise, BC_DECIMALS);
+  }
 
-    duoScaleBc(promise) {
-        return duoScaledPromise(promise, BC_DECIMALS);
-    }
+  // StableCoin web3 promises:
 
-    // StableCoin web3 promises:
+  promiseNumberSc() {
+    return web3Promise(this.stableCoin, "totalSupply");
+  }
 
-    promiseNumberSc() {
-        return web3Promise(this.stableCoin, "totalSupply");
-    }
+  promiseBalanceSc(account) {
+    return web3Promise(this.stableCoin, "balanceOf", account);
+  }
 
-    promiseBalanceSc(account) {
-        return web3Promise(this.stableCoin, "balanceOf", account);
-    }
+  promiseRawDecimalsSc() {
+    return web3Promise(this.stableCoin, "decimals");
+  }
 
-    promiseRawDecimalsSc() {
-        return web3Promise(this.stableCoin, "decimals");
-    }
+  promiseScaledNumberSc() {
+    return this.scaleSc(this.promiseNumberSc());
+  }
 
-    promiseScaledNumberSc() {
-        return this.scaleSc(this.promiseNumberSc());
-    }
+  promiseScaledBalanceSc(account) {
+    return this.scaleSc(this.promiseBalanceSc(account));
+  }
 
-    promiseScaledBalanceSc(account) {
-        return this.scaleSc(this.promiseBalanceSc(account))
-    }
+  promiseDecimalsSc() {
+    return convertInt(this.promiseRawDecimalsSc());
+  }
 
-    promiseDecimalsSc() {
-        return convertInt(this.promiseRawDecimalsSc());
-    }
+  // ReserveCoin web3 promises:
 
-    // ReserveCoin web3 promises:
+  promiseNumberRc() {
+    return web3Promise(this.reserveCoin, "totalSupply");
+  }
 
-    promiseNumberRc() {
-        return web3Promise(this.reserveCoin, "totalSupply");
-    }
+  promiseBalanceRc(account) {
+    return web3Promise(this.reserveCoin, "balanceOf", account);
+  }
 
-    promiseBalanceRc(account) {
-        return web3Promise(this.reserveCoin, "balanceOf", account);
-    }
+  promiseRawDecimalsRc() {
+    return web3Promise(this.reserveCoin, "decimals");
+  }
 
-    promiseRawDecimalsRc() {
-        return web3Promise(this.reserveCoin, "decimals");
-    }
+  promiseScaledNumberRc() {
+    return this.scaleRc(this.promiseNumberRc());
+  }
 
-    promiseScaledNumberRc() {
-        return this.scaleRc(this.promiseNumberRc());
-    }
+  promiseScaledBalanceRc(account) {
+    return this.scaleRc(this.promiseBalanceRc(account));
+  }
 
-    promiseScaledBalanceRc(account) {
-        return this.scaleRc(this.promiseBalanceRc(account))
-    }
+  promiseDecimalsRc() {
+    return convertInt(this.promiseRawDecimalsRc());
+  }
 
-    promiseDecimalsRc() {
-        return convertInt(this.promiseRawDecimalsRc());
-    }
+  // Oracle web3 promises:
 
-    // Oracle web3 promises:
+  promiseExchangeRate() {
+    return web3Promise(this.oracle, "exchangeRate");
+  }
 
-    promiseExchangeRate() {
-        return web3Promise(this.oracle, "exchangeRate");
-    }
+  promiseScaledExchangeRate() {
+    return this.scaleBc(this.promiseExchangeRate());
+  }
 
-    promiseScaledExchangeRate() {
-        return this.scaleBc(this.promiseExchangeRate());
-    }
+  // Djed web3 promises:
 
-    // Djed web3 promises:
+  promiseStableCoinAddress() {
+    return web3Promise(this.djed, "stableCoin");
+  }
 
-    promiseStableCoinAddress() {
-        return web3Promise(this.djed, "stableCoin");
-    }
+  promiseReserveCoinAddress() {
+    return web3Promise(this.djed, "reserveCoin");
+  }
 
-    promiseReserveCoinAddress() {
-        return web3Promise(this.djed, "reserveCoin");
-    }
+  promiseReserveRatio() {
+    return web3Promise(this.djed, "getReserveRatio");
+  }
 
-    promiseReserveRatio() {
-        return web3Promise(this.djed, "getReserveRatio");
-    }
+  promiseReserveBc() {
+    return web3Promise(this.djed, "reserveBC");
+  }
 
-    promiseReserveBc() {
-        return web3Promise(this.djed, "reserveBC");
-    }
+  promisePriceBuySc(amount) {
+    return web3Promise(this.djed, "getPriceBuyNStableCoinsBC", amount.toString(10));
+  }
 
-    promisePriceBuySc(amount) {
-        return web3Promise(this.djed, "getPriceBuyNStableCoinsBC", amount.toString(10));
-    }
+  promisePriceSellSc(amount) {
+    return web3Promise(this.djed, "getPriceSellNStableCoinsBC", amount.toString(10));
+  }
 
-    promisePriceSellSc(amount) {
-        return web3Promise(this.djed, "getPriceSellNStableCoinsBC", amount.toString(10));
-    }
+  promisePriceBuyRc(amount) {
+    return web3Promise(this.djed, "getPriceBuyNReserveCoinsBC", amount.toString(10));
+  }
 
-    promisePriceBuyRc(amount) {
-        return web3Promise(this.djed, "getPriceBuyNReserveCoinsBC", amount.toString(10));
-    }
+  promisePriceSellRc(amount) {
+    return web3Promise(this.djed, "getPriceSellNReserveCoinsBC", amount.toString(10));
+  }
 
-    promisePriceSellRc(amount) {
-        return web3Promise(this.djed, "getPriceSellNReserveCoinsBC", amount.toString(10));
-    }
+  promiseScaledReserveRatio() {
+    return this.scaleFixed(this.promiseReserveRatio());
+  }
 
-    promiseScaledReserveRatio() {
-        return this.scaleFixed(this.promiseReserveRatio());
-    }
+  promisePercentReserveRatio() {
+    return this.promiseScaledReserveRatio().then(
+      (value) => (parseFloat(value) * 100).toString(10) + "%"
+    );
+  }
 
-    promisePercentReserveRatio() {
-        return this.promiseScaledReserveRatio()
-            .then(value => (parseFloat(value) * 100).toString(10) + "%");
-    }
+  promiseScaledReserveBc() {
+    return this.scaleBc(this.promiseReserveBc());
+  }
 
-    promiseScaledReserveBc() {
-        return this.scaleBc(this.promiseReserveBc());
-    }
+  promiseTradeDataPriceBuySc(amountUnscaled) {
+    const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
+    return this.promisePriceBuySc(amount).then((value) => ({
+      amountText: amountUnscaled,
+      amountInt: amount,
+      totalText: decimalScaling(value, this.rcDecimals),
+      totalInt: value
+    }));
+  }
 
-    promiseTradeDataPriceBuySc(amountUnscaled) {
-        const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
-        return this.promisePriceBuySc(amount)
-            .then(value => ({
-                amountText: amountUnscaled,
-                amountInt: amount,
-                totalText: decimalScaling(value, this.rcDecimals),
-                totalInt: value
-            }));
-    }
+  promiseTradeDataPriceSellSc(amountUnscaled) {
+    const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
+    //return this.duoScaleBc(this.promisePriceSellSc(amount));
+    return this.promisePriceSellSc(amount).then((value) => ({
+      amountText: amountUnscaled,
+      amountInt: amount,
+      totalText: decimalScaling(value, this.rcDecimals),
+      totalInt: value
+    }));
+  }
 
-    promiseTradeDataPriceSellSc(amountUnscaled) {
-        const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
-        //return this.duoScaleBc(this.promisePriceSellSc(amount));
-        return this.promisePriceSellSc(amount)
-        .then(value => ({
-            amountText: amountUnscaled,
-            amountInt: amount,
-            totalText: decimalScaling(value, this.rcDecimals),
-            totalInt: value
-        }));
-    }
+  promiseTradeDataPriceBuyRc(amountUnscaled) {
+    const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
+    return this.promisePriceBuyRc(amount).then((value) => ({
+      amountText: amountUnscaled,
+      amountInt: amount,
+      totalText: decimalScaling(value, this.rcDecimals),
+      totalInt: value
+    }));
+  }
 
-    promiseTradeDataPriceBuyRc(amountUnscaled) {
-        const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
-        return this.promisePriceBuyRc(amount)
-            .then(value => ({
-                amountText: amountUnscaled,
-                amountInt: amount,
-                totalText: decimalScaling(value, this.rcDecimals),
-                totalInt: value
-            }));
-    }
-
-    promiseTradeDataPriceSellRc(amountUnscaled) {
-        const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
-        //return this.duoScaleBc(this.promisePriceSellRc(amount));
-        return this.promisePriceSellRc(amount)
-        .then(value => ({
-            amountText: amountUnscaled,
-            amountInt: amount,
-            totalText: decimalScaling(value, this.rcDecimals),
-            totalInt: value
-        }));
-    }
+  promiseTradeDataPriceSellRc(amountUnscaled) {
+    const amount = decimalUnscaling(amountUnscaled, this.rcDecimals);
+    //return this.duoScaleBc(this.promisePriceSellRc(amount));
+    return this.promisePriceSellRc(amount).then((value) => ({
+      amountText: amountUnscaled,
+      amountInt: amount,
+      totalText: decimalScaling(value, this.rcDecimals),
+      totalInt: value
+    }));
+  }
 }

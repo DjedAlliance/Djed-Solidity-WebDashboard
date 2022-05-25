@@ -9,7 +9,7 @@ const ModalPending = ({
   transactionStatus,
   statusText,
   statusDescription,
-  transactionType,
+  transactionType
 }) => {
   const [visible, setVisible] = useState(false);
 

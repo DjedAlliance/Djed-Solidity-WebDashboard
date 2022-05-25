@@ -2,12 +2,7 @@ import React from "react";
 import CoinIndicator from "../../atoms/CoinIndictor/CoinIndicator";
 import "./_CoinCard.scss";
 
-const CoinCard = ({
-  coinIcon,
-  coinName,
-  priceAmount,
-  circulatingAmount,
-}) => (
+const CoinCard = ({ coinIcon, coinName, priceAmount, circulatingAmount }) => (
   <div className="CoinCard">
     <CoinIndicator coinIcon={coinIcon} coinName={coinName} />
     <hr />

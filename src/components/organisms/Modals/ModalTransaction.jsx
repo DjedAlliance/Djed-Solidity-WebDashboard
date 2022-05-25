@@ -22,7 +22,7 @@ const ModalTransaction = ({
         footer={[
           <Button type="link">
             Check your balance <img src="/arrow-right.svg" alt="" />
-          </Button>,
+          </Button>
         ]}
       >
         <img className="ModalImg" src={transactionStatus} alt="" />
