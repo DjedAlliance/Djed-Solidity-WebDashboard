@@ -46,7 +46,7 @@ export default function Protocol() {
             <CoinCard
               coinIcon="/coin-icon-two.png"
               coinName="Reservecoin Name"
-              priceAmount={coinsDetails?.scaledPriceRc} //"0.31152640"
+              priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
             />
             <ReservesCard

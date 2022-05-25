@@ -27,28 +27,30 @@ export default function ReserveCoin() {
   const [tradeData, setTradeData] = useState({});
 
   const amountChangeCallback = (e) => {
-    let value = e.target.value;
+    let amountScaled = e.target.value;
     let promise = isBuyActive
-      ? tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, value)
-      : tradeDataPriceSellRc(djedContract, decimals.rcDecimals, value);
+      ? tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, amountScaled)
+      : tradeDataPriceSellRc(djedContract, decimals.rcDecimals, amountScaled);
     promise.then((data) => setTradeData(data));
   };
 
-  const buyRc = (value) => {
-    console.log("Attempting to buy RC for", value);
-    promiseTx(accounts, buyRcTx(djedContract, accounts[0], value))
+  const buyRc = (total) => {
+    console.log("Attempting to buy RC for", total);
+    promiseTx(accounts, buyRcTx(djedContract, accounts[0], total))
       .then((res) => console.log("Success:", res))
       .catch((err) => console.err("Error:", err));
   };
 
-  const sellRc = (value) => {
-    console.log("Attempting to sell RC in amount", value);
-    promiseTx(accounts, sellRcTx(djedContract, accounts[0], value))
+  const sellRc = (amount) => {
+    console.log("Attempting to sell RC in amount", amount);
+    promiseTx(accounts, sellRcTx(djedContract, accounts[0], amount))
       .then((res) => console.log("Success:", res))
       .catch((err) => console.err("Error:", err));
   };
 
-  const tradeFxn = isBuyActive ? buyRc.bind(null, tradeData.totalInt) : sellRc.bind(null, tradeData.amountInt);
+  const tradeFxn = isBuyActive
+    ? buyRc.bind(null, tradeData.totalUnscaled)
+    : sellRc.bind(null, tradeData.amountUnscaled);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -72,7 +74,7 @@ export default function ReserveCoin() {
           <CoinCard
             coinIcon="/coin-icon-two.png"
             coinName="Reservecoin Name"
-            priceAmount={tradeData.totalInt}
+            priceAmount={coinsDetails?.scaledBuyPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
           />
         </div>
@@ -125,8 +127,8 @@ export default function ReserveCoin() {
               onClick={tradeFxn}
               buyOrSell={buyOrSell}
               coinName="Reservecoin"
-              coinAmount={tradeData.amountText}
-              value={tradeData.totalText}
+              coinAmount={tradeData.amountScaled}
+              value={tradeData.totalScaled}
             />
           </div>
         </div>

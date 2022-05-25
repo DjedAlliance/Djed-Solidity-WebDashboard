@@ -27,28 +27,30 @@ export default function Stablecoin() {
   const [tradeData, setTradeData] = useState({});
 
   const amountChangeCallback = (e) => {
-    let value = e.target.value;
+    let amountScaled = e.target.value;
     let promise = isBuyActive
-      ? tradeDataPriceBuySc(djedContract, decimals.scDecimals, value)
-      : tradeDataPriceSellSc(djedContract, decimals.scDecimals, value);
+      ? tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled)
+      : tradeDataPriceSellSc(djedContract, decimals.scDecimals, amountScaled);
     promise.then((data) => setTradeData(data));
   };
 
-  const buySc = (value) => {
-    console.log("Attempting to buy SC for", value);
-    promiseTx(accounts, buyScTx(djedContract, accounts[0], value))
+  const buySc = (total) => {
+    console.log("Attempting to buy SC for", total);
+    promiseTx(accounts, buyScTx(djedContract, accounts[0], total))
       .then((res) => console.log("Success:", res))
       .catch((err) => console.err("Error:", err));
   };
 
-  const sellSc = (value) => {
-    console.log("Attempting to sell SC in amount", value);
-    promiseTx(accounts, sellScTx(djedContract, accounts[0], value))
+  const sellSc = (amount) => {
+    console.log("Attempting to sell SC in amount", amount);
+    promiseTx(accounts, sellScTx(djedContract, accounts[0], amount))
       .then((res) => console.log("Success:", res))
       .catch((err) => console.err("Error:", err));
   };
 
-  const tradeFxn = isBuyActive ? buySc.bind(null, tradeData.totalInt) : sellSc.bind(null, tradeData.amountInt);
+  const tradeFxn = isBuyActive
+    ? buySc.bind(null, tradeData.totalUnscaled)
+    : sellSc.bind(null, tradeData.amountUnscaled);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -117,8 +119,8 @@ export default function Stablecoin() {
               onClick={tradeFxn}
               buyOrSell={buyOrSell}
               coinName="Stablecoin"
-              coinAmount={tradeData.amountText}
-              value={tradeData.totalText}
+              coinAmount={tradeData.amountScaled}
+              value={tradeData.totalScaled}
             />
           </div>
         </div>

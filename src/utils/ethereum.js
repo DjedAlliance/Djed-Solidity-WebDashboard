@@ -15,7 +15,7 @@ import {
 
 const BLOCKCHAIN_URI = "https://rpc-devnet-cardano-evm.c1.milkomeda.com/";
 //const CHAIN_ID = 200101;
-const DJED_ADDRESS = "0xa5D1ae7052785801f4681De9a9aA13294F1e8D3d"; // djedAddress
+const DJED_ADDRESS = "0xe675C175b64F241c01ef7Cf273F2e8f4e19AaD48"; // djedAddress
 const ORACLE_ADDRESS = "0xf1E16aC91dC04a9583E45Dc95ef1C41d485eBd84"; // oracleAddress
 const BC_DECIMALS = 18;
 const SCALING_DECIMALS = 24; // scalingFixed
@@ -78,19 +78,18 @@ export const getCoinDetails = async (
     scaledNumberRc,
     scaledReserveBc,
     percentReserveRatio,
-    scaledPriceRc
+    scaledBuyPriceRc,
+    scaledSellPriceRc
   ] = await Promise.all([
     scaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
-    scaledPromise(web3Promise(oracle, "exchangeRate"), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "getStableCoinWholeTargetPriceBC"), BC_DECIMALS), //oracle, "exchangeRate"), BC_DECIMALS),
     scaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
     scaledPromise(web3Promise(djed, "reserveBC"), BC_DECIMALS),
     scaledPromise(web3Promise(djed, "getReserveRatio"), SCALING_DECIMALS).then(
       (value) => (parseFloat(value) * 100).toString(10) + "%"
     ),
-    scaledPromise(
-      web3Promise(reserveCoin, "balanceOf", "0x1867Cd64DE4F9aEcfbC14846bc736cd7008dca40"),
-      rcDecimals
-    )
+    scaledPromise(web3Promise(djed, "getReserveCoinWholeBuyPriceBC"), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "getReserveCoinWholeSellPriceBC"), BC_DECIMALS)
   ]);
 
   return {
@@ -99,7 +98,8 @@ export const getCoinDetails = async (
     scaledNumberRc,
     scaledReserveBc,
     percentReserveRatio,
-    scaledPriceRc
+    scaledBuyPriceRc,
+    scaledSellPriceRc
   };
 };
 
@@ -111,11 +111,7 @@ export const getAccountDetails = async (
   scDecimals,
   rcDecimals
 ) => {
-  const [
-    scaledBalanceSc,
-    scaledBalanceRc,
-    scaledBalanceBc
-  ] = await Promise.all([
+  const [scaledBalanceSc, scaledBalanceRc, scaledBalanceBc] = await Promise.all([
     scaledPromise(web3Promise(stableCoin, "balanceOf", account), scDecimals),
     scaledPromise(web3Promise(reserveCoin, "balanceOf", account), rcDecimals),
     scaledPromise(web3.eth.getBalance(account), BC_DECIMALS)
@@ -126,7 +122,7 @@ export const getAccountDetails = async (
     scaledBalanceRc,
     scaledBalanceBc
   };
-}
+};
 
 export const promiseTx = (accounts, tx) => {
   if (accounts.length === 0) {
@@ -138,30 +134,23 @@ export const promiseTx = (accounts, tx) => {
   });
 };
 
-// reservecoin
-export const tradeDataPriceBuyRc = (djed, rcDecimals, amountUnscaled) => {
-  const amount = decimalUnscaling(amountUnscaled, rcDecimals);
-  return web3Promise(djed, "getPriceBuyNReserveCoinsBC", amount.toString(10)).then(
-    (value) => ({
-      amountText: amountUnscaled,
-      amountInt: amount,
-      totalText: decimalScaling(value, rcDecimals),
-      totalInt: value
-    })
-  );
+const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
+  const amountUnscaled = decimalUnscaling(amountScaled, decimals);
+  return web3Promise(djed, method, amountUnscaled.toString(10)).then((totalUnscaled) => ({
+    amountScaled,
+    amountUnscaled,
+    totalScaled: decimalScaling(totalUnscaled, BC_DECIMALS),
+    totalUnscaled
+  }));
 };
 
-export const tradeDataPriceSellRc = (djed, rcDecimals, amountUnscaled) => {
-  const amount = decimalUnscaling(amountUnscaled, rcDecimals);
-  return web3Promise(djed, "getPriceSellNReserveCoinsBC", amount.toString(10)).then(
-    (value) => ({
-      amountText: amountUnscaled,
-      amountInt: amount,
-      totalText: decimalScaling(value, rcDecimals),
-      totalInt: value
-    })
-  );
-};
+// reservecoin
+export const tradeDataPriceBuyRc = (djed, rcDecimals, amountScaled) =>
+  tradeDataPriceCore(djed, "getPriceBuyNReserveCoinsBC", rcDecimals, amountScaled);
+
+export const tradeDataPriceSellRc = (djed, rcDecimals, amountScaled) =>
+  tradeDataPriceCore(djed, "getPriceSellNReserveCoinsBC", rcDecimals, amountScaled);
+
 export const buyRcTx = (djed, account, value) => {
   const data = djed.methods.buyReserveCoins().encodeABI();
   return buildTx(account, DJED_ADDRESS, value, data);
@@ -173,28 +162,11 @@ export const sellRcTx = (djed, account, amount) => {
 };
 
 // stablecoin
-export const tradeDataPriceBuySc = (djed, rcDecimals, amountUnscaled) => {
-  const amount = decimalUnscaling(amountUnscaled, rcDecimals);
-  return web3Promise(djed, "getPriceBuyNStableCoinsBC", amount.toString(10)).then(
-    (value) => ({
-      amountText: amountUnscaled,
-      amountInt: amount,
-      totalText: decimalScaling(value, rcDecimals),
-      totalInt: value
-    })
-  );
-};
-export const tradeDataPriceSellSc = (djed, rcDecimals, amountUnscaled) => {
-  const amount = decimalUnscaling(amountUnscaled, rcDecimals);
-  return web3Promise(djed, "getPriceSellNStableCoinsBC", amount.toString(10)).then(
-    (value) => ({
-      amountText: amountUnscaled,
-      amountInt: amount,
-      totalText: decimalScaling(value, rcDecimals),
-      totalInt: value
-    })
-  );
-};
+export const tradeDataPriceBuySc = (djed, scDecimals, amountScaled) =>
+  tradeDataPriceCore(djed, "getPriceBuyNStableCoinsBC", scDecimals, amountScaled);
+
+export const tradeDataPriceSellSc = (djed, scDecimals, amountScaled) =>
+  tradeDataPriceCore(djed, "getPriceSellNStableCoinsBC", scDecimals, amountScaled);
 
 export const buyScTx = (djed, account, value) => {
   const data = djed.methods.buyStableCoins().encodeABI();

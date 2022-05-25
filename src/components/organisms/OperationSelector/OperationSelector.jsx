@@ -6,7 +6,12 @@ import { BUY_SELL_OPTIONS } from "../../../utils/constants";
 
 const { TabPane } = Tabs;
 
-const OperationSelector = ({ coinName, selectionCallback, changeCallback, tradeData }) => (
+const OperationSelector = ({
+  coinName,
+  selectionCallback,
+  changeCallback,
+  tradeData
+}) => (
   <div className="OperationSelector">
     <Tabs defaultActiveKey={BUY_SELL_OPTIONS.BUY} onChange={selectionCallback}>
       <TabPane tab="Buy" key={BUY_SELL_OPTIONS.BUY}>
@@ -15,7 +20,7 @@ const OperationSelector = ({ coinName, selectionCallback, changeCallback, tradeD
           coinName={coinName}
           priceAmount="0.000"
           feeAmount="0.000"
-          totalAmount={tradeData.totalText}
+          totalAmount={tradeData.totalScaled}
           payOrGet="pay"
           changeFxn={changeCallback}
         />
@@ -26,7 +31,7 @@ const OperationSelector = ({ coinName, selectionCallback, changeCallback, tradeD
           coinName={coinName}
           priceAmount="0.000"
           feeAmount="0.000"
-          totalAmount={tradeData.totalText}
+          totalAmount={tradeData.totalScaled}
           payOrGet="get"
           changeFxn={changeCallback}
         />
