@@ -7,10 +7,12 @@ import { ReactComponent as Logo } from "./images/logoipsum.svg";
 
 import "antd/dist/antd.css";
 import "./App.scss";
+import { useAppProvider } from "./context/AppProvider";
 
 const { Header, Content } = Layout;
 
 export default function MainLayout() {
+  const { accounts } = useAppProvider();
   return (
     <div>
       <Layout className="layout">
@@ -28,9 +30,11 @@ export default function MainLayout() {
             <Menu.Item key="3">
               <Link to="/reservecoin">Reservecoin</Link>
             </Menu.Item>
-            <Menu.Item key="4">
-              <Link to="/my-balance">My Balance</Link>
-            </Menu.Item>
+            {accounts.length ? (
+              <Menu.Item key="4">
+                <Link to="/my-balance">My Balance</Link>
+              </Menu.Item>
+            ) : null}
           </Menu>
           <div className="WalletConfig">
             <MetamaskStatusButton />
