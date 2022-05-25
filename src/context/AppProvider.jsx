@@ -5,7 +5,8 @@ import {
   getOracleContract,
   getCoinContracts,
   getDecimals,
-  getCoinDetails
+  getCoinDetails,
+  getAccountDetails
 } from "../utils/ethereum";
 
 const AppContext = createContext();
@@ -19,6 +20,7 @@ export const AppProvider = ({ children }) => {
   const [coinContracts, setCoinContracts] = useState(null);
   const [decimals, setDecimals] = useState(null);
   const [coinsDetails, setCoinsDetails] = useState(null);
+  const [accountDetails, setAccountDetails] = useState(null);
 
   useEffect(() => {
     const init = async () => {
@@ -36,8 +38,8 @@ export const AppProvider = ({ children }) => {
           coinContracts.reserveCoin,
           djed,
           oracle,
-          decimals.rcDecimals,
-          decimals.scDecimals
+          decimals.scDecimals,
+          decimals.rcDecimals
         );
         setWeb3(web3);
         setDjedContract(djed);
@@ -63,6 +65,15 @@ export const AppProvider = ({ children }) => {
       if (!isWalletConnected) {
         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
         setAccounts(accounts);
+        const accountDetails = await getAccountDetails(
+          web3,
+          accounts[0],
+          coinContracts.stableCoin,
+          coinContracts.reserveCoin,
+          decimals.scDecimals,
+          decimals.rcDecimals
+        );
+        setAccountDetails(accountDetails);
       }
     } catch (e) {
       console.error(e);
@@ -78,6 +89,7 @@ export const AppProvider = ({ children }) => {
         coinContracts,
         decimals,
         coinsDetails,
+        accountDetails,
         isWalletConnected,
         connectMetamask,
         accounts,

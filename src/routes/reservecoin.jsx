@@ -21,7 +21,7 @@ import {
 } from "../utils/ethereum";
 
 export default function ReserveCoin() {
-  const { djed, coinsDetails, decimals, accounts } = useAppProvider();
+  const { djedContract, coinsDetails, decimals, accounts } = useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
@@ -29,26 +29,26 @@ export default function ReserveCoin() {
   const amountChangeCallback = (e) => {
     let value = e.target.value;
     let promise = isBuyActive
-      ? tradeDataPriceBuyRc(djed, decimals.rcDecimals, value)
-      : tradeDataPriceSellRc(djed, decimals.rcDecimals, value);
+      ? tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, value)
+      : tradeDataPriceSellRc(djedContract, decimals.rcDecimals, value);
     promise.then((data) => setTradeData(data));
   };
 
   const buyRc = (value) => {
     console.log("Attempting to buy RC for", value);
-    promiseTx(buyRcTx(accounts[0], value))
+    promiseTx(accounts, buyRcTx(djedContract, accounts[0], value))
       .then((res) => console.log("Success:", res))
       .catch((err) => console.err("Error:", err));
   };
 
   const sellRc = (value) => {
     console.log("Attempting to sell RC in amount", value);
-    promiseTx(sellRcTx(accounts[0], value))
+    promiseTx(accounts, sellRcTx(djedContract, accounts[0], value))
       .then((res) => console.log("Success:", res))
       .catch((err) => console.err("Error:", err));
   };
 
-  const tradeFxn = isBuyActive ? buyRc(tradeData.totalInt) : sellRc(tradeData.amountInt);
+  const tradeFxn = isBuyActive ? buyRc.bind(null, tradeData.totalInt) : sellRc.bind(null, tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>

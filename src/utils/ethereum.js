@@ -69,8 +69,8 @@ export const getCoinDetails = async (
   reserveCoin,
   djed,
   oracle,
-  rcDecimals,
-  scDecimals
+  scDecimals,
+  rcDecimals
 ) => {
   const [
     scaledNumberSc,
@@ -102,6 +102,31 @@ export const getCoinDetails = async (
     scaledPriceRc
   };
 };
+
+export const getAccountDetails = async (
+  web3,
+  account,
+  stableCoin,
+  reserveCoin,
+  scDecimals,
+  rcDecimals
+) => {
+  const [
+    scaledBalanceSc,
+    scaledBalanceRc,
+    scaledBalanceBc
+  ] = await Promise.all([
+    scaledPromise(web3Promise(stableCoin, "balanceOf", account), scDecimals),
+    scaledPromise(web3Promise(reserveCoin, "balanceOf", account), rcDecimals),
+    scaledPromise(web3.eth.getBalance(account), BC_DECIMALS)
+  ]);
+
+  return {
+    scaledBalanceSc,
+    scaledBalanceRc,
+    scaledBalanceBc
+  };
+}
 
 export const promiseTx = (accounts, tx) => {
   if (accounts.length === 0) {

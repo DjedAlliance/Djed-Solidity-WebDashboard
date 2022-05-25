@@ -22,33 +22,33 @@ import {
 //import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 
 export default function Stablecoin() {
-  const { coinsDetails, djed, decimals, accounts } = useAppProvider();
+  const { coinsDetails, djedContract, decimals, accounts } = useAppProvider();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
 
   const amountChangeCallback = (e) => {
     let value = e.target.value;
     let promise = isBuyActive
-      ? tradeDataPriceBuySc(djed, decimals.rcDecimals, value)
-      : tradeDataPriceSellSc(djed, decimals.rcDecimals, value);
+      ? tradeDataPriceBuySc(djedContract, decimals.scDecimals, value)
+      : tradeDataPriceSellSc(djedContract, decimals.scDecimals, value);
     promise.then((data) => setTradeData(data));
   };
 
   const buySc = (value) => {
     console.log("Attempting to buy SC for", value);
-    promiseTx(buyScTx(accounts[0], value))
+    promiseTx(accounts, buyScTx(djedContract, accounts[0], value))
       .then((res) => console.log("Success:", res))
       .catch((err) => console.err("Error:", err));
   };
 
   const sellSc = (value) => {
     console.log("Attempting to sell SC in amount", value);
-    promiseTx(sellScTx(accounts[0], value))
+    promiseTx(accounts, sellScTx(djedContract, accounts[0], value))
       .then((res) => console.log("Success:", res))
       .catch((err) => console.err("Error:", err));
   };
 
-  const tradeFxn = isBuyActive ? buySc(tradeData.totalInt) : sellSc(tradeData.amountInt);
+  const tradeFxn = isBuyActive ? buySc.bind(null, tradeData.totalInt) : sellSc.bind(null, tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>
