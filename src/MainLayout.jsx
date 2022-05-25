@@ -1,8 +1,6 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { Layout, Menu } from "antd";
-
-//import CustomButton from "./components/atoms/CustomButton/CustomButton";
 import MetamaskStatusButton from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
 
 import { ReactComponent as Logo } from "./images/logoipsum.svg";
@@ -36,17 +34,6 @@ export default function MainLayout() {
           </Menu>
           <div className="WalletConfig">
             <MetamaskStatusButton />
-            {/*<CustomButton
-              text="Set Wallet"
-              variant="primary"
-              iconWallet={<WalletOutlined />}
-            />*/}
-            {/* Use this button once Metamask wallet is connected */}
-            {/* <CustomButton
-              text="0x2d7…3A49"
-              variant="secondary"
-              iconWallet={<Metamask />}
-            /> */}
           </div>
         </Header>
         <Content>
