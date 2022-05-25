@@ -10,12 +10,11 @@ import ReservesCard from "../components/molecules/ReservesCard/ReservesCard";
 import { useAppProvider } from "../context/AppProvider";
 
 export default function Protocol() {
-  const { coinsDetails, error } = useAppProvider();
+  const { coinsDetails } = useAppProvider();
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="ProtocolSection">
         <div className="Left">
-          {error ? <h1>Error: {error}</h1> : null}
           <h1>
             <strong>Protocol Name</strong> presentation goes here
           </h1>

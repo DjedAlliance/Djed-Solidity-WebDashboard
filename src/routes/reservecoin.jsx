@@ -21,7 +21,8 @@ import {
 } from "../utils/ethereum";
 
 export default function ReserveCoin() {
-  const { djedContract, coinsDetails, decimals, accounts } = useAppProvider();
+  const { isWalletConnected, djedContract, coinsDetails, decimals, accounts } =
+    useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
@@ -48,7 +49,9 @@ export default function ReserveCoin() {
       .catch((err) => console.err("Error:", err));
   };
 
-  const tradeFxn = isBuyActive ? buyRc.bind(null, tradeData.totalInt) : sellRc.bind(null, tradeData.amountInt);
+  const tradeFxn = isBuyActive
+    ? buyRc.bind(null, tradeData.totalInt)
+    : sellRc.bind(null, tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -89,11 +92,16 @@ export default function ReserveCoin() {
             />
           </div>
           <div className="ConnectWallet">
-            <p className="Disclaimer">
-              In order to operate you need to connect your wallet
-            </p>
-            <MetamaskConnectButton />
+            {isWalletConnected ? null : (
+              <>
+                <p className="Disclaimer">
+                  In order to operate you need to connect your wallet
+                </p>
+                <MetamaskConnectButton />
+              </>
+            )}
 
+            <br />
             {/*<CustomButton
               type="submit"
               text="Connect with Metamask"
@@ -101,9 +109,8 @@ export default function ReserveCoin() {
               iconWallet={<Metamask />}
               icon={<ArrowRightOutlined />}
             />*/}
-            <br />
             {/* Buttons to open the 3 different modals post transaction */}
-            <ModalPending
+            {/* <ModalPending
               transactionType="Confirmation"
               transactionStatus="/transaction-success.svg"
               statusText="Pending for confirmation"
@@ -120,7 +127,7 @@ export default function ReserveCoin() {
               transactionStatus="/transaction-failed.svg"
               statusText="Failed transaction!"
               statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-            />
+            /> */}
             <BuySellButton
               onClick={tradeFxn}
               buyOrSell={buyOrSell}

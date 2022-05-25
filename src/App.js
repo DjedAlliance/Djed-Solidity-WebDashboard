@@ -12,7 +12,6 @@ export default function App() {
       <AppProvider>
         <Routes>
           <Route path="/" element={<MainLayout />}>
-            {/* TODO: home page */}
             <Route path="/" element={<Protocol />} />
             <Route path="stablecoin" element={<Stablecoin />} />
             <Route path="protocol" element={<Protocol />} />

@@ -28,7 +28,7 @@
   .AdditionalInfo {
     margin: 0.5em 0;
     p {
-      @include number-text($label, $grey-5, 400);
+      @include number-text($label, $grey-2, 400);
     }
   }
 }

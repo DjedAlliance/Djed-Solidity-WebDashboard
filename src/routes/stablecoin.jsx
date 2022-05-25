@@ -22,7 +22,8 @@ import {
 //import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 
 export default function Stablecoin() {
-  const { coinsDetails, djedContract, decimals, accounts } = useAppProvider();
+  const { isWalletConnected, coinsDetails, djedContract, decimals, accounts } =
+    useAppProvider();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
 
@@ -48,7 +49,9 @@ export default function Stablecoin() {
       .catch((err) => console.err("Error:", err));
   };
 
-  const tradeFxn = isBuyActive ? buySc.bind(null, tradeData.totalInt) : sellSc.bind(null, tradeData.amountInt);
+  const tradeFxn = isBuyActive
+    ? buySc.bind(null, tradeData.totalInt)
+    : sellSc.bind(null, tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -89,13 +92,17 @@ export default function Stablecoin() {
             />
           </div>
           <div className="ConnectWallet">
-            <p className="Disclaimer">
-              In order to operate you need to connect your wallet
-            </p>
-            <MetamaskConnectButton />
+            {isWalletConnected ? null : (
+              <>
+                <p className="Disclaimer">
+                  In order to operate you need to connect your wallet
+                </p>
+                <MetamaskConnectButton />
+              </>
+            )}
             <br />
             {/* Buttons to open the 3 different modals post transaction */}
-            <ModalPending
+            {/* <ModalPending
               transactionType="Confirmation"
               transactionStatus="/transaction-success.svg"
               statusText="Pending for confirmation"
@@ -112,7 +119,7 @@ export default function Stablecoin() {
               transactionStatus="/transaction-failed.svg"
               statusText="Failed transaction!"
               statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-            />
+            /> */}
             <BuySellButton
               onClick={tradeFxn}
               buyOrSell={buyOrSell}
