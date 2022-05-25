@@ -57,13 +57,16 @@ export const AppProvider = ({ children }) => {
 
   const isWalletConnected =
     typeof web3 !== "undefined" &&
-    typeof contracts !== "undefined" &&
+    typeof djedContract !== "undefined" &&
+    typeof oracleContract !== "undefined" &&
     accounts.length > 0;
 
   const connectMetamask = async () => {
     try {
       if (!isWalletConnected) {
-        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts"
+        });
         setAccounts(accounts);
         const accountDetails = await getAccountDetails(
           web3,

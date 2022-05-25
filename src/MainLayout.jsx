@@ -12,7 +12,7 @@ import { useAppProvider } from "./context/AppProvider";
 const { Header, Content } = Layout;
 
 export default function MainLayout() {
-  const { accounts } = useAppProvider();
+  const { isWalletConnected } = useAppProvider();
   return (
     <div>
       <Layout className="layout">
@@ -30,7 +30,7 @@ export default function MainLayout() {
             <Menu.Item key="3">
               <Link to="/reservecoin">Reservecoin</Link>
             </Menu.Item>
-            {accounts.length ? (
+            {isWalletConnected ? (
               <Menu.Item key="4">
                 <Link to="/my-balance">My Balance</Link>
               </Menu.Item>
