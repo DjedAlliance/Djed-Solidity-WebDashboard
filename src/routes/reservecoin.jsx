@@ -12,22 +12,43 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
+import {
+  buyRcTx,
+  promiseTx,
+  sellRcTx,
+  tradeDataPriceBuyRc,
+  tradeDataPriceSellRc
+} from "../utils/ethereum";
 
 export default function ReserveCoin() {
-  const { wrapper } = useAppProvider();
+  const { djed, coinsDetails, decimals, accounts } = useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
 
   const amountChangeCallback = (e) => {
-    let text = e.target.value;
-    let promise = isBuyActive ? wrapper?.promiseTradeDataPriceBuyRc(text) : wrapper.promiseTradeDataPriceSellRc(text);
+    let value = e.target.value;
+    let promise = isBuyActive
+      ? tradeDataPriceBuyRc(djed, decimals.rcDecimals, value)
+      : tradeDataPriceSellRc(djed, decimals.rcDecimals, value);
     promise.then((data) => setTradeData(data));
   };
 
-  const tradeFxn = isBuyActive
-    ? wrapper?.buyRc.bind(wrapper, tradeData.totalInt)
-    : wrapper?.sellRc.bind(wrapper, tradeData.amountInt);
+  const buyRc = (value) => {
+    console.log("Attempting to buy RC for", value);
+    promiseTx(buyRcTx(accounts[0], value))
+      .then((res) => console.log("Success:", res))
+      .catch((err) => console.err("Error:", err));
+  };
+
+  const sellRc = (value) => {
+    console.log("Attempting to sell RC in amount", value);
+    promiseTx(sellRcTx(accounts[0], value))
+      .then((res) => console.log("Success:", res))
+      .catch((err) => console.err("Error:", err));
+  };
+
+  const tradeFxn = isBuyActive ? buyRc(tradeData.totalInt) : sellRc(tradeData.amountInt);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -38,20 +59,21 @@ export default function ReserveCoin() {
           </h1>
           <div className="DescriptionContainer">
             <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-              industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make a type specimen book.
+              Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+              Lorem Ipsum has been the industry's standard dummy text ever since the
+              1500s, when an unknown printer took a galley of type and scrambled it to
+              make a type specimen book.
             </p>
             <p>
-              It has survived not only five centuries, but also the leap into electronic typesetting, remaining
-              essentially unchanged.
+              It has survived not only five centuries, but also the leap into electronic
+              typesetting, remaining essentially unchanged.
             </p>
           </div>
           <CoinCard
             coinIcon="/coin-icon-two.png"
             coinName="Reservecoin Name"
-            priceAmount={tradeData.totalInt} //{wrapper.data.scaledPriceRc} //"0.31152640"
-            circulatingAmount={wrapper?.data.scaledNumberRc} //"1,345,402.15"
+            priceAmount={tradeData.totalInt}
+            circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
           />
         </div>
         <div className="Right">
@@ -67,7 +89,9 @@ export default function ReserveCoin() {
             />
           </div>
           <div className="ConnectWallet">
-            <p className="Disclaimer">In order to operate you need to connect your wallet</p>
+            <p className="Disclaimer">
+              In order to operate you need to connect your wallet
+            </p>
             <MetamaskConnectButton />
 
             {/*<CustomButton

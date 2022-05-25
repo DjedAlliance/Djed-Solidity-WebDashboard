@@ -1,54 +1,84 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import Web3 from "web3";
-import { MinimalDjedWrapper } from "../wrapper/wrapper";
-
-const BLOCKCHAIN_URI = "https://rpc-devnet-cardano-evm.c1.milkomeda.com/";
-//const CHAIN_ID = 200101;
-const DJED_ADDRESS = "0xa5D1ae7052785801f4681De9a9aA13294F1e8D3d";
-const ORACLE_ADDRESS = "0xf1E16aC91dC04a9583E45Dc95ef1C41d485eBd84";
+import {
+  getWeb3,
+  getDjedContract,
+  getOracleContract,
+  getCoinContracts,
+  getDecimals,
+  getCoinDetails
+} from "../utils/ethereum";
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [wrapper, setWrapper] = useState(null);
+  // TODO: handle loading and error state
+  const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState([]);
+  const [djedContract, setDjedContract] = useState(null);
+  const [oracleContract, setOracleContract] = useState(null);
+  const [coinContracts, setCoinContracts] = useState(null);
+  const [decimals, setDecimals] = useState(null);
+  const [coinsDetails, setCoinsDetails] = useState(null);
 
   useEffect(() => {
-    const wrapFn = async () => {
+    const init = async () => {
       try {
-        const web3 = new Web3(BLOCKCHAIN_URI);
-        let minimalDjedWrapper = new MinimalDjedWrapper(
-          web3,
-          //CHAIN_ID,
-          DJED_ADDRESS,
-          ORACLE_ADDRESS
+        const web3 = await getWeb3();
+        const djed = await getDjedContract(web3);
+        const oracle = await getOracleContract(web3);
+        const coinContracts = await getCoinContracts(djed, web3);
+        const decimals = await getDecimals(
+          coinContracts.stableCoin,
+          coinContracts.reserveCoin
         );
-        await minimalDjedWrapper.initialize();
-        await minimalDjedWrapper.getData();
-        setWrapper(minimalDjedWrapper);
+        const coinsDetails = await getCoinDetails(
+          coinContracts.stableCoin,
+          coinContracts.reserveCoin,
+          djed,
+          oracle,
+          decimals.rcDecimals,
+          decimals.scDecimals
+        );
+        setWeb3(web3);
+        setDjedContract(djed);
+        setOracleContract(oracle);
+        setCoinContracts(coinContracts);
+        setDecimals(decimals);
+        setCoinsDetails(coinsDetails);
       } catch (e) {
         console.error(e);
       }
     };
 
-    wrapFn();
+    init();
   }, []);
 
-  const connectMetamask = () => {
-    console.log("Attempting connection, maybe? Status:", !!accounts.length);
-    if (!accounts.length) {
-      window.ethereum.request({ method: "eth_requestAccounts" }).then((accounts) => {
+  const isWalletConnected =
+    typeof web3 !== "undefined" &&
+    typeof contracts !== "undefined" &&
+    accounts.length > 0;
+
+  const connectMetamask = async () => {
+    try {
+      if (!isWalletConnected) {
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
         setAccounts(accounts);
-        wrapper.setMetamask(window.ethereum, accounts);
-        console.log("Set metamask stuff for wrapper!");
-      });
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
   return (
     <AppContext.Provider
       value={{
-        wrapper,
+        web3,
+        djedContract,
+        oracleContract,
+        coinContracts,
+        decimals,
+        coinsDetails,
+        isWalletConnected,
         connectMetamask,
         accounts,
         setAccounts
