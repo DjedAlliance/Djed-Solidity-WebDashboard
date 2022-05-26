@@ -2,12 +2,30 @@ import React from "react";
 import CoinIndicator from "../../atoms/CoinIndictor/CoinIndicator";
 import "./_CoinCard.scss";
 
-const CoinCard = ({ coinIcon, coinName, priceAmount, circulatingAmount, tokenName }) => (
+const CoinCard = ({
+  coinIcon,
+  coinName,
+  priceAmount,
+  sellPriceAmount,
+  circulatingAmount,
+  tokenName
+}) => (
   <div className="CoinCard">
     <CoinIndicator coinIcon={coinIcon} coinName={coinName} />
     <hr />
-    <span>Current Price</span>
-    <h3>milkADA {priceAmount}</h3>
+    {sellPriceAmount ? (
+      <div className="PriceInfo">
+        <span>Current Buy Price</span>
+        <h3>milkADA {priceAmount}</h3>
+        <span>Current Sell Price</span>
+        <h3>milkADA {sellPriceAmount}</h3>
+      </div>
+    ) : (
+      <div className="PriceInfo">
+        <span>Current Price</span>
+        <h3>milkADA {priceAmount}</h3>
+      </div>
+    )}
     <div className="AdditionalInfo">
       <div className="InfoItem">
         <span>Circulating Supply</span>

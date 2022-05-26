@@ -48,6 +48,7 @@ export default function Protocol() {
               coinIcon="/coin-icon-two.png"
               coinName="Reservecoin Name"
               priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
+              sellPriceAmount={coinsDetails?.scaledSellPriceRc}
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
               tokenName="ReserveDjed"
             />

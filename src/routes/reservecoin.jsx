@@ -76,6 +76,7 @@ export default function ReserveCoin() {
             coinIcon="/coin-icon-two.png"
             coinName="Reservecoin Name"
             priceAmount={coinsDetails?.scaledBuyPriceRc}
+            sellPriceAmount={coinsDetails?.scaledSellPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
             tokenName="ReserveDjed"
           />
