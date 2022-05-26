@@ -77,6 +77,7 @@ export default function ReserveCoin() {
             coinName="Reservecoin Name"
             priceAmount={tradeData.totalInt}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
+            tokenName="ReserveDjed"
           />
         </div>
         <div className="Right">

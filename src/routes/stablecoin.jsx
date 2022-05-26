@@ -77,6 +77,7 @@ export default function Stablecoin() {
             coinName="Stablecoin Name"
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
+            tokenName="StableDjed"
           />
         </div>
         <div className="Right">

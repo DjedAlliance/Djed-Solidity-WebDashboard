@@ -42,16 +42,18 @@ export default function Protocol() {
               coinName="Stablecoin Name"
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
+              tokenName="StableDjed"
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
               coinName="Reservecoin Name"
               priceAmount={coinsDetails?.scaledPriceRc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
+              tokenName="ReserveDjed"
             />
             <ReservesCard
               priceAmount={coinsDetails?.scaledReserveBc}
-              equivalence="≈ 4.51M StabeCoin"
+              equivalence="≈ 4.51M StableDjed"
               coinIcon="/coin-icon-three.png"
               coinName="Reserves"
               reserveRatio={coinsDetails?.percentReserveRatio}
