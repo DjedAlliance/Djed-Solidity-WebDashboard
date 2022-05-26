@@ -85,7 +85,7 @@ export const getCoinDetails = async (
     scaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
     scaledPromise(web3Promise(djed, "reserveBC"), BC_DECIMALS),
     scaledPromise(web3Promise(djed, "getReserveRatio"), SCALING_DECIMALS).then(
-      (value) => (parseFloat(value) * 100).toString(10) + "%"
+      (value) => (parseFloat(value) * 100).toFixed(4) + "%"
     ),
     scaledPromise(
       web3Promise(reserveCoin, "balanceOf", "0x1867Cd64DE4F9aEcfbC14846bc736cd7008dca40"),
