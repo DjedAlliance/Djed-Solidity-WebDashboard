@@ -6,13 +6,11 @@ const capitalizeString = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-const BuySellButton = ({ onClick, buyOrSell, coinName, coinAmount, value }) => {
-  const hasCoinAmount = coinAmount && value;
-  const text = `~${coinAmount} ${coinName} for ~${value} milkADA`;
+const BuySellButton = ({ onClick, buyOrSell }) => {
   return (
     <CustomButton
       type="submit"
-      text={`${capitalizeString(buyOrSell)} ${hasCoinAmount ? text : "stablecoin"}`}
+      text={`${capitalizeString(buyOrSell)} stablecoin`}
       variant="primary"
       icon={<ArrowRightOutlined />}
       onClick={onClick}

@@ -93,7 +93,10 @@ export default function ReserveCoin() {
             />
           </div>
           <div className="ConnectWallet">
-            {isWalletConnected ? null : (
+            <br />
+            {isWalletConnected ? (
+              <BuySellButton onClick={tradeFxn} buyOrSell={buyOrSell} />
+            ) : (
               <>
                 <p className="Disclaimer">
                   In order to operate you need to connect your wallet
@@ -101,44 +104,30 @@ export default function ReserveCoin() {
                 <MetamaskConnectButton />
               </>
             )}
-
-            <br />
-            {/*<CustomButton
-              type="submit"
-              text="Connect with Metamask"
-              variant="primary"
-              iconWallet={<Metamask />}
-              icon={<ArrowRightOutlined />}
-            />*/}
-            {/* Buttons to open the 3 different modals post transaction */}
-            {/* <ModalPending
-              transactionType="Confirmation"
-              transactionStatus="/transaction-success.svg"
-              statusText="Pending for confirmation"
-              statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
-            />
-            <ModalTransaction
-              transactionType="Success Transaction"
-              transactionStatus="/transaction-success.svg"
-              statusText="Succesful transaction!"
-              statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-            />
-            <ModalTransaction
-              transactionType="Failed Transaction"
-              transactionStatus="/transaction-failed.svg"
-              statusText="Failed transaction!"
-              statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-            /> */}
-            <BuySellButton
-              onClick={tradeFxn}
-              buyOrSell={buyOrSell}
-              coinName="Reservecoin"
-              coinAmount={tradeData.amountText}
-              value={tradeData.totalText}
-            />
           </div>
         </div>
       </div>
     </main>
   );
+}
+
+{
+  /* <ModalPending
+  transactionType="Confirmation"
+  transactionStatus="/transaction-success.svg"
+  statusText="Pending for confirmation"
+  statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
+/>
+<ModalTransaction
+  transactionType="Success Transaction"
+  transactionStatus="/transaction-success.svg"
+  statusText="Succesful transaction!"
+  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+/>
+<ModalTransaction
+  transactionType="Failed Transaction"
+  transactionStatus="/transaction-failed.svg"
+  statusText="Failed transaction!"
+  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+/> */
 }
