@@ -7,6 +7,7 @@ import {
   getCoinContracts,
   getDecimals,
   getCoinDetails,
+  getSystemParams,
   getAccountDetails
 } from "../utils/ethereum";
 
@@ -21,6 +22,7 @@ export const AppProvider = ({ children }) => {
   const [coinContracts, setCoinContracts] = useState(null);
   const [decimals, setDecimals] = useState(null);
   const [coinsDetails, setCoinsDetails] = useState(null);
+  const [systemParams, setSystemParams] = useState(null);
   const [accountDetails, setAccountDetails] = useState(null);
 
   useEffect(() => {
@@ -38,16 +40,17 @@ export const AppProvider = ({ children }) => {
           coinContracts.stableCoin,
           coinContracts.reserveCoin,
           djed,
-          oracle,
           decimals.scDecimals,
           decimals.rcDecimals
         );
+        const systemParams = await getSystemParams(djed);
         setWeb3(web3);
         setDjedContract(djed);
         setOracleContract(oracle);
         setCoinContracts(coinContracts);
         setDecimals(decimals);
         setCoinsDetails(coinsDetails);
+        setSystemParams(systemParams);
       } catch (e) {
         console.error(e);
       } finally {
@@ -97,6 +100,7 @@ export const AppProvider = ({ children }) => {
           coinContracts,
           decimals,
           coinsDetails,
+          systemParams,
           accountDetails,
           isWalletInstalled,
           isWalletConnected,

@@ -41,12 +41,9 @@ export function decimalUnscaling(scaledString, decimals) {
 }
 
 export function scaledPromise(promise, scaling) {
-  return promise.then((value) => decimalScaling(value, scaling));
+  return promise.then((value) => decimalScaling(value.toString(10), scaling));
 }
 
-function duoScaledPromise(promise, scaling) {
-  return promise.then((value) => ({
-    raw: value,
-    scaled: decimalScaling(value, scaling)
-  }));
+export function scaledUnscaledPromise(promise, scaling) {
+  return promise.then((value) => [decimalScaling(value, scaling), value]);
 }

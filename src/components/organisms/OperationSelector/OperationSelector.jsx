@@ -10,6 +10,7 @@ const OperationSelector = ({
   coinName,
   selectionCallback,
   changeCallback,
+  maxCallback,
   tradeData
 }) => (
   <div className="OperationSelector">
@@ -25,7 +26,7 @@ const OperationSelector = ({
           feeAmount="0.000"
           totalAmount={tradeData.totalScaled}
           payOrGet="pay"
-          onMaxClick={() => console.log("MAX")}
+          onMaxClick={maxCallback}
           changeFxn={changeCallback}
         />
       </TabPane>
@@ -39,7 +40,7 @@ const OperationSelector = ({
           priceAmount="0.000"
           feeAmount="0.000"
           totalAmount={tradeData.totalScaled}
-          onMaxClick={() => console.log("MAX")}
+          onMaxClick={maxCallback}
           payOrGet="get"
           changeFxn={changeCallback}
         />

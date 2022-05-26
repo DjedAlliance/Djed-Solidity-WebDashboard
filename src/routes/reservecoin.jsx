@@ -17,12 +17,24 @@ import {
   promiseTx,
   sellRcTx,
   tradeDataPriceBuyRc,
-  tradeDataPriceSellRc
+  tradeDataPriceSellRc,
+  checkBuyableRc,
+  checkSellableRc,
+  getMaxBuyRc,
+  getMaxSellRc,
+  checkBuyableSc
 } from "../utils/ethereum";
 
 export default function ReserveCoin() {
-  const { isWalletConnected, djedContract, coinsDetails, decimals, accounts } =
-    useAppProvider();
+  const {
+    isWalletConnected,
+    djedContract,
+    coinsDetails,
+    decimals,
+    accountDetails,
+    accounts,
+    systemParams
+  } = useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
@@ -49,9 +61,40 @@ export default function ReserveCoin() {
       .catch((err) => console.err("Error:", err));
   };
 
+  const maxBuyRc = (djed, rcDecimals, unscaledNumberSc, thresholdNumberSc) => {
+    console.log("MAX button clicked...");
+    getMaxBuyRc(djed, rcDecimals, unscaledNumberSc, thresholdNumberSc)
+      .then((res) => console.log("MAX:", res))
+      .catch((err) => console.err("MAX Error:", err));
+  };
+
+  const maxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
+    console.log("MAX button clicked...");
+    getMaxSellRc(djed, rcDecimals, unscaledBalanceRc)
+      .then((res) => console.log("MAX:", res))
+      .catch((err) => console.err("MAX Error:", err));
+  };
+
   const tradeFxn = isBuyActive
     ? buyRc.bind(null, tradeData.totalUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
+
+  const maxCallback = isWalletConnected
+    ? isBuyActive
+      ? maxBuyRc.bind(
+          null,
+          djedContract,
+          coinsDetails?.rcDecimals,
+          coinsDetails?.unscaledNumberSc,
+          systemParams?.thresholdNumberSc
+        )
+      : maxSellRc.bind(
+          null,
+          djedContract,
+          coinsDetails?.rcDecimals,
+          accountDetails?.unscaledBalanceRc
+        )
+    : () => console.err("MAX: WALLET NOT CONNECTED");
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -90,6 +133,7 @@ export default function ReserveCoin() {
               coinName="Reservecoin"
               selectionCallback={setBuyOrSell}
               changeCallback={amountChangeCallback}
+              maxCallback={maxCallback}
               tradeData={tradeData}
             />
           </div>
