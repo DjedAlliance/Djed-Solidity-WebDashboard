@@ -25,6 +25,7 @@ const OperationSelector = ({
           feeAmount="0.000"
           totalAmount={tradeData.totalText}
           payOrGet="pay"
+          onMaxClick={() => console.log("MAX")}
           changeFxn={changeCallback}
         />
       </TabPane>
@@ -38,6 +39,7 @@ const OperationSelector = ({
           priceAmount="0.000"
           feeAmount="0.000"
           totalAmount={tradeData.totalText}
+          onMaxClick={() => console.log("MAX")}
           payOrGet="get"
           changeFxn={changeCallback}
         />
