@@ -17,13 +17,23 @@ import {
   promiseTx,
   sellScTx,
   tradeDataPriceBuySc,
-  tradeDataPriceSellSc
+  tradeDataPriceSellSc,
+  checkBuyableSc,
+  checkSellableSc,
+  getMaxBuySc,
+  getMaxSellSc
 } from "../utils/ethereum";
 //import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 
 export default function Stablecoin() {
-  const { isWalletConnected, coinsDetails, djedContract, decimals, accounts } =
-    useAppProvider();
+  const {
+    isWalletConnected,
+    coinsDetails,
+    djedContract,
+    decimals,
+    accountDetails,
+    accounts
+  } = useAppProvider();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
 
@@ -49,9 +59,27 @@ export default function Stablecoin() {
       .catch((err) => console.err("Error:", err));
   };
 
+  const maxBuySc = (djed, scDecimals) => {
+    getMaxBuySc(djed, scDecimals)
+      .then((res) => console.log("MAX:", res))
+      .catch((err) => console.err("MAX Error:", err));
+  };
+
+  const maxSellSc = (scaledBalanceSc) => {
+    getMaxSellSc(scaledBalanceSc)
+      .then((res) => console.log("MAX:", res))
+      .catch((err) => console.err("MAX Error:", err));
+  };
+
   const tradeFxn = isBuyActive
     ? buySc.bind(null, tradeData.totalUnscaled)
     : sellSc.bind(null, tradeData.amountUnscaled);
+
+  const maxCallback = isWalletConnected
+    ? isBuyActive
+      ? maxBuySc.bind(null, djedContract, coinsDetails?.scDecimals)
+      : maxSellSc.bind(null, accountDetails?.scaledBalanceSc)
+    : () => console.log("MAX: WALLET NOT CONNECTED");
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -89,6 +117,7 @@ export default function Stablecoin() {
               coinName="Stablecoin"
               selectionCallback={setBuyOrSell}
               changeCallback={amountChangeCallback}
+              maxCallback={maxCallback}
               tradeData={tradeData}
             />
           </div>

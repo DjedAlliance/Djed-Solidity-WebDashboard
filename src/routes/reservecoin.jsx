@@ -21,8 +21,7 @@ import {
   checkBuyableRc,
   checkSellableRc,
   getMaxBuyRc,
-  getMaxSellRc,
-  checkBuyableSc
+  getMaxSellRc
 } from "../utils/ethereum";
 
 export default function ReserveCoin() {
@@ -62,14 +61,12 @@ export default function ReserveCoin() {
   };
 
   const maxBuyRc = (djed, rcDecimals, unscaledNumberSc, thresholdNumberSc) => {
-    console.log("MAX button clicked...");
     getMaxBuyRc(djed, rcDecimals, unscaledNumberSc, thresholdNumberSc)
       .then((res) => console.log("MAX:", res))
       .catch((err) => console.err("MAX Error:", err));
   };
 
   const maxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
-    console.log("MAX button clicked...");
     getMaxSellRc(djed, rcDecimals, unscaledBalanceRc)
       .then((res) => console.log("MAX:", res))
       .catch((err) => console.err("MAX Error:", err));
@@ -94,7 +91,7 @@ export default function ReserveCoin() {
           coinsDetails?.rcDecimals,
           accountDetails?.unscaledBalanceRc
         )
-    : () => console.err("MAX: WALLET NOT CONNECTED");
+    : () => console.log("MAX: WALLET NOT CONNECTED");
 
   return (
     <main style={{ padding: "1rem 0" }}>
