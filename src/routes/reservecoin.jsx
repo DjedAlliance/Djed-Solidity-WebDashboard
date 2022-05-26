@@ -21,7 +21,8 @@ import {
 } from "../utils/ethereum";
 
 export default function ReserveCoin() {
-  const { djedContract, coinsDetails, decimals, accounts } = useAppProvider();
+  const { isWalletConnected, djedContract, coinsDetails, decimals, accounts } =
+    useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
@@ -76,6 +77,7 @@ export default function ReserveCoin() {
             coinName="Reservecoin Name"
             priceAmount={coinsDetails?.scaledBuyPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
+            tokenName="ReserveDjed"
           />
         </div>
         <div className="Right">
@@ -91,48 +93,41 @@ export default function ReserveCoin() {
             />
           </div>
           <div className="ConnectWallet">
-            <p className="Disclaimer">
-              In order to operate you need to connect your wallet
-            </p>
-            <MetamaskConnectButton />
-
-            {/*<CustomButton
-              type="submit"
-              text="Connect with Metamask"
-              variant="primary"
-              iconWallet={<Metamask />}
-              icon={<ArrowRightOutlined />}
-            />*/}
             <br />
-            {/* Buttons to open the 3 different modals post transaction */}
-            <ModalPending
-              transactionType="Confirmation"
-              transactionStatus="/transaction-success.svg"
-              statusText="Pending for confirmation"
-              statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
-            />
-            <ModalTransaction
-              transactionType="Success Transaction"
-              transactionStatus="/transaction-success.svg"
-              statusText="Succesful transaction!"
-              statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-            />
-            <ModalTransaction
-              transactionType="Failed Transaction"
-              transactionStatus="/transaction-failed.svg"
-              statusText="Failed transaction!"
-              statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-            />
-            <BuySellButton
-              onClick={tradeFxn}
-              buyOrSell={buyOrSell}
-              coinName="Reservecoin"
-              coinAmount={tradeData.amountScaled}
-              value={tradeData.totalScaled}
-            />
+            {isWalletConnected ? (
+              <BuySellButton onClick={tradeFxn} buyOrSell={buyOrSell} />
+            ) : (
+              <>
+                <p className="Disclaimer">
+                  In order to operate you need to connect your wallet
+                </p>
+                <MetamaskConnectButton />
+              </>
+            )}
           </div>
         </div>
       </div>
     </main>
   );
+}
+
+{
+  /* <ModalPending
+  transactionType="Confirmation"
+  transactionStatus="/transaction-success.svg"
+  statusText="Pending for confirmation"
+  statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
+/>
+<ModalTransaction
+  transactionType="Success Transaction"
+  transactionStatus="/transaction-success.svg"
+  statusText="Succesful transaction!"
+  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+/>
+<ModalTransaction
+  transactionType="Failed Transaction"
+  transactionStatus="/transaction-failed.svg"
+  statusText="Failed transaction!"
+  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+/> */
 }

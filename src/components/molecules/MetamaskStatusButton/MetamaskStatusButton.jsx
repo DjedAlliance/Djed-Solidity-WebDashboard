@@ -6,12 +6,31 @@ import { useAppProvider } from "../../../context/AppProvider";
 import { truncateAddress } from "../../../utils/address";
 
 const MetamaskStatusButton = () => {
-  const { accounts } = useAppProvider();
+  const {
+    isWalletInstalled,
+    isWalletConnected,
+    accounts,
+    connectMetamask,
+    redirectToMetamask
+  } = useAppProvider();
   return (
     <CustomButton
-      text={accounts.length ? truncateAddress(accounts[0]) : "Wallet not connected"}
-      iconWallet={accounts.length ? <Metamask /> : <WalletOutlined />}
-      variant={accounts.length ? "secondary" : "primary"}
+      text={
+        isWalletInstalled
+          ? isWalletConnected
+            ? truncateAddress(accounts[0])
+            : "Connect Wallet"
+          : "Install Metamask"
+      }
+      onClick={
+        isWalletInstalled
+          ? isWalletConnected
+            ? () => {}
+            : connectMetamask
+          : redirectToMetamask
+      }
+      iconWallet={isWalletConnected ? <Metamask /> : <WalletOutlined />}
+      variant={isWalletConnected ? "secondary" : "primary"}
     />
   );
 };

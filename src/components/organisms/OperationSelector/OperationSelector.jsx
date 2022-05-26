@@ -14,7 +14,10 @@ const OperationSelector = ({
 }) => (
   <div className="OperationSelector">
     <Tabs defaultActiveKey={BUY_SELL_OPTIONS.BUY} onChange={selectionCallback}>
-      <TabPane tab="Buy" key={BUY_SELL_OPTIONS.BUY}>
+      <TabPane
+        tab={<div className="custom-tab tab-buy">Buy</div>}
+        key={BUY_SELL_OPTIONS.BUY}
+      >
         <BuySellCoin
           buyOrSell="Buy"
           coinName={coinName}
@@ -22,16 +25,21 @@ const OperationSelector = ({
           feeAmount="0.000"
           totalAmount={tradeData.totalScaled}
           payOrGet="pay"
+          onMaxClick={() => console.log("MAX")}
           changeFxn={changeCallback}
         />
       </TabPane>
-      <TabPane tab="Sell" key={BUY_SELL_OPTIONS.SELL}>
+      <TabPane
+        tab={<div className="custom-tab tab-sell">Sell</div>}
+        key={BUY_SELL_OPTIONS.SELL}
+      >
         <BuySellCoin
           buyOrSell="Sell"
           coinName={coinName}
           priceAmount="0.000"
           feeAmount="0.000"
           totalAmount={tradeData.totalScaled}
+          onMaxClick={() => console.log("MAX")}
           payOrGet="get"
           changeFxn={changeCallback}
         />

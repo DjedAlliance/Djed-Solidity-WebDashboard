@@ -10,14 +10,27 @@ const BuySellCoin = ({
   totalAmount,
   payOrGet,
   buyOrSell,
-  changeFxn
+  changeFxn,
+  onMaxClick
 }) => (
   <div className="BuySellCoin">
     <h3>
       {buyOrSell} {coinName}
     </h3>
     <div className="AmountInput">
-      <Input size="large" placeholder="0.0" suffix={coinName} onChange={changeFxn} />
+      <Input
+        size="large"
+        placeholder="0.0"
+        suffix={
+          <div>
+            <button className="MaxButton" onClick={onMaxClick}>
+              MAX
+            </button>
+            {coinName}
+          </div>
+        }
+        onChange={changeFxn}
+      />
     </div>
     <p className="FeeInfo">
       <InfoCircleOutlined /> A fee is charged for currency conversion

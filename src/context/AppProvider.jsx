@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { FullPageSpinner } from "../components/atoms/LoadingIcon/LoadingIcon";
 import {
   getWeb3,
   getDjedContract,
@@ -12,7 +13,7 @@ import {
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  // TODO: handle loading and error state
+  const [isLoading, setIsLoading] = useState(false);
   const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [djedContract, setDjedContract] = useState(null);
@@ -49,56 +50,66 @@ export const AppProvider = ({ children }) => {
         setCoinsDetails(coinsDetails);
       } catch (e) {
         console.error(e);
+      } finally {
+        setIsLoading(false);
       }
     };
-
+    setIsLoading(true);
     init();
   }, []);
 
-  const isWalletConnected =
-    typeof web3 !== "undefined" &&
-    typeof contracts !== "undefined" &&
-    accounts.length > 0;
+  const isWalletInstalled = web3 && djedContract && oracleContract;
+  const isWalletConnected = isWalletInstalled && accounts.length > 0;
+
+  const redirectToMetamask = () => {
+    window.open("https://metamask.io/", "_blank");
+  };
 
   const connectMetamask = async () => {
     try {
-      if (!isWalletConnected) {
-        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-        setAccounts(accounts);
-        const accountDetails = await getAccountDetails(
-          web3,
-          accounts[0],
-          coinContracts.stableCoin,
-          coinContracts.reserveCoin,
-          decimals.scDecimals,
-          decimals.rcDecimals
-        );
-        setAccountDetails(accountDetails);
-      }
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts"
+      });
+      setAccounts(accounts);
+      const accountDetails = await getAccountDetails(
+        web3,
+        accounts[0],
+        coinContracts.stableCoin,
+        coinContracts.reserveCoin,
+        decimals.scDecimals,
+        decimals.rcDecimals
+      );
+      setAccountDetails(accountDetails);
     } catch (e) {
       console.error(e);
     }
   };
 
-  return (
-    <AppContext.Provider
-      value={{
-        web3,
-        djedContract,
-        oracleContract,
-        coinContracts,
-        decimals,
-        coinsDetails,
-        accountDetails,
-        isWalletConnected,
-        connectMetamask,
-        accounts,
-        setAccounts
-      }}
-    >
-      {children}
-    </AppContext.Provider>
-  );
+  if (isLoading) {
+    return <FullPageSpinner />;
+  } else {
+    return (
+      <AppContext.Provider
+        value={{
+          web3,
+          djedContract,
+          oracleContract,
+          coinContracts,
+          decimals,
+          coinsDetails,
+          accountDetails,
+          isWalletInstalled,
+          isWalletConnected,
+          connectMetamask,
+          redirectToMetamask,
+          accounts,
+          setAccounts
+        }}
+      >
+        {children}
+      </AppContext.Provider>
+    );
+  }
 };
 
 export const useAppProvider = () => {

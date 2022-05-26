@@ -118,13 +118,6 @@ body {
   padding: 8px;
 }
 
-.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  background: #4962fc;
-  height: -webkit-fill-available;
-  border-radius: 30px;
-  color: $white;
-}
-
 .ant-tabs-ink-bar {
   display: none;
 }
@@ -205,12 +198,12 @@ body {
     flex-wrap: wrap;
     height: auto;
 
-    .logo{
+    .logo {
       justify-content: center;
       margin-right: 0;
     }
 
-    .ant-menu-horizontal{
+    .ant-menu-horizontal {
       width: min-content;
     }
 

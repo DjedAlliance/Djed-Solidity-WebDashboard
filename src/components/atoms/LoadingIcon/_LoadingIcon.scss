@@ -1,7 +1,22 @@
 @import "../../../scss/general_styling";
 
 .LoadingIcon {
+  display: flex;
+  justify-content: center;
   margin-bottom: 2em;
+  width: 100%;
+  .ant-spin {
+    color: $primary-color;
+  }
+}
+.LoadingIcon-fullpage {
+  background: $gradient-theme-1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   .ant-spin {
     color: $primary-color;
   }

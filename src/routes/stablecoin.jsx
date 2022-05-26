@@ -22,7 +22,8 @@ import {
 //import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 
 export default function Stablecoin() {
-  const { coinsDetails, djedContract, decimals, accounts } = useAppProvider();
+  const { isWalletConnected, coinsDetails, djedContract, decimals, accounts } =
+    useAppProvider();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
 
@@ -76,6 +77,7 @@ export default function Stablecoin() {
             coinName="Stablecoin Name"
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
+            tokenName="StableDjed"
           />
         </div>
         <div className="Right">
@@ -91,40 +93,44 @@ export default function Stablecoin() {
             />
           </div>
           <div className="ConnectWallet">
-            <p className="Disclaimer">
-              In order to operate you need to connect your wallet
-            </p>
-            <MetamaskConnectButton />
             <br />
-            {/* Buttons to open the 3 different modals post transaction */}
-            <ModalPending
-              transactionType="Confirmation"
-              transactionStatus="/transaction-success.svg"
-              statusText="Pending for confirmation"
-              statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
-            />
-            <ModalTransaction
-              transactionType="Success Transaction"
-              transactionStatus="/transaction-success.svg"
-              statusText="Succesful transaction!"
-              statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-            />
-            <ModalTransaction
-              transactionType="Failed Transaction"
-              transactionStatus="/transaction-failed.svg"
-              statusText="Failed transaction!"
-              statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-            />
-            <BuySellButton
-              onClick={tradeFxn}
-              buyOrSell={buyOrSell}
-              coinName="Stablecoin"
-              coinAmount={tradeData.amountScaled}
-              value={tradeData.totalScaled}
-            />
+            {isWalletConnected ? (
+              <BuySellButton onClick={tradeFxn} buyOrSell={buyOrSell} />
+            ) : (
+              <>
+                <p className="Disclaimer">
+                  In order to operate you need to connect your wallet
+                </p>
+                <MetamaskConnectButton />
+              </>
+            )}
           </div>
         </div>
       </div>
     </main>
   );
+}
+
+{
+  /* Buttons to open the 3 different modals post transaction */
+}
+{
+  /* <ModalPending
+  transactionType="Confirmation"
+  transactionStatus="/transaction-success.svg"
+  statusText="Pending for confirmation"
+  statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
+/>
+<ModalTransaction
+  transactionType="Success Transaction"
+  transactionStatus="/transaction-success.svg"
+  statusText="Succesful transaction!"
+  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+/>
+<ModalTransaction
+  transactionType="Failed Transaction"
+  transactionStatus="/transaction-failed.svg"
+  statusText="Failed transaction!"
+  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+/> */
 }
