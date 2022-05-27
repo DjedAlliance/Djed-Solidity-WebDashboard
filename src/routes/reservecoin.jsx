@@ -37,9 +37,11 @@ export default function ReserveCoin() {
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
+  const [value, setValue] = useState(null);
 
   const amountChangeCallback = (e) => {
     let amountScaled = e.target.value;
+    setValue(amountScaled);
     let promise = isBuyActive
       ? tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, amountScaled)
       : tradeDataPriceSellRc(djedContract, decimals.rcDecimals, amountScaled);
@@ -62,36 +64,25 @@ export default function ReserveCoin() {
 
   const maxBuyRc = (djed, rcDecimals, unscaledNumberSc, thresholdNumberSc) => {
     getMaxBuyRc(djed, rcDecimals, unscaledNumberSc, thresholdNumberSc)
-      .then((res) => console.log("MAX:", res))
+      .then((res) => {
+        const maxAmount = parseFloat(res);
+        setValue(maxAmount);
+      })
       .catch((err) => console.err("MAX Error:", err));
   };
 
   const maxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
     getMaxSellRc(djed, rcDecimals, unscaledBalanceRc)
-      .then((res) => console.log("MAX:", res))
+      .then((res) => {
+        const maxAmount = parseFloat(res);
+        setValue(maxAmount);
+      })
       .catch((err) => console.err("MAX Error:", err));
   };
 
   const tradeFxn = isBuyActive
     ? buyRc.bind(null, tradeData.totalUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
-
-  const maxCallback = isWalletConnected
-    ? isBuyActive
-      ? maxBuyRc.bind(
-          null,
-          djedContract,
-          coinsDetails?.rcDecimals,
-          coinsDetails?.unscaledNumberSc,
-          systemParams?.thresholdNumberSc
-        )
-      : maxSellRc.bind(
-          null,
-          djedContract,
-          coinsDetails?.rcDecimals,
-          accountDetails?.unscaledBalanceRc
-        )
-    : () => console.log("MAX: WALLET NOT CONNECTED");
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -128,10 +119,27 @@ export default function ReserveCoin() {
           <div className="PurchaseContainer">
             <OperationSelector
               coinName="Reservecoin"
-              selectionCallback={setBuyOrSell}
-              changeCallback={amountChangeCallback}
-              maxCallback={maxCallback}
+              selectionCallback={() => {
+                setBuyOrSell();
+                setValue(null);
+              }}
+              onChangeInput={amountChangeCallback}
+              onMaxBuy={maxBuyRc.bind(
+                null,
+                djedContract,
+                coinsDetails?.rcDecimals,
+                coinsDetails?.unscaledNumberSc,
+                systemParams?.thresholdNumberSc
+              )}
+              onMaxSell={maxSellRc.bind(
+                null,
+                djedContract,
+                coinsDetails?.rcDecimals,
+                accountDetails?.unscaledBalanceRc
+              )}
               tradeData={tradeData}
+              inputValue={value}
+              clearInput={() => setValue(null)}
             />
           </div>
           <div className="ConnectWallet">

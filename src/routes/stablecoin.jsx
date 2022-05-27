@@ -36,9 +36,11 @@ export default function Stablecoin() {
   } = useAppProvider();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
+  const [value, setValue] = useState(null);
 
   const amountChangeCallback = (e) => {
     let amountScaled = e.target.value;
+    setValue(amountScaled);
     let promise = isBuyActive
       ? tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled)
       : tradeDataPriceSellSc(djedContract, decimals.scDecimals, amountScaled);
@@ -61,25 +63,25 @@ export default function Stablecoin() {
 
   const maxBuySc = (djed, scDecimals) => {
     getMaxBuySc(djed, scDecimals)
-      .then((res) => console.log("MAX:", res))
+      .then((res) => {
+        const maxAmount = parseFloat(res);
+        setValue(maxAmount);
+      })
       .catch((err) => console.err("MAX Error:", err));
   };
 
   const maxSellSc = (scaledBalanceSc) => {
     getMaxSellSc(scaledBalanceSc)
-      .then((res) => console.log("MAX:", res))
+      .then((res) => {
+        const maxAmount = parseFloat(res);
+        setValue(maxAmount);
+      })
       .catch((err) => console.err("MAX Error:", err));
   };
 
   const tradeFxn = isBuyActive
     ? buySc.bind(null, tradeData.totalUnscaled)
     : sellSc.bind(null, tradeData.amountUnscaled);
-
-  const maxCallback = isWalletConnected
-    ? isBuyActive
-      ? maxBuySc.bind(null, djedContract, coinsDetails?.scDecimals)
-      : maxSellSc.bind(null, accountDetails?.scaledBalanceSc)
-    : () => console.log("MAX: WALLET NOT CONNECTED");
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -115,10 +117,15 @@ export default function Stablecoin() {
           <div className="PurchaseContainer">
             <OperationSelector
               coinName="Stablecoin"
-              selectionCallback={setBuyOrSell}
-              changeCallback={amountChangeCallback}
-              maxCallback={maxCallback}
+              selectionCallback={() => {
+                setBuyOrSell();
+                setValue(null);
+              }}
+              onChangeInput={amountChangeCallback}
+              onMaxBuy={maxBuySc.bind(null, djedContract, coinsDetails?.scDecimals)}
+              onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}
+              inputValue={value}
             />
           </div>
           <div className="ConnectWallet">
