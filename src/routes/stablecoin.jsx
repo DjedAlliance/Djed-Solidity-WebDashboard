@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-//import { ArrowRightOutlined } from "@ant-design/icons";
-//import { ReactComponent as Metamask } from "../images/metamask.svg";
-//import CustomButton from "../components/atoms/CustomButton/CustomButton";
 import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import OperationSelector from "../components/organisms/OperationSelector/OperationSelector";
@@ -18,12 +15,9 @@ import {
   sellScTx,
   tradeDataPriceBuySc,
   tradeDataPriceSellSc,
-  checkBuyableSc,
-  checkSellableSc,
   getMaxBuySc,
   getMaxSellSc
 } from "../utils/ethereum";
-//import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 
 export default function Stablecoin() {
   const {
@@ -37,6 +31,12 @@ export default function Stablecoin() {
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
+  const [txError, setTxError] = useState(null);
+  const [txStatus, setTxStatus] = useState("idle");
+
+  const txStatusPending = txStatus === "pending";
+  const txStatusRejected = txStatus === "rejected";
+  const txStatusSuccess = txStatus === "success";
 
   const onChangeBuyInput = (e) => {
     const amountScaled = e.target.value;
@@ -55,16 +55,32 @@ export default function Stablecoin() {
 
   const buySc = (total) => {
     console.log("Attempting to buy SC for", total);
+    setTxStatus("pending");
     promiseTx(accounts, buyScTx(djedContract, accounts[0], total))
-      .then((res) => console.log("Success:", res))
-      .catch((err) => console.err("Error:", err));
+      .then((res) => {
+        console.log("Buy SC tx success", res);
+        setTxStatus("success");
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        setTxStatus("rejected");
+        setTxError(err.message);
+      });
   };
 
   const sellSc = (amount) => {
     console.log("Attempting to sell SC in amount", amount);
+    setTxStatus("pending");
     promiseTx(accounts, sellScTx(djedContract, accounts[0], amount))
-      .then((res) => console.log("Success:", res))
-      .catch((err) => console.err("Error:", err));
+      .then((res) => {
+        console.log("Sell SC tx success", res);
+        setTxStatus("success");
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        setTxStatus("rejected");
+        setTxError(err.message);
+      });
   };
 
   const maxBuySc = (djed, scDecimals) => {
@@ -73,7 +89,7 @@ export default function Stablecoin() {
         const maxAmount = parseFloat(res);
         setValue(maxAmount);
       })
-      .catch((err) => console.err("MAX Error:", err));
+      .catch((err) => console.error("MAX Error:", err));
   };
 
   const maxSellSc = (scaledBalanceSc) => {
@@ -82,7 +98,7 @@ export default function Stablecoin() {
         const maxAmount = parseFloat(res);
         setValue(maxAmount);
       })
-      .catch((err) => console.err("MAX Error:", err));
+      .catch((err) => console.error("MAX Error:", err));
   };
 
   const tradeFxn = isBuyActive
@@ -148,32 +164,31 @@ export default function Stablecoin() {
               </>
             )}
           </div>
+          {txStatusRejected && (
+            <ModalTransaction
+              transactionType="Failed Transaction"
+              transactionStatus="/transaction-failed.svg"
+              statusText="Failed transaction!"
+              statusDescription={txError}
+            />
+          )}
+          {txStatusPending ? (
+            <ModalPending
+              transactionType="Confirmation"
+              transactionStatus="/transaction-success.svg"
+              statusText="Pending for confirmation"
+              statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
+            />
+          ) : txStatusSuccess ? (
+            <ModalTransaction
+              transactionType="Success Transaction"
+              transactionStatus="/transaction-success.svg"
+              statusText="Succesful transaction!"
+              statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+            />
+          ) : null}
         </div>
       </div>
     </main>
   );
-}
-
-{
-  /* Buttons to open the 3 different modals post transaction */
-}
-{
-  /* <ModalPending
-  transactionType="Confirmation"
-  transactionStatus="/transaction-success.svg"
-  statusText="Pending for confirmation"
-  statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
-/>
-<ModalTransaction
-  transactionType="Success Transaction"
-  transactionStatus="/transaction-success.svg"
-  statusText="Succesful transaction!"
-  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-/>
-<ModalTransaction
-  transactionType="Failed Transaction"
-  transactionStatus="/transaction-failed.svg"
-  statusText="Failed transaction!"
-  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-/> */
 }

@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import { ArrowRightOutlined } from "@ant-design/icons";
-//import { ReactComponent as Metamask } from "../images/metamask.svg";
-//import CustomButton from "../components/atoms/CustomButton/CustomButton";
 import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import OperationSelector from "../components/organisms/OperationSelector/OperationSelector";
@@ -18,8 +15,6 @@ import {
   sellRcTx,
   tradeDataPriceBuyRc,
   tradeDataPriceSellRc,
-  checkBuyableRc,
-  checkSellableRc,
   getMaxBuyRc,
   getMaxSellRc
 } from "../utils/ethereum";
@@ -38,6 +33,12 @@ export default function ReserveCoin() {
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
+  const [txError, setTxError] = useState(null);
+  const [txStatus, setTxStatus] = useState("idle");
+
+  const txStatusPending = txStatus === "pending";
+  const txStatusRejected = txStatus === "rejected";
+  const txStatusSuccess = txStatus === "success";
 
   const onChangeBuyInput = (e) => {
     const amountScaled = e.target.value;
@@ -57,16 +58,32 @@ export default function ReserveCoin() {
 
   const buyRc = (total) => {
     console.log("Attempting to buy RC for", total);
+    setTxStatus("pending");
     promiseTx(accounts, buyRcTx(djedContract, accounts[0], total))
-      .then((res) => console.log("Success:", res))
-      .catch((err) => console.err("Error:", err));
+      .then((res) => {
+        console.log("Success:", res);
+        setTxStatus("success");
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        setTxStatus("rejected");
+        setTxError(err.message);
+      });
   };
 
   const sellRc = (amount) => {
     console.log("Attempting to sell RC in amount", amount);
+    setTxStatus("pending");
     promiseTx(accounts, sellRcTx(djedContract, accounts[0], amount))
-      .then((res) => console.log("Success:", res))
-      .catch((err) => console.err("Error:", err));
+      .then((res) => {
+        console.log("Success:", res);
+        setTxStatus("success");
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        setTxStatus("rejected");
+        setTxError(err.message);
+      });
   };
 
   const maxBuyRc = (djed, rcDecimals, unscaledNumberSc, thresholdNumberSc) => {
@@ -75,7 +92,7 @@ export default function ReserveCoin() {
         const maxAmount = parseFloat(res);
         setValue(maxAmount);
       })
-      .catch((err) => console.err("MAX Error:", err));
+      .catch((err) => console.error("MAX Error:", err));
   };
 
   const maxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
@@ -84,7 +101,7 @@ export default function ReserveCoin() {
         const maxAmount = parseFloat(res);
         setValue(maxAmount);
       })
-      .catch((err) => console.err("MAX Error:", err));
+      .catch((err) => console.error("MAX Error:", err));
   };
 
   const tradeFxn = isBuyActive
@@ -162,29 +179,31 @@ export default function ReserveCoin() {
               </>
             )}
           </div>
+          {txStatusRejected && (
+            <ModalTransaction
+              transactionType="Failed Transaction"
+              transactionStatus="/transaction-failed.svg"
+              statusText="Failed transaction!"
+              statusDescription={txError}
+            />
+          )}
+          {txStatusPending ? (
+            <ModalPending
+              transactionType="Confirmation"
+              transactionStatus="/transaction-success.svg"
+              statusText="Pending for confirmation"
+              statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
+            />
+          ) : txStatusSuccess ? (
+            <ModalTransaction
+              transactionType="Success Transaction"
+              transactionStatus="/transaction-success.svg"
+              statusText="Succesful transaction!"
+              statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+            />
+          ) : null}
         </div>
       </div>
     </main>
   );
-}
-
-{
-  /* <ModalPending
-  transactionType="Confirmation"
-  transactionStatus="/transaction-success.svg"
-  statusText="Pending for confirmation"
-  statusDescription="This transaction can take a while, once the process finish you will see the transaction reflected in your wallet."
-/>
-<ModalTransaction
-  transactionType="Success Transaction"
-  transactionStatus="/transaction-success.svg"
-  statusText="Succesful transaction!"
-  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-/>
-<ModalTransaction
-  transactionType="Failed Transaction"
-  transactionStatus="/transaction-failed.svg"
-  statusText="Failed transaction!"
-  statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-/> */
 }
