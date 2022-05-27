@@ -10,8 +10,9 @@ const BuySellCoin = ({
   totalAmount,
   payOrGet,
   buyOrSell,
-  changeFxn,
-  onMaxClick
+  onChangeInput,
+  onMaxClick,
+  inputValue
 }) => (
   <div className="BuySellCoin">
     <h3>
@@ -21,6 +22,7 @@ const BuySellCoin = ({
       <Input
         size="large"
         placeholder="0.0"
+        value={inputValue}
         suffix={
           <div>
             <button className="MaxButton" onClick={onMaxClick}>
@@ -29,7 +31,7 @@ const BuySellCoin = ({
             {coinName}
           </div>
         }
-        onChange={changeFxn}
+        onChange={onChangeInput}
       />
     </div>
     <p className="FeeInfo">

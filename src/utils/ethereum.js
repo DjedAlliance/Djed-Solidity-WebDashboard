@@ -189,14 +189,14 @@ export const checkBuyableRc = (djed, unscaledAmountRc) =>
   web3Promise(djed, "checkBuyableNReserveCoins", unscaledAmountRc);
 
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
-  if (unscaledAmountRc.gt(unscaledBalanceRc)) {
+  if (new BN(unscaledAmountRc).gt(new BN(unscaledBalanceRc))) {
     return new Promise((r) => false);
   }
   return web3Promise(djed, "checkSellableNReserveCoins", unscaledAmountRc);
 };
 
 export const getMaxBuyRc = (djed, rcDecimals, unscaledNumberSc, thresholdNumberSc) => {
-  if (unscaledNumberSc.lt(thresholdNumberSc)) {
+  if (new BN(unscaledNumberSc).lt(new BN(thresholdNumberSc))) {
     // empty string returned on no limit:
     return new Promise((r) => r(""));
   }
@@ -208,7 +208,7 @@ export const getMaxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
     web3Promise(djed, "getMaxSellableReserveCoins"),
     rcDecimals
   ).then(([scaledMax, unscaledMax]) =>
-    unscaledBalanceRc.lt(unscaledMax)
+    new BN(unscaledBalanceRc).lt(new BN(unscaledMax))
       ? scaledMax
       : decimalScaling(unscaledBalanceRc.toString(10), rcDecimals)
   );
@@ -235,11 +235,11 @@ export const checkBuyableSc = (djed, unscaledAmountSc) =>
   web3Promise(djed, "checkBuyableNStableCoins", unscaledAmountSc);
 
 export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) =>
-  new Promise((r) => r(!unscaledAmountSc.gt(unscaledBalanceSc)));
+  new Promise((r) => r(!new BN(unscaledAmountSc).gt(new BN(unscaledBalanceSc))));
 
 export const getMaxBuySc = (djed, scDecimals) => {
   return scaledPromise(web3Promise(djed, "getMaxBuyableStableCoins"), scDecimals);
 };
 
 // maxSellSc is just the current account balance, no additional protocol limits:
-export const getMaxSellSc = (scaledBalanceSc) => scaledBalanceSc;
+export const getMaxSellSc = (scaledBalanceSc) => new Promise((r) => r(scaledBalanceSc));

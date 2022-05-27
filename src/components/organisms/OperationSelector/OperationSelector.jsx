@@ -9,9 +9,13 @@ const { TabPane } = Tabs;
 const OperationSelector = ({
   coinName,
   selectionCallback,
-  changeCallback,
-  maxCallback,
-  tradeData
+  onChangeInput,
+  onChangeBuyInput,
+  onChangeSellInput,
+  onMaxBuy,
+  onMaxSell,
+  tradeData,
+  inputValue
 }) => (
   <div className="OperationSelector">
     <Tabs defaultActiveKey={BUY_SELL_OPTIONS.BUY} onChange={selectionCallback}>
@@ -26,8 +30,9 @@ const OperationSelector = ({
           feeAmount="0.000"
           totalAmount={tradeData.totalScaled}
           payOrGet="pay"
-          onMaxClick={maxCallback}
-          changeFxn={changeCallback}
+          onMaxClick={onMaxBuy}
+          onChangeInput={onChangeBuyInput}
+          inputValue={inputValue}
         />
       </TabPane>
       <TabPane
@@ -40,9 +45,10 @@ const OperationSelector = ({
           priceAmount="0.000"
           feeAmount="0.000"
           totalAmount={tradeData.totalScaled}
-          onMaxClick={maxCallback}
+          onMaxClick={onMaxSell}
           payOrGet="get"
-          changeFxn={changeCallback}
+          onChangeInput={onChangeSellInput}
+          inputValue={inputValue}
         />
       </TabPane>
     </Tabs>
