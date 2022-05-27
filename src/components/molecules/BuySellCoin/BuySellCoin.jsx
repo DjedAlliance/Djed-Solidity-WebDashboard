@@ -12,7 +12,8 @@ const BuySellCoin = ({
   buyOrSell,
   onChangeInput,
   onMaxClick,
-  inputValue
+  inputValue,
+  validated
 }) => (
   <div className="BuySellCoin">
     <h3>
@@ -46,6 +47,7 @@ const BuySellCoin = ({
       <p>
         You will {payOrGet} ≈ {totalAmount} milkADA
       </p>
+      <p>Validated? {validated ? "YES" : "NO"}</p>
     </div>
     <hr />
   </div>

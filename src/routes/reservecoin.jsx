@@ -16,7 +16,9 @@ import {
   tradeDataPriceBuyRc,
   tradeDataPriceSellRc,
   getMaxBuyRc,
-  getMaxSellRc
+  getMaxSellRc,
+  checkBuyableRc,
+  checkSellableRc
 } from "../utils/ethereum";
 
 export default function ReserveCoin() {
@@ -35,25 +37,49 @@ export default function ReserveCoin() {
   const [value, setValue] = useState(null);
   const [txError, setTxError] = useState(null);
   const [txStatus, setTxStatus] = useState("idle");
+  const [canBuy, setCanBuy] = useState(false);
+  const [canSell, setCanSell] = useState(false);
 
   const txStatusPending = txStatus === "pending";
   const txStatusRejected = txStatus === "rejected";
   const txStatusSuccess = txStatus === "success";
 
+  const updateBuyTradeData = (amountScaled) => {
+    tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, amountScaled).then((data) => {
+      setTradeData(data);
+      if (isWalletConnected) {
+        checkBuyableRc(djedContract, data.amountUnscaled).then((res) => setCanBuy(res));
+      } else {
+        setCanBuy(false);
+      }
+    });
+  };
+
+  const updateSellTradeData = (amountScaled) => {
+    tradeDataPriceSellRc(djedContract, decimals.rcDecimals, amountScaled).then((data) => {
+      setTradeData(data);
+      if (isWalletConnected) {
+        checkSellableRc(
+          djedContract,
+          data.amountUnscaled,
+          accountDetails.unscaledBalanceRc
+        ).then((res) => setCanSell(res));
+      } else {
+        setCanSell(false);
+      }
+    });
+  };
+
   const onChangeBuyInput = (e) => {
     const amountScaled = e.target.value;
     setValue(amountScaled);
-    tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, amountScaled).then((data) =>
-      setTradeData(data)
-    );
+    updateBuyTradeData(amountScaled);
   };
 
   const onChangeSellInput = (e) => {
     const amountScaled = e.target.value;
     setValue(amountScaled);
-    tradeDataPriceSellRc(djedContract, decimals.rcDecimals, amountScaled).then((data) =>
-      setTradeData(data)
-    );
+    updateSellTradeData(amountScaled);
   };
 
   const buyRc = (total) => {
@@ -88,18 +114,18 @@ export default function ReserveCoin() {
 
   const maxBuyRc = (djed, rcDecimals, unscaledNumberSc, thresholdNumberSc) => {
     getMaxBuyRc(djed, rcDecimals, unscaledNumberSc, thresholdNumberSc)
-      .then((res) => {
-        const maxAmount = parseFloat(res);
-        setValue(maxAmount);
+      .then((maxAmountScaled) => {
+        setValue(maxAmountScaled);
+        updateBuyTradeData(maxAmountScaled);
       })
       .catch((err) => console.error("MAX Error:", err));
   };
 
   const maxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
     getMaxSellRc(djed, rcDecimals, unscaledBalanceRc)
-      .then((res) => {
-        const maxAmount = parseFloat(res);
-        setValue(maxAmount);
+      .then((maxAmountScaled) => {
+        setValue(maxAmountScaled);
+        updateSellTradeData(maxAmountScaled);
       })
       .catch((err) => console.error("MAX Error:", err));
   };
@@ -164,6 +190,8 @@ export default function ReserveCoin() {
               )}
               tradeData={tradeData}
               inputValue={value}
+              canBuy={canBuy}
+              canSell={canSell}
             />
           </div>
           <div className="ConnectWallet">

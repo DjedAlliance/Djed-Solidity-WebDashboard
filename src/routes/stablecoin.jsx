@@ -16,7 +16,9 @@ import {
   tradeDataPriceBuySc,
   tradeDataPriceSellSc,
   getMaxBuySc,
-  getMaxSellSc
+  getMaxSellSc,
+  checkBuyableSc,
+  checkSellableSc
 } from "../utils/ethereum";
 
 export default function Stablecoin() {
@@ -33,24 +35,49 @@ export default function Stablecoin() {
   const [value, setValue] = useState(null);
   const [txError, setTxError] = useState(null);
   const [txStatus, setTxStatus] = useState("idle");
+  const [canBuy, setCanBuy] = useState(false);
+  const [canSell, setCanSell] = useState(false);
 
   const txStatusPending = txStatus === "pending";
   const txStatusRejected = txStatus === "rejected";
   const txStatusSuccess = txStatus === "success";
 
+  const updateBuyTradeData = (amountScaled) => {
+    tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled).then((data) => {
+      setTradeData(data);
+      if (isWalletConnected) {
+        checkBuyableSc(djedContract, data.amountUnscaled).then((res) => {
+          console.log("Validation result received:", res);
+          setCanBuy(res);
+        });
+      } else {
+        setCanBuy(false);
+      }
+    });
+  };
+
+  const updateSellTradeData = (amountScaled) => {
+    tradeDataPriceSellSc(djedContract, decimals.scDecimals, amountScaled).then((data) => {
+      setTradeData(data);
+      if (isWalletConnected) {
+        checkSellableSc(data.amountUnscaled, accountDetails.unscaledBalanceSc).then(
+          (res) => setCanSell(res)
+        );
+      } else {
+        setCanSell(false);
+      }
+    });
+  };
+
   const onChangeBuyInput = (e) => {
     const amountScaled = e.target.value;
     setValue(amountScaled);
-    tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled).then((data) =>
-      setTradeData(data)
-    );
+    updateBuyTradeData(amountScaled);
   };
   const onChangeSellInput = (e) => {
     const amountScaled = e.target.value;
     setValue(amountScaled);
-    tradeDataPriceSellSc(djedContract, decimals.scDecimals, amountScaled).then((data) =>
-      setTradeData(data)
-    );
+    updateSellTradeData(amountScaled);
   };
 
   const buySc = (total) => {
@@ -85,18 +112,18 @@ export default function Stablecoin() {
 
   const maxBuySc = (djed, scDecimals) => {
     getMaxBuySc(djed, scDecimals)
-      .then((res) => {
-        const maxAmount = parseFloat(res);
-        setValue(maxAmount);
+      .then((maxAmountScaled) => {
+        setValue(maxAmountScaled);
+        updateBuyTradeData(maxAmountScaled);
       })
       .catch((err) => console.error("MAX Error:", err));
   };
 
   const maxSellSc = (scaledBalanceSc) => {
     getMaxSellSc(scaledBalanceSc)
-      .then((res) => {
-        const maxAmount = parseFloat(res);
-        setValue(maxAmount);
+      .then((maxAmountScaled) => {
+        setValue(maxAmountScaled);
+        updateSellTradeData(maxAmountScaled);
       })
       .catch((err) => console.error("MAX Error:", err));
   };
@@ -149,6 +176,8 @@ export default function Stablecoin() {
               onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}
               inputValue={value}
+              canBuy={canBuy}
+              canSell={canSell}
             />
           </div>
           <div className="ConnectWallet">

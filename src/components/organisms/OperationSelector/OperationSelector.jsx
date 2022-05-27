@@ -15,7 +15,9 @@ const OperationSelector = ({
   onMaxBuy,
   onMaxSell,
   tradeData,
-  inputValue
+  inputValue,
+  canBuy,
+  canSell
 }) => (
   <div className="OperationSelector">
     <Tabs defaultActiveKey={BUY_SELL_OPTIONS.BUY} onChange={selectionCallback}>
@@ -33,6 +35,7 @@ const OperationSelector = ({
           onMaxClick={onMaxBuy}
           onChangeInput={onChangeBuyInput}
           inputValue={inputValue}
+          validated={canBuy}
         />
       </TabPane>
       <TabPane
@@ -49,6 +52,7 @@ const OperationSelector = ({
           payOrGet="get"
           onChangeInput={onChangeSellInput}
           inputValue={inputValue}
+          validated={canSell}
         />
       </TabPane>
     </Tabs>

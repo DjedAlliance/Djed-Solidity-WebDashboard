@@ -16,7 +16,7 @@ import {
 } from "./helpers";
 
 const BLOCKCHAIN_URI = "https://rpc-devnet-cardano-evm.c1.milkomeda.com/";
-//const CHAIN_ID = 200101;
+export const CHAIN_ID = 200101;
 const DJED_ADDRESS = "0xe675C175b64F241c01ef7Cf273F2e8f4e19AaD48"; // djedAddress
 const ORACLE_ADDRESS = "0xf1E16aC91dC04a9583E45Dc95ef1C41d485eBd84"; // oracleAddress
 const BC_DECIMALS = 18;
@@ -208,7 +208,7 @@ export const getMaxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
     web3Promise(djed, "getMaxSellableReserveCoins"),
     rcDecimals
   ).then(([scaledMax, unscaledMax]) =>
-    new BN(unscaledBalanceRc).lt(new BN(unscaledMax))
+    new BN(unscaledBalanceRc).gt(new BN(unscaledMax))
       ? scaledMax
       : decimalScaling(unscaledBalanceRc.toString(10), rcDecimals)
   );

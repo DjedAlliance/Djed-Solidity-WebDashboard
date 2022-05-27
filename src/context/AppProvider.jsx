@@ -8,7 +8,8 @@ import {
   getDecimals,
   getCoinDetails,
   getSystemParams,
-  getAccountDetails
+  getAccountDetails,
+  CHAIN_ID
 } from "../utils/ethereum";
 
 const AppContext = createContext();
@@ -68,12 +69,23 @@ export const AppProvider = ({ children }) => {
     window.open("https://metamask.io/", "_blank");
   };
 
+  const handleChain = (chainId) => {
+    if (chainId !== CHAIN_ID) {
+      console.log("Wrong chain:", chainId, "rather than", CHAIN_ID);
+    } else {
+      console.log("Correct chain:", chainId);
+    }
+  };
+
   const connectMetamask = async () => {
     try {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts"
       });
       setAccounts(accounts);
+      window.ethereum
+        .request({ method: "eth_chainId" })
+        .then((chainId) => handleChain(parseInt(chainId)));
       const accountDetails = await getAccountDetails(
         web3,
         accounts[0],
