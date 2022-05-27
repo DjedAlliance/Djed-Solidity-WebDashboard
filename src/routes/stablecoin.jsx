@@ -38,13 +38,19 @@ export default function Stablecoin() {
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
 
-  const amountChangeCallback = (e) => {
-    let amountScaled = e.target.value;
+  const onChangeBuyInput = (e) => {
+    const amountScaled = e.target.value;
     setValue(amountScaled);
-    let promise = isBuyActive
-      ? tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled)
-      : tradeDataPriceSellSc(djedContract, decimals.scDecimals, amountScaled);
-    promise.then((data) => setTradeData(data));
+    tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled).then((data) =>
+      setTradeData(data)
+    );
+  };
+  const onChangeSellInput = (e) => {
+    const amountScaled = e.target.value;
+    setValue(amountScaled);
+    tradeDataPriceSellSc(djedContract, decimals.scDecimals, amountScaled).then((data) =>
+      setTradeData(data)
+    );
   };
 
   const buySc = (total) => {
@@ -121,7 +127,8 @@ export default function Stablecoin() {
                 setBuyOrSell();
                 setValue(null);
               }}
-              onChangeInput={amountChangeCallback}
+              onChangeBuyInput={onChangeBuyInput}
+              onChangeSellInput={onChangeSellInput}
               onMaxBuy={maxBuySc.bind(null, djedContract, coinsDetails?.scDecimals)}
               onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}

@@ -39,13 +39,20 @@ export default function ReserveCoin() {
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
 
-  const amountChangeCallback = (e) => {
-    let amountScaled = e.target.value;
+  const onChangeBuyInput = (e) => {
+    const amountScaled = e.target.value;
     setValue(amountScaled);
-    let promise = isBuyActive
-      ? tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, amountScaled)
-      : tradeDataPriceSellRc(djedContract, decimals.rcDecimals, amountScaled);
-    promise.then((data) => setTradeData(data));
+    tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, amountScaled).then((data) =>
+      setTradeData(data)
+    );
+  };
+
+  const onChangeSellInput = (e) => {
+    const amountScaled = e.target.value;
+    setValue(amountScaled);
+    tradeDataPriceSellRc(djedContract, decimals.rcDecimals, amountScaled).then((data) =>
+      setTradeData(data)
+    );
   };
 
   const buyRc = (total) => {
@@ -123,7 +130,8 @@ export default function ReserveCoin() {
                 setBuyOrSell();
                 setValue(null);
               }}
-              onChangeInput={amountChangeCallback}
+              onChangeBuyInput={onChangeBuyInput}
+              onChangeSellInput={onChangeSellInput}
               onMaxBuy={maxBuyRc.bind(
                 null,
                 djedContract,
@@ -139,7 +147,6 @@ export default function ReserveCoin() {
               )}
               tradeData={tradeData}
               inputValue={value}
-              clearInput={() => setValue(null)}
             />
           </div>
           <div className="ConnectWallet">

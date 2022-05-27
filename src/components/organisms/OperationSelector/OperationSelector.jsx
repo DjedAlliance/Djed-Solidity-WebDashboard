@@ -10,11 +10,12 @@ const OperationSelector = ({
   coinName,
   selectionCallback,
   onChangeInput,
+  onChangeBuyInput,
+  onChangeSellInput,
   onMaxBuy,
   onMaxSell,
   tradeData,
-  inputValue,
-  clearInput
+  inputValue
 }) => (
   <div className="OperationSelector">
     <Tabs defaultActiveKey={BUY_SELL_OPTIONS.BUY} onChange={selectionCallback}>
@@ -30,7 +31,7 @@ const OperationSelector = ({
           totalAmount={tradeData.totalScaled}
           payOrGet="pay"
           onMaxClick={onMaxBuy}
-          onChangeInput={onChangeInput}
+          onChangeInput={onChangeBuyInput}
           inputValue={inputValue}
         />
       </TabPane>
@@ -46,7 +47,7 @@ const OperationSelector = ({
           totalAmount={tradeData.totalScaled}
           onMaxClick={onMaxSell}
           payOrGet="get"
-          onChangeInput={onChangeInput}
+          onChangeInput={onChangeSellInput}
           inputValue={inputValue}
         />
       </TabPane>
