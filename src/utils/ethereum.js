@@ -17,7 +17,7 @@ import {
 
 const BLOCKCHAIN_URI = "https://rpc-devnet-cardano-evm.c1.milkomeda.com/";
 export const CHAIN_ID = 200101;
-const DJED_ADDRESS = "0xe675C175b64F241c01ef7Cf273F2e8f4e19AaD48"; // djedAddress
+const DJED_ADDRESS = "0xFf8c2747D6d486cFC8E45f812210FD0599F85B92"; // djedAddress
 const ORACLE_ADDRESS = "0xf1E16aC91dC04a9583E45Dc95ef1C41d485eBd84"; // oracleAddress
 const BC_DECIMALS = 18;
 const SCALING_DECIMALS = 24; // scalingFixed
