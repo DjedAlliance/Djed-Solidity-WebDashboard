@@ -18,11 +18,13 @@ import {
   getMaxBuyRc,
   getMaxSellRc,
   checkBuyableRc,
-  checkSellableRc
+  checkSellableRc,
+  verifyTx
 } from "../utils/ethereum";
 
 export default function ReserveCoin() {
   const {
+    web3,
     isWalletConnected,
     djedContract,
     coinsDetails,
@@ -86,9 +88,16 @@ export default function ReserveCoin() {
     console.log("Attempting to buy RC for", total);
     setTxStatus("pending");
     promiseTx(accounts, buyRcTx(djedContract, accounts[0], total))
-      .then((res) => {
-        console.log("Success:", res);
-        setTxStatus("success");
+      .then((hash) => {
+        verifyTx(web3, hash).then((res) => {
+          if (res) {
+            console.log("Buy RC success!");
+            setTxStatus("success");
+          } else {
+            console.log("Buy RC reverted!");
+            setTxStatus("rejected");
+          }
+        });
       })
       .catch((err) => {
         console.error("Error:", err);
@@ -101,9 +110,16 @@ export default function ReserveCoin() {
     console.log("Attempting to sell RC in amount", amount);
     setTxStatus("pending");
     promiseTx(accounts, sellRcTx(djedContract, accounts[0], amount))
-      .then((res) => {
-        console.log("Success:", res);
-        setTxStatus("success");
+      .then((hash) => {
+        verifyTx(web3, hash).then((res) => {
+          if (res) {
+            console.log("Sell RC success!");
+            setTxStatus("success");
+          } else {
+            console.log("Sell RC reverted!");
+            setTxStatus("rejected");
+          }
+        });
       })
       .catch((err) => {
         console.error("Error:", err);

@@ -21,6 +21,7 @@ const DJED_ADDRESS = "0xFf8c2747D6d486cFC8E45f812210FD0599F85B92"; // djedAddres
 const ORACLE_ADDRESS = "0xf1E16aC91dC04a9583E45Dc95ef1C41d485eBd84"; // oracleAddress
 const BC_DECIMALS = 18;
 const SCALING_DECIMALS = 24; // scalingFixed
+const REFRESH_PERIOD = 4000;
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {
@@ -155,6 +156,15 @@ export const promiseTx = (accounts, tx) => {
   return window.ethereum.request({
     method: "eth_sendTransaction",
     params: [tx]
+  });
+};
+
+export const verifyTx = (web3, hash) => {
+  return new Promise((res) => {
+    setTimeout(() => {
+      console.log("Doing stuff after", REFRESH_PERIOD, "ms have passed.");
+      web3.eth.getTransactionReceipt(hash).then((receipt) => res(receipt.status));
+    }, REFRESH_PERIOD);
   });
 };
 

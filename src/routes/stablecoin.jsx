@@ -18,11 +18,13 @@ import {
   getMaxBuySc,
   getMaxSellSc,
   checkBuyableSc,
-  checkSellableSc
+  checkSellableSc,
+  verifyTx
 } from "../utils/ethereum";
 
 export default function Stablecoin() {
   const {
+    web3,
     isWalletConnected,
     coinsDetails,
     djedContract,
@@ -84,12 +86,19 @@ export default function Stablecoin() {
     console.log("Attempting to buy SC for", total);
     setTxStatus("pending");
     promiseTx(accounts, buyScTx(djedContract, accounts[0], total))
-      .then((res) => {
-        console.log("Buy SC tx success", res);
-        setTxStatus("success");
+      .then((hash) => {
+        verifyTx(web3, hash).then((res) => {
+          if (res) {
+            console.log("Buy SC success!");
+            setTxStatus("success");
+          } else {
+            console.log("Buy SC reverted!");
+            setTxStatus("rejected");
+          }
+        });
       })
       .catch((err) => {
-        console.error("Error:", err);
+        console.error("Buy SC error:", err);
         setTxStatus("rejected");
         setTxError(err.message);
       });
@@ -99,12 +108,19 @@ export default function Stablecoin() {
     console.log("Attempting to sell SC in amount", amount);
     setTxStatus("pending");
     promiseTx(accounts, sellScTx(djedContract, accounts[0], amount))
-      .then((res) => {
-        console.log("Sell SC tx success", res);
-        setTxStatus("success");
+      .then((hash) => {
+        verifyTx(web3, hash).then((res) => {
+          if (res) {
+            console.log("Sell SC success!");
+            setTxStatus("success");
+          } else {
+            console.log("Sell SC reverted!");
+            setTxStatus("rejected");
+          }
+        });
       })
       .catch((err) => {
-        console.error("Error:", err);
+        console.error("Sell SC error:", err);
         setTxStatus("rejected");
         setTxError(err.message);
       });
