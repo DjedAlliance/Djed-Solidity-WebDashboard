@@ -19,6 +19,19 @@ export function convertInt(promise) {
   return promise.then((value) => parseInt(value));
 }
 
+export function reverseString(s) {
+  return s.split("").reverse().join("");
+}
+
+function intersperseCommas(s) {
+  let newString = s.replace(/(.{3})/g, "$1,");
+  if (s.length % 3 === 0) {
+    return newString.slice(0, newString.length - 1);
+  } else {
+    return newString;
+  }
+}
+
 export function decimalScaling(unscaledString, decimals, show = 6) {
   if (decimals <= 0) {
     return unscaledString + "0".repeat(-decimals);
@@ -28,17 +41,18 @@ export function decimalScaling(unscaledString, decimals, show = 6) {
   if (unscaledString.length <= decimals) {
     prefix = "0";
     suffix = "0".repeat(decimals - unscaledString.length) + unscaledString;
-    //return "0." + "0".repeat(decimals - scaledString.length) + scaledString;
   } else {
     prefix = unscaledString.slice(0, -decimals);
     suffix = unscaledString.slice(-decimals);
-    //return scaledString.slice(0, -decimals) + "." + scaledString.slice(-decimals);
   }
   suffix = suffix.slice(0, show);
+  suffix = intersperseCommas(suffix);
+  prefix = reverseString(intersperseCommas(reverseString(prefix)));
   return prefix + "." + suffix;
 }
 
 export function decimalUnscaling(scaledString, decimals) {
+  scaledString = scaledString.replaceAll(",", "");
   let pos = scaledString.indexOf(".");
   if (pos < 0) {
     return scaledString + "0".repeat(decimals);

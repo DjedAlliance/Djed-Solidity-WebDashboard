@@ -1,6 +1,7 @@
 import React from "react";
 import CoinIndicator from "../../atoms/CoinIndictor/CoinIndicator";
 import "./_CoinCard.scss";
+import { decimalScaling } from "../../../utils/helpers";
 
 const CoinCard = ({
   coinIcon,
@@ -36,7 +37,9 @@ const CoinCard = ({
       <div className="InfoItem">
         <span>Current Ratio</span>
         <p>
-          1 milkADA = {(1 / parseFloat(priceAmount)).toFixed(6)} {tokenName}
+          1 milkADA ={" "}
+          {decimalScaling((1e6 / parseFloat(priceAmount)).toFixed(0).toString(10), 6)}{" "}
+          {tokenName}
         </p>
       </div>
     </div>
