@@ -10,7 +10,7 @@ import ReservesCard from "../components/molecules/ReservesCard/ReservesCard";
 import { useAppProvider } from "../context/AppProvider";
 
 export default function Protocol() {
-  const { coinsDetails } = useAppProvider();
+  const { coinsDetails, systemParams } = useAppProvider();
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="ProtocolSection">
@@ -39,14 +39,14 @@ export default function Protocol() {
           <div className="CoinsContainer">
             <CoinCard
               coinIcon="/coin-icon-one.png"
-              coinName="Stablecoin Name"
+              coinName="StableDjed"
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
               tokenName="StableDjed"
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
-              coinName="Reservecoin Name"
+              coinName="ReserveDjed"
               priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
               sellPriceAmount={coinsDetails?.scaledSellPriceRc}
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
@@ -58,6 +58,8 @@ export default function Protocol() {
               coinIcon="/coin-icon-three.png"
               coinName="Reserves"
               reserveRatio={coinsDetails?.percentReserveRatio}
+              reserveRatioMin={systemParams?.reserveRatioMin}
+              reserveRatioMax={systemParams?.reserveRatioMax}
             />
           </div>
         </div>

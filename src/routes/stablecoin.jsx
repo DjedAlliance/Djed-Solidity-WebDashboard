@@ -30,7 +30,8 @@ export default function Stablecoin() {
     djedContract,
     decimals,
     accountDetails,
-    accounts
+    accounts,
+    systemParams
   } = useAppProvider();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
@@ -148,13 +149,13 @@ export default function Stablecoin() {
     ? buySc.bind(null, tradeData.totalUnscaled)
     : sellSc.bind(null, tradeData.amountUnscaled);
 
+  const transactionValidated = isBuyActive ? canBuy : canSell;
+
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>
-            Stablecoin <strong>Name</strong>
-          </h1>
+          <h1>StableDjed {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
               Lorem Ipsum is simply dummy text of the printing and typesetting industry.
@@ -169,7 +170,7 @@ export default function Stablecoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-one.png"
-            coinName="Stablecoin Name"
+            coinName="StableDjed"
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
             tokenName="StableDjed"
@@ -177,11 +178,11 @@ export default function Stablecoin() {
         </div>
         <div className="Right">
           <h2 className="SubtTitle">
-            <strong>Buy & Sell</strong> Stablecoin
+            <strong>Buy & Sell</strong> StableDjed
           </h2>
           <div className="PurchaseContainer">
             <OperationSelector
-              coinName="Stablecoin"
+              coinName="StableDjed"
               selectionCallback={() => {
                 setBuyOrSell();
                 setValue(null);
@@ -192,18 +193,26 @@ export default function Stablecoin() {
               onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}
               inputValue={value}
-              canBuy={canBuy}
-              canSell={canSell}
+              isWalletConnected={isWalletConnected}
+              scaledBalance={accountDetails?.scaledBalanceSc}
+              fee={systemParams?.fee}
             />
           </div>
           <div className="ConnectWallet">
             <br />
             {isWalletConnected ? (
-              <BuySellButton
-                onClick={tradeFxn}
-                buyOrSell={buyOrSell}
-                currencyName="StableDjed"
-              />
+              <>
+                <p className="Disclaimer">
+                  {transactionValidated
+                    ? "This transaction is expected to succeed."
+                    : "This transaction is expected to fail!"}
+                </p>
+                <BuySellButton
+                  onClick={tradeFxn}
+                  buyOrSell={buyOrSell}
+                  currencyName="StableDjed"
+                />
+              </>
             ) : (
               <>
                 <p className="Disclaimer">

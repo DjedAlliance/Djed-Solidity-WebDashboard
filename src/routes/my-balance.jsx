@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRightOutlined } from "@ant-design/icons";
+//import { ArrowRightOutlined } from "@ant-design/icons";
 import TotalBalance from "../components/molecules/TotalBalance/TotalBalance";
 
 import "./_MyBalance.scss";
@@ -17,17 +17,17 @@ export default function MyBalance() {
           <div className="Content">
             <TotalBalance
               coinIcon="/coin-icon-one.png"
-              coinName="Stablecoin"
+              coinName="StableDjed"
               balanceAmount={accountDetails?.scaledBalanceSc}
             />
             <TotalBalance
               coinIcon="/coin-icon-two.png"
-              coinName="ReserveCoin"
+              coinName="ReserveDjed"
               balanceAmount={accountDetails?.scaledBalanceRc}
             />
             <TotalBalance
               coinIcon="/coin-icon-three.png"
-              coinName="Basecoin"
+              coinName="milkADA"
               balanceAmount={accountDetails?.scaledBalanceBc}
             />
           </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Tag, Space } from "antd";
+import { Table, Tag } from "antd";
 
 import "./_TransactionTable.scss";
 
@@ -51,11 +51,11 @@ const columns = [
     title: "",
     key: "action",
     width: 40,
-    render: () => (
-      <a href="">
+    render: () => ({
+      /*<a href="">
         <img src="/external-link.svg" alt="" />
-      </a>
-    )
+    </a>*/
+    })
   }
 ];
 
@@ -77,7 +77,7 @@ const data = [
   {
     key: "3",
     transactionId: "7680adec8eabcabac676be9e83854ade0bd22mnb",
-    transaction: "Basecoin",
+    transaction: "milkADA",
     total: "+0.005456",
     date: "12/04/21 09:31:06 EST"
   }

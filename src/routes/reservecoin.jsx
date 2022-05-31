@@ -135,6 +135,7 @@ export default function ReserveCoin() {
           setValue(maxAmountScaled);
           updateBuyTradeData(maxAmountScaled);
         } else {
+          console.log("No limit on buying RCs right now!");
           // no limit -- do something special?
         }
       })
@@ -142,8 +143,6 @@ export default function ReserveCoin() {
   };
 
   const maxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
-    console.log("Called maxSellRc with rcDecimals", rcDecimals);
-    console.log("Called maxSellRc with balance", unscaledBalanceRc);
     getMaxSellRc(djed, rcDecimals, unscaledBalanceRc)
       .then((maxAmountScaled) => {
         setValue(maxAmountScaled);
@@ -156,13 +155,13 @@ export default function ReserveCoin() {
     ? buyRc.bind(null, tradeData.totalUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
 
+  const transactionValidated = isBuyActive ? canBuy : canSell;
+
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>
-            Reservecoin <strong>Name</strong>
-          </h1>
+          <h1>ReserveDjed {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
               Lorem Ipsum is simply dummy text of the printing and typesetting industry.
@@ -177,7 +176,7 @@ export default function ReserveCoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-two.png"
-            coinName="Reservecoin Name"
+            coinName="ReserveDjed"
             priceAmount={coinsDetails?.scaledBuyPriceRc}
             sellPriceAmount={coinsDetails?.scaledSellPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
@@ -186,11 +185,11 @@ export default function ReserveCoin() {
         </div>
         <div className="Right">
           <h2 className="SubtTitle">
-            <strong>Buy & Sell</strong> Reservecoin
+            <strong>Buy & Sell</strong> ReserveDjed
           </h2>
           <div className="PurchaseContainer">
             <OperationSelector
-              coinName="Reservecoin"
+              coinName="ReserveDjed"
               selectionCallback={() => {
                 setBuyOrSell();
                 setValue(null);
@@ -212,18 +211,26 @@ export default function ReserveCoin() {
               )}
               tradeData={tradeData}
               inputValue={value}
-              canBuy={canBuy}
-              canSell={canSell}
+              isWalletConnected={isWalletConnected}
+              scaledBalance={accountDetails?.scaledBalanceRc}
+              fee={systemParams?.fee}
             />
           </div>
           <div className="ConnectWallet">
             <br />
             {isWalletConnected ? (
-              <BuySellButton
-                onClick={tradeFxn}
-                buyOrSell={buyOrSell}
-                currencyName="ReserveDjed"
-              />
+              <>
+                <p className="Disclaimer">
+                  {transactionValidated
+                    ? "This transaction is expected to succeed."
+                    : "This transaction is expected to fail!"}
+                </p>
+                <BuySellButton
+                  onClick={tradeFxn}
+                  buyOrSell={buyOrSell}
+                  currencyName="StableDjed"
+                />
+              </>
             ) : (
               <>
                 <p className="Disclaimer">

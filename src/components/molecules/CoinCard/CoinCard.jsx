@@ -36,7 +36,7 @@ const CoinCard = ({
       <div className="InfoItem">
         <span>Current Ratio</span>
         <p>
-          1 milkADA = {1 / parseFloat(priceAmount)} {tokenName}
+          1 milkADA = {(1 / parseFloat(priceAmount)).toFixed(6)} {tokenName}
         </p>
       </div>
     </div>

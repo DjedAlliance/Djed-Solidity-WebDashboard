@@ -3,6 +3,8 @@ import { FullPageSpinner } from "../components/atoms/LoadingIcon/LoadingIcon";
 import {
   getWeb3,
   getDjedContract,
+  ORACLE_ADDRESS,
+  //getOracleAddress,
   getOracleContract,
   getCoinContracts,
   getDecimals,
@@ -30,8 +32,8 @@ export const AppProvider = ({ children }) => {
     const init = async () => {
       try {
         const web3 = await getWeb3();
-        const djed = await getDjedContract(web3);
-        const oracle = await getOracleContract(web3);
+        const djed = getDjedContract(web3);
+        const oracle = getOracleContract(web3, ORACLE_ADDRESS);
         const coinContracts = await getCoinContracts(djed, web3);
         const decimals = await getDecimals(
           coinContracts.stableCoin,

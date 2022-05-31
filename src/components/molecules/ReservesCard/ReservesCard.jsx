@@ -3,7 +3,15 @@ import CoinIndicator from "../../atoms/CoinIndictor/CoinIndicator";
 import NumberItem from "../../atoms/NumberItem/NumberItem";
 import "./_ReservesCard.scss";
 
-const ReservesCard = ({ coinIcon, coinName, priceAmount, equivalence, reserveRatio }) => (
+const ReservesCard = ({
+  coinIcon,
+  coinName,
+  priceAmount,
+  equivalence,
+  reserveRatio,
+  reserveRatioMin,
+  reserveRatioMax
+}) => (
   <div className="ReservesCard">
     <CoinIndicator coinIcon={coinIcon} coinName={coinName} />
     <hr />
@@ -14,7 +22,9 @@ const ReservesCard = ({ coinIcon, coinName, priceAmount, equivalence, reserveRat
         <p>{equivalence}</p>
       </div>
       <div className="ReservesRatio">
-        <NumberItem amount={reserveRatio} label="Reserve Ratio" />
+        <NumberItem amount={reserveRatioMin} label="Minimum Reserve Ratio" />
+        <NumberItem amount={reserveRatioMax} label="Maximum Reserve Ratio" />
+        <NumberItem amount={reserveRatio} label="Current Reserve Ratio" />
       </div>
     </div>
   </div>

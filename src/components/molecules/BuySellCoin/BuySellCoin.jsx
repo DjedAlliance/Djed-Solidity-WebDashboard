@@ -5,15 +5,16 @@ import "./_BuySellCoin.scss";
 
 const BuySellCoin = ({
   coinName,
-  priceAmount,
-  feeAmount,
+  //priceAmount,
+  fee,
   totalAmount,
   payOrGet,
   buyOrSell,
   onChangeInput,
   onMaxClick,
   inputValue,
-  validated
+  isWalletConnected,
+  scaledBalance
 }) => (
   <div className="BuySellCoin">
     <h3>
@@ -36,18 +37,22 @@ const BuySellCoin = ({
       />
     </div>
     <p className="FeeInfo">
-      <InfoCircleOutlined /> A fee is charged for currency conversion
+      <InfoCircleOutlined />
+      {isWalletConnected
+        ? `Your current balance is ${scaledBalance} ${coinName}`
+        : "Please connect your wallet to see your balance."}
     </p>
     <hr />
     <div className="AdditionalInfo">
-      <p>
+      {/*<p>
         {coinName} ≈ {priceAmount} milkADA
-      </p>
-      <p>Fee ≈ {feeAmount} milkADA</p>
+      </p>*/}
+      <p>Fee = {fee}</p>
       <p>
-        You will {payOrGet} ≈ {totalAmount} milkADA
+        {totalAmount
+          ? `You will ${payOrGet}  ~${totalAmount} milkADA`
+          : "Enter an amount above to compute transaction price."}
       </p>
-      <p>Validated? {validated ? "YES" : "NO"}</p>
     </div>
     <hr />
   </div>

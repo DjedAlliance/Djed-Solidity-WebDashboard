@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button } from "antd";
+import { Modal } from "antd";
 
 import "./_ModalTransaction.scss";
 import LabelMessage from "../../atoms/LabelMessage/LabelMessage";

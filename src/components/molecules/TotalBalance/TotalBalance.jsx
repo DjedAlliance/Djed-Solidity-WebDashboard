@@ -1,14 +1,14 @@
 import React from "react";
-import { ArrowRightOutlined } from "@ant-design/icons";
+//import { ArrowRightOutlined } from "@ant-design/icons";
 import "./_TotalBalance.scss";
 
 const TotalBalance = ({ coinIcon, coinName, balanceAmount }) => (
   <div className="TotalBalance">
     <div className="Title">
       <span>total balance</span>
-      <a href="">
+      {/*<a href="">
         <img src="/external-link.svg" alt="" />
-      </a>
+</a>*/}
     </div>
     <div className="ContentInfo">
       <img className="CoinIcon" src={coinIcon} alt="" />

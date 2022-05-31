@@ -12,13 +12,14 @@ import {
   decimalUnscaling,
   scaledPromise,
   scaledUnscaledPromise,
+  percentScaledPromise,
   web3Promise
 } from "./helpers";
 
 const BLOCKCHAIN_URI = "https://rpc-devnet-cardano-evm.c1.milkomeda.com/";
 export const CHAIN_ID = 200101;
 const DJED_ADDRESS = "0x52527fF4a1d99a35B75d821e90F23512D9327fdf"; // djedAddress
-const ORACLE_ADDRESS = "0x5A8E0B0B666A60Cf4f00E56A7C6C73FcE77eAaD6"; // oracleAddress
+export const ORACLE_ADDRESS = "0x5A8E0B0B666A60Cf4f00E56A7C6C73FcE77eAaD6"; // oracleAddress
 const BC_DECIMALS = 18;
 const SCALING_DECIMALS = 24; // scalingFixed
 const REFRESH_PERIOD = 4000;
@@ -41,8 +42,12 @@ export const getDjedContract = (web3) => {
   return djed;
 };
 
-export const getOracleContract = (web3) => {
-  const oracle = new web3.eth.Contract(oracleArtifact.abi, ORACLE_ADDRESS);
+export const getOracleAddress = async (djedContract) => {
+  return await web3Promise(djedContract, "oracle");
+};
+
+export const getOracleContract = (web3, oracleAddress) => {
+  const oracle = new web3.eth.Contract(oracleArtifact.abi, oracleAddress);
   return oracle;
 };
 
@@ -87,9 +92,9 @@ export const getCoinDetails = async (
     scaledPromise(web3Promise(djed, "getStableCoinWholeTargetPriceBC"), BC_DECIMALS), //oracle, "exchangeRate"), BC_DECIMALS),
     scaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
     scaledPromise(web3Promise(djed, "reserveBC"), BC_DECIMALS),
-    scaledPromise(web3Promise(djed, "getReserveRatio"), SCALING_DECIMALS).then(
+    percentScaledPromise(web3Promise(djed, "getReserveRatio"), SCALING_DECIMALS) /*.then(
       (value) => (parseFloat(value) * 100).toFixed(4) + "%"
-    ),
+    )*/,
     scaledPromise(web3Promise(djed, "getReserveCoinWholeBuyPriceBC"), BC_DECIMALS),
     scaledPromise(web3Promise(djed, "getReserveCoinWholeSellPriceBC"), BC_DECIMALS)
   ]);
@@ -108,9 +113,9 @@ export const getCoinDetails = async (
 
 export const getSystemParams = async (djed) => {
   const [reserveRatioMin, reserveRatioMax, fee, thresholdNumberSc] = await Promise.all([
-    scaledPromise(web3Promise(djed, "reserveRatioMin"), SCALING_DECIMALS),
-    scaledPromise(web3Promise(djed, "reserveRatioMax"), SCALING_DECIMALS),
-    scaledPromise(web3Promise(djed, "fee"), SCALING_DECIMALS),
+    percentScaledPromise(web3Promise(djed, "reserveRatioMin"), SCALING_DECIMALS),
+    percentScaledPromise(web3Promise(djed, "reserveRatioMax"), SCALING_DECIMALS),
+    percentScaledPromise(web3Promise(djed, "fee"), SCALING_DECIMALS),
     web3Promise(djed, "thresholdNumberSC")
   ]);
 
