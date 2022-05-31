@@ -188,7 +188,7 @@ export default function Stablecoin() {
               }}
               onChangeBuyInput={onChangeBuyInput}
               onChangeSellInput={onChangeSellInput}
-              onMaxBuy={maxBuySc.bind(null, djedContract, coinsDetails?.scDecimals)}
+              onMaxBuy={maxBuySc.bind(null, djedContract, decimals?.scDecimals)}
               onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}
               inputValue={value}
@@ -199,7 +199,11 @@ export default function Stablecoin() {
           <div className="ConnectWallet">
             <br />
             {isWalletConnected ? (
-              <BuySellButton onClick={tradeFxn} buyOrSell={buyOrSell} />
+              <BuySellButton
+                onClick={tradeFxn}
+                buyOrSell={buyOrSell}
+                currencyName="StableDjed"
+              />
             ) : (
               <>
                 <p className="Disclaimer">

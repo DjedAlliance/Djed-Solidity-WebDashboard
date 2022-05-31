@@ -162,7 +162,6 @@ export const promiseTx = (accounts, tx) => {
 export const verifyTx = (web3, hash) => {
   return new Promise((res) => {
     setTimeout(() => {
-      console.log("Doing stuff after", REFRESH_PERIOD, "ms have passed.");
       web3.eth.getTransactionReceipt(hash).then((receipt) => res(receipt.status));
     }, REFRESH_PERIOD);
   });

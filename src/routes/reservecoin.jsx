@@ -131,13 +131,19 @@ export default function ReserveCoin() {
   const maxBuyRc = (djed, rcDecimals, unscaledNumberSc, thresholdNumberSc) => {
     getMaxBuyRc(djed, rcDecimals, unscaledNumberSc, thresholdNumberSc)
       .then((maxAmountScaled) => {
-        setValue(maxAmountScaled);
-        updateBuyTradeData(maxAmountScaled);
+        if (maxAmountScaled.length > 0) {
+          setValue(maxAmountScaled);
+          updateBuyTradeData(maxAmountScaled);
+        } else {
+          // no limit -- do something special?
+        }
       })
       .catch((err) => console.error("MAX Error:", err));
   };
 
   const maxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
+    console.log("Called maxSellRc with rcDecimals", rcDecimals);
+    console.log("Called maxSellRc with balance", unscaledBalanceRc);
     getMaxSellRc(djed, rcDecimals, unscaledBalanceRc)
       .then((maxAmountScaled) => {
         setValue(maxAmountScaled);
@@ -194,14 +200,14 @@ export default function ReserveCoin() {
               onMaxBuy={maxBuyRc.bind(
                 null,
                 djedContract,
-                coinsDetails?.rcDecimals,
+                decimals?.rcDecimals,
                 coinsDetails?.unscaledNumberSc,
                 systemParams?.thresholdNumberSc
               )}
               onMaxSell={maxSellRc.bind(
                 null,
                 djedContract,
-                coinsDetails?.rcDecimals,
+                decimals?.rcDecimals,
                 accountDetails?.unscaledBalanceRc
               )}
               tradeData={tradeData}
@@ -213,7 +219,11 @@ export default function ReserveCoin() {
           <div className="ConnectWallet">
             <br />
             {isWalletConnected ? (
-              <BuySellButton onClick={tradeFxn} buyOrSell={buyOrSell} />
+              <BuySellButton
+                onClick={tradeFxn}
+                buyOrSell={buyOrSell}
+                currencyName="ReserveDjed"
+              />
             ) : (
               <>
                 <p className="Disclaimer">

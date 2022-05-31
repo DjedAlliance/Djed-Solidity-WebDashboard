@@ -13,7 +13,7 @@ const CoinCard = ({
   <div className="CoinCard">
     <CoinIndicator coinIcon={coinIcon} coinName={coinName} />
     <hr />
-    {sellPriceAmount ? (
+    {sellPriceAmount && priceAmount !== sellPriceAmount ? (
       <div className="PriceInfo">
         <span>Current Buy Price</span>
         <h3>milkADA {priceAmount}</h3>

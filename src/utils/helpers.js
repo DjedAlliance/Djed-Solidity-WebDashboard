@@ -20,11 +20,14 @@ export function convertInt(promise) {
 }
 
 export function decimalScaling(scaledString, decimals) {
+  var res;
   if (scaledString.length <= decimals) {
-    return "0." + "0".repeat(decimals - scaledString.length) + scaledString;
+    res = "0." + "0".repeat(decimals - scaledString.length) + scaledString;
   } else {
-    return scaledString.slice(0, -decimals) + "." + scaledString.slice(-decimals);
+    res = scaledString.slice(0, -decimals) + "." + scaledString.slice(-decimals);
   }
+  console.log(`Scaled ${scaledString} with dec ${decimals} to ${res}.`);
+  return res;
 }
 
 export function decimalUnscaling(scaledString, decimals) {
@@ -45,5 +48,5 @@ export function scaledPromise(promise, scaling) {
 }
 
 export function scaledUnscaledPromise(promise, scaling) {
-  return promise.then((value) => [decimalScaling(value, scaling), value]);
+  return promise.then((value) => [decimalScaling(value.toString(10), scaling), value]);
 }

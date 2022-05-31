@@ -14,7 +14,6 @@ const ReservesCard = ({ coinIcon, coinName, priceAmount, equivalence, reserveRat
         <p>{equivalence}</p>
       </div>
       <div className="ReservesRatio">
-        <NumberItem amount="2.8%" label="Reserve %" />
         <NumberItem amount={reserveRatio} label="Reserve Ratio" />
       </div>
     </div>
