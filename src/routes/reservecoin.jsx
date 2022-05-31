@@ -215,7 +215,8 @@ export default function ReserveCoin() {
               tradeData={tradeData}
               inputValue={value}
               isWalletConnected={isWalletConnected}
-              scaledBalance={accountDetails?.scaledBalanceRc}
+              scaledCoinBalance={accountDetails?.scaledBalanceRc}
+              scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}
             />
           </div>
@@ -224,9 +225,12 @@ export default function ReserveCoin() {
             {isWalletConnected ? (
               <>
                 <p className="Disclaimer">
-                  {transactionValidated
-                    ? "This transaction is expected to succeed."
-                    : "This transaction is expected to fail!"}
+                  This transaction is expected to{" "}
+                  {transactionValidated ? (
+                    <strong>succeed.</strong>
+                  ) : (
+                    <strong>fail!</strong>
+                  )}
                 </p>
                 <BuySellButton
                   onClick={tradeFxn}

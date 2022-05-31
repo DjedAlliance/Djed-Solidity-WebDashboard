@@ -14,7 +14,8 @@ const BuySellCoin = ({
   onMaxClick,
   inputValue,
   isWalletConnected,
-  scaledBalance
+  scaledCoinBalance,
+  scaledBaseBalance
 }) => (
   <div className="BuySellCoin">
     <h3>
@@ -27,10 +28,10 @@ const BuySellCoin = ({
         value={inputValue}
         suffix={
           <div>
+            {coinName}
             <button className="MaxButton" onClick={onMaxClick}>
               MAX
             </button>
-            {coinName}
           </div>
         }
         onChange={onChangeInput}
@@ -39,8 +40,14 @@ const BuySellCoin = ({
     <p className="FeeInfo">
       <InfoCircleOutlined />
       {isWalletConnected
-        ? `Your current balance is ${scaledBalance} ${coinName}`
-        : "Please connect your wallet to see your balance."}
+        ? `Your current balance is ${scaledCoinBalance} ${coinName}.`
+        : `Please connect your wallet to see your ${coinName} balance.`}
+    </p>
+    <p className="FeeInfo">
+      <InfoCircleOutlined />
+      {isWalletConnected
+        ? `Your current balance is ${scaledBaseBalance} milkADA.`
+        : `Please connect your wallet to see your milkADA balance.`}
     </p>
     <hr />
     <div className="AdditionalInfo">
@@ -50,7 +57,7 @@ const BuySellCoin = ({
       <p>Fee = {fee}</p>
       <p>
         {totalAmount
-          ? `You will ${payOrGet}  ~${totalAmount} milkADA`
+          ? `You will ${payOrGet}  ~ ${totalAmount} milkADA`
           : "Enter an amount above to compute transaction price."}
       </p>
     </div>

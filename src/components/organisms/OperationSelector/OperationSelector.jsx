@@ -17,7 +17,8 @@ const OperationSelector = ({
   tradeData,
   inputValue,
   isWalletConnected,
-  scaledBalance,
+  scaledCoinBalance,
+  scaledBaseBalance,
   fee
 }) => (
   <div className="OperationSelector">
@@ -37,7 +38,8 @@ const OperationSelector = ({
           onChangeInput={onChangeBuyInput}
           inputValue={inputValue}
           isWalletConnected={isWalletConnected}
-          scaledBalance={scaledBalance}
+          scaledCoinBalance={scaledCoinBalance}
+          scaledBaseBalance={scaledBaseBalance}
         />
       </TabPane>
       <TabPane
@@ -55,7 +57,8 @@ const OperationSelector = ({
           onChangeInput={onChangeSellInput}
           inputValue={inputValue}
           isWalletConnected={isWalletConnected}
-          scaledBalance={scaledBalance}
+          scaledCoinBalance={scaledCoinBalance}
+          scaledBaseBalance={scaledBaseBalance}
         />
       </TabPane>
     </Tabs>
