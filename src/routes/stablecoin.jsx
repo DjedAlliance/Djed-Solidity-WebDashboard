@@ -50,7 +50,6 @@ export default function Stablecoin() {
       setTradeData(data);
       if (isWalletConnected) {
         checkBuyableSc(djedContract, data.amountUnscaled).then((res) => {
-          console.log("Validation result received:", res);
           setCanBuy(res);
         });
       } else {
@@ -178,7 +177,10 @@ export default function Stablecoin() {
         </div>
         <div className="Right">
           <h2 className="SubtTitle">
-            <strong>Buy & Sell</strong> StableDjed
+            <strong>
+              Buy <>&amp;</> Sell
+            </strong>{" "}
+            StableDjed
           </h2>
           <div className="PurchaseContainer">
             <OperationSelector

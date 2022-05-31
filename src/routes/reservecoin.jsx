@@ -185,7 +185,10 @@ export default function ReserveCoin() {
         </div>
         <div className="Right">
           <h2 className="SubtTitle">
-            <strong>Buy & Sell</strong> ReserveDjed
+            <strong>
+              Buy <>&amp;</> Sell
+            </strong>{" "}
+            ReserveDjed
           </h2>
           <div className="PurchaseContainer">
             <OperationSelector
@@ -228,7 +231,7 @@ export default function ReserveCoin() {
                 <BuySellButton
                   onClick={tradeFxn}
                   buyOrSell={buyOrSell}
-                  currencyName="StableDjed"
+                  currencyName="ReserveDjed"
                 />
               </>
             ) : (
