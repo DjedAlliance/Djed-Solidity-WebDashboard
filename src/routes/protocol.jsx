@@ -8,9 +8,15 @@ import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import "./_protocol.scss";
 import ReservesCard from "../components/molecules/ReservesCard/ReservesCard";
 import { useAppProvider } from "../context/AppProvider";
+import { decimalScaling } from "../utils/helpers";
 
 export default function Protocol() {
   const { coinsDetails, systemParams } = useAppProvider();
+  const scPriceFloat = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
+  const reservesFloat = parseFloat(coinsDetails?.scaledReserveBc.replaceAll(",", ""));
+  const eqPrice = 1e6 * scPriceFloat * reservesFloat;
+  //console.log(eqPrice, "=", scPriceFloat, "*", reservesFloat);
+  const eqPriceScaled = decimalScaling(eqPrice.toFixed(0).toString(10), 6);
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="ProtocolSection">
@@ -54,7 +60,7 @@ export default function Protocol() {
             />
             <ReservesCard
               priceAmount={coinsDetails?.scaledReserveBc}
-              equivalence="≈ 4.51M StableDjed"
+              equivalence={eqPriceScaled}
               coinIcon="/coin-icon-three.png"
               coinName="Reserves"
               reserveRatio={coinsDetails?.percentReserveRatio}

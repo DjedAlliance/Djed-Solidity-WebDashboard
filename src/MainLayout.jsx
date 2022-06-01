@@ -25,10 +25,10 @@ export default function MainLayout() {
               <Link to="/protocol">Protocol</Link>
             </Menu.Item>
             <Menu.Item key="2">
-              <Link to="/stablecoin">StableDjed</Link>
+              <Link to="/stabledjed">StableDjed</Link>
             </Menu.Item>
             <Menu.Item key="3">
-              <Link to="/reservecoin">ReserveDjed</Link>
+              <Link to="/reservedjed">ReserveDjed</Link>
             </Menu.Item>
             {isWalletConnected ? (
               <Menu.Item key="4">

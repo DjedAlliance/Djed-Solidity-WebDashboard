@@ -19,7 +19,7 @@ const ReservesCard = ({
       <div className="BaseReserves">
         <span>Base Reserves</span>
         <h3>{priceAmount} milkADA</h3>
-        <p>{equivalence}</p>
+        <p>≈ {equivalence} StableDjed</p>
       </div>
       <div className="ReservesRatio">
         <NumberItem amount={reserveRatioMin} label="Minimum Reserve Ratio" />
