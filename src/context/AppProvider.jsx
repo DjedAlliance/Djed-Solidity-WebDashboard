@@ -13,6 +13,11 @@ import {
   getAccountDetails,
   CHAIN_ID
 } from "../utils/ethereum";
+import useInterval from "../utils/hooks/useInterval";
+import {
+  ACCOUNT_DETAILS_REQUEST_INTERVAL,
+  COIN_DETAILS_REQUEST_INTERVAL
+} from "../utils/constants";
 
 const AppContext = createContext();
 
@@ -101,6 +106,35 @@ export const AppProvider = ({ children }) => {
       console.error(e);
     }
   };
+
+  useInterval(
+    async () => {
+      const accountDetails = await getAccountDetails(
+        web3,
+        accounts[0],
+        coinContracts.stableCoin,
+        coinContracts.reserveCoin,
+        decimals.scDecimals,
+        decimals.rcDecimals
+      );
+      setAccountDetails(accountDetails);
+    },
+    isWalletConnected ? ACCOUNT_DETAILS_REQUEST_INTERVAL : null
+  );
+
+  useInterval(
+    async () => {
+      const coinsDetails = await getCoinDetails(
+        coinContracts.stableCoin,
+        coinContracts.reserveCoin,
+        djedContract,
+        decimals.scDecimals,
+        decimals.rcDecimals
+      );
+      setCoinsDetails(coinsDetails);
+    },
+    isWalletConnected ? COIN_DETAILS_REQUEST_INTERVAL : null
+  );
 
   if (isLoading) {
     return <FullPageSpinner />;
