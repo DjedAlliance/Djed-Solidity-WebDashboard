@@ -214,7 +214,6 @@ export default function ReserveCoin() {
               )}
               tradeData={tradeData}
               inputValue={value}
-              isWalletConnected={isWalletConnected}
               scaledCoinBalance={accountDetails?.scaledBalanceRc}
               scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}

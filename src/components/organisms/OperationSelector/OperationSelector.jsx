@@ -16,7 +16,6 @@ const OperationSelector = ({
   onMaxSell,
   tradeData,
   inputValue,
-  isWalletConnected,
   scaledCoinBalance,
   scaledBaseBalance,
   fee
@@ -37,7 +36,6 @@ const OperationSelector = ({
           onMaxClick={onMaxBuy}
           onChangeInput={onChangeBuyInput}
           inputValue={inputValue}
-          isWalletConnected={isWalletConnected}
           scaledCoinBalance={scaledCoinBalance}
           scaledBaseBalance={scaledBaseBalance}
         />
@@ -56,7 +54,6 @@ const OperationSelector = ({
           payOrGet="get"
           onChangeInput={onChangeSellInput}
           inputValue={inputValue}
-          isWalletConnected={isWalletConnected}
           scaledCoinBalance={scaledCoinBalance}
           scaledBaseBalance={scaledBaseBalance}
         />

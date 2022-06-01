@@ -195,7 +195,6 @@ export default function Stablecoin() {
               onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}
               inputValue={value}
-              isWalletConnected={isWalletConnected}
               scaledBalance={accountDetails?.scaledBalanceSc}
               fee={systemParams?.fee}
             />

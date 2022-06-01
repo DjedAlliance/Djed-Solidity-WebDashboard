@@ -32,6 +32,7 @@ export const AppProvider = ({ children }) => {
   const [coinsDetails, setCoinsDetails] = useState(null);
   const [systemParams, setSystemParams] = useState(null);
   const [accountDetails, setAccountDetails] = useState(null);
+  const [isWrongChain, setIsWrongChain] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -78,8 +79,10 @@ export const AppProvider = ({ children }) => {
 
   const handleChain = (chainId) => {
     if (chainId !== CHAIN_ID) {
+      setIsWrongChain(true);
       console.log("Wrong chain:", chainId, "rather than", CHAIN_ID);
     } else {
+      setIsWrongChain(false);
       console.log("Correct chain:", chainId);
     }
   };
@@ -152,6 +155,7 @@ export const AppProvider = ({ children }) => {
           accountDetails,
           isWalletInstalled,
           isWalletConnected,
+          isWrongChain,
           connectMetamask,
           redirectToMetamask,
           accounts,
