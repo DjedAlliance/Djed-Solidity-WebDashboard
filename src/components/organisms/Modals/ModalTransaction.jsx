@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Modal, Button } from "antd";
+import { Modal } from "antd";
 
 import "./_ModalTransaction.scss";
+import { Link } from "react-router-dom";
 
 const ModalTransaction = ({ transactionStatus, statusText, statusDescription }) => {
   const [visible, setVisible] = useState(true);
@@ -13,9 +14,9 @@ const ModalTransaction = ({ transactionStatus, statusText, statusDescription }) 
       onOk={() => setVisible(false)}
       onCancel={() => setVisible(false)}
       footer={[
-        <Button type="link">
+        <Link to="/my-balance">
           Check your balance <img src="/arrow-right.svg" alt="" />
-        </Button>
+        </Link>
       ]}
     >
       <img className="ModalImg" src={transactionStatus} alt="" />
