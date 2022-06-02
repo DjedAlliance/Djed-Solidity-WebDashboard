@@ -13,9 +13,8 @@
   .Content {
     display: flex;
     justify-content: space-between;
-
+    gap: 30px;
     .BaseReserves {
-      width: 55%;
       span {
         @include primary-text($label, $white, 400);
         margin: 0;
@@ -31,7 +30,7 @@
     }
     .ReservesRatio {
       display: flex;
-      width: 45%;
+      flex: 1;
       .NumberItem {
         margin-right: 2em;
       }

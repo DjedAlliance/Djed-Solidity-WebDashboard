@@ -39,6 +39,13 @@ body {
       width: max-content;
     }
   }
+
+  &.header-desktop {
+    display: flex;
+  }
+}
+.header-mobile {
+  display: none;
 }
 
 .ant-layout-footer {
@@ -194,6 +201,38 @@ body {
     padding: 0 2em;
   }
 
+  .header-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2em;
+    color: white;
+  }
+  .menu-mobile-dropdown {
+    width: 300px;
+    background: rgba(0, 0, 0, 0.9);
+    top: 70px !important;
+    overflow: hidden;
+    .ant-dropdown-menu {
+      padding-top: 20px;
+      background: $gradient-theme-1;
+      border: 1px solid #5f606e;
+      .ant-dropdown-menu-item {
+        color: $white;
+        padding: 20px 2em;
+        text-align: center;
+        &:hover {
+          background: #2f3037;
+        }
+      }
+      button {
+        margin: 2em auto;
+      }
+      .menu-mobile-icon {
+        font-size: 40px;
+      }
+    }
+  }
   .ant-layout-header {
     flex-wrap: wrap;
     height: auto;
@@ -207,6 +246,9 @@ body {
       width: min-content;
     }
 
+    &.header-desktop {
+      display: none;
+    }
     .WalletConfig {
       margin-top: 1.5em;
       justify-content: center;

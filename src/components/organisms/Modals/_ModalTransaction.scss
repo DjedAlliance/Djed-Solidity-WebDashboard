@@ -38,11 +38,9 @@
     border-top: 1px solid $grey-5;
     text-align: center;
 
-    button {
-      span {
-        color: $white;
-        margin-right: 0.25em;
-      }
+    a {
+      color: $white;
+      margin-right: 0.25em;
     }
   }
 }
