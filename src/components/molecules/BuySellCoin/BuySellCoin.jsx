@@ -18,6 +18,12 @@ const BuySellCoin = ({
   scaledBaseBalance
 }) => {
   const { isWalletConnected, isWrongChain } = useAppProvider();
+  const maxButton = (
+    <button className="MaxButton" onClick={onMaxClick}>
+      MAX
+    </button>
+  );
+
   return (
     <div className="BuySellCoin">
       <h3>
@@ -31,9 +37,7 @@ const BuySellCoin = ({
           suffix={
             <div>
               {coinName}
-              <button className="MaxButton" onClick={onMaxClick}>
-                MAX
-              </button>
+              {isWalletConnected ? maxButton : null}
             </div>
           }
           onChange={onChangeInput}
@@ -48,8 +52,8 @@ const BuySellCoin = ({
       <p className="FeeInfo">
         <InfoCircleOutlined />
         {isWalletConnected
-          ? `Your current balance is ${scaledBaseBalance} milkADA.`
-          : `Please connect your wallet to see your milkADA balance.`}
+          ? `Your current balance is ${scaledBaseBalance} milktADA.`
+          : `Please connect your wallet to see your milktADA balance.`}
       </p>
       {isWrongChain ? (
         <p className="Alert">
@@ -60,12 +64,12 @@ const BuySellCoin = ({
       <hr />
       <div className="AdditionalInfo">
         {/*<p>
-        {coinName} ≈ {priceAmount} milkADA
+        {coinName} ≈ {priceAmount} milktADA
       </p>*/}
         <p>Fee = {fee}</p>
         <p>
           {totalAmount
-            ? `You will ${payOrGet}  ~ ${totalAmount} milkADA`
+            ? `You will ${payOrGet}  ~ ${totalAmount} milktADA`
             : "Enter an amount above to compute transaction price."}
         </p>
       </div>

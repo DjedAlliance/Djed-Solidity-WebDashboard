@@ -138,11 +138,11 @@ export const getAccountDetails = async (
   const [
     [scaledBalanceSc, unscaledBalanceSc],
     [scaledBalanceRc, unscaledBalanceRc],
-    scaledBalanceBc
+    [scaledBalanceBc, unscaledBalanceBc]
   ] = await Promise.all([
     scaledUnscaledPromise(web3Promise(stableCoin, "balanceOf", account), scDecimals),
     scaledUnscaledPromise(web3Promise(reserveCoin, "balanceOf", account), rcDecimals),
-    scaledPromise(web3.eth.getBalance(account), BC_DECIMALS)
+    scaledUnscaledPromise(web3.eth.getBalance(account), BC_DECIMALS)
   ]);
 
   return {
@@ -150,7 +150,29 @@ export const getAccountDetails = async (
     unscaledBalanceSc,
     scaledBalanceRc,
     unscaledBalanceRc,
-    scaledBalanceBc
+    scaledBalanceBc,
+    unscaledBalanceBc
+  };
+};
+
+export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDecimals) => {
+  const [[scaledBudgetSc, unscaledBudgetSc], [scaledBudgetRc, unscaledBudgetRc]] =
+    await Promise.all([
+      scaledUnscaledPromise(
+        web3Promise(djed, "getAmountForValueBuyStableCoins", unscaledBalanceBc),
+        scDecimals
+      ),
+      scaledUnscaledPromise(
+        web3Promise(djed, "getAmountForValueBuyReserveCoins", unscaledBalanceBc),
+        rcDecimals
+      )
+    ]);
+
+  return {
+    scaledBudgetSc,
+    unscaledBudgetSc,
+    scaledBudgetRc,
+    unscaledBudgetRc
   };
 };
 

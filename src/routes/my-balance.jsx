@@ -27,7 +27,7 @@ export default function MyBalance() {
             />
             <TotalBalance
               coinIcon="/coin-icon-three.png"
-              coinName="milkADA"
+              coinName="milktADA"
               balanceAmount={accountDetails?.scaledBalanceBc}
             />
           </div>

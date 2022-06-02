@@ -21,14 +21,14 @@ const CoinCard = ({
       {sellPriceAmount && priceAmount !== sellPriceAmount ? (
         <div className="PriceInfo">
           <span>Current Buy Price</span>
-          <h3>milkADA {priceAmount}</h3>
+          <h3>milktADA {priceAmount}</h3>
           <span>Current Sell Price</span>
-          <h3>milkADA {sellPriceAmount}</h3>
+          <h3>milktADA {sellPriceAmount}</h3>
         </div>
       ) : (
         <div className="PriceInfo">
           <span>Current Price</span>
-          <h3>milkADA {priceAmount}</h3>
+          <h3>milktADA {priceAmount}</h3>
         </div>
       )}
       <div className="AdditionalInfo">
@@ -41,7 +41,7 @@ const CoinCard = ({
         <div className="InfoItem">
           <span>Current Ratio</span>
           <p>
-            1 milkADA = {invPriceScaled} {tokenName}
+            1 milktADA = {invPriceScaled} {tokenName}
           </p>
         </div>
       </div>

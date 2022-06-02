@@ -11,6 +11,7 @@ import {
   getCoinDetails,
   getSystemParams,
   getAccountDetails,
+  getCoinBudgets,
   CHAIN_ID
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
@@ -32,6 +33,7 @@ export const AppProvider = ({ children }) => {
   const [coinsDetails, setCoinsDetails] = useState(null);
   const [systemParams, setSystemParams] = useState(null);
   const [accountDetails, setAccountDetails] = useState(null);
+  const [coinBudgets, setCoinBudgets] = useState(null);
   const [isWrongChain, setIsWrongChain] = useState(false);
 
   useEffect(() => {
@@ -107,6 +109,13 @@ export const AppProvider = ({ children }) => {
         decimals.rcDecimals
       );
       setAccountDetails(accountDetails);
+      const coinBudgets = await getCoinBudgets(
+        djedContract,
+        accountDetails.unscaledBalanceBc,
+        decimals.scDecimals,
+        decimals.rcDecimals
+      );
+      setCoinBudgets(coinBudgets);
     } catch (e) {
       console.error(e);
     }
@@ -123,6 +132,13 @@ export const AppProvider = ({ children }) => {
         decimals.rcDecimals
       );
       setAccountDetails(accountDetails);
+      const coinBudgets = await getCoinBudgets(
+        djedContract,
+        accountDetails.unscaledBalanceBc,
+        decimals.scDecimals,
+        decimals.rcDecimals
+      );
+      setCoinBudgets(coinBudgets);
     },
     isWalletConnected ? ACCOUNT_DETAILS_REQUEST_INTERVAL : null
   );
@@ -155,6 +171,7 @@ export const AppProvider = ({ children }) => {
           coinsDetails,
           systemParams,
           accountDetails,
+          coinBudgets,
           isWalletInstalled,
           isWalletConnected,
           isWrongChain,
