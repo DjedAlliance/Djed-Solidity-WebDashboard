@@ -50,7 +50,11 @@ export default function Stablecoin() {
     tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled).then((data) => {
       setTradeData(data);
       if (isWalletConnected) {
-        checkBuyableSc(djedContract, data.amountUnscaled).then((res) => {
+        checkBuyableSc(
+          djedContract,
+          data.amountUnscaled,
+          coinBudgets?.unscaledBudgetSc
+        ).then((res) => {
           setCanBuy(res);
         });
       } else {
@@ -63,7 +67,7 @@ export default function Stablecoin() {
     tradeDataPriceSellSc(djedContract, decimals.scDecimals, amountScaled).then((data) => {
       setTradeData(data);
       if (isWalletConnected) {
-        checkSellableSc(data.amountUnscaled, accountDetails.unscaledBalanceSc).then(
+        checkSellableSc(data.amountUnscaled, accountDetails?.unscaledBalanceSc).then(
           (res) => setCanSell(res)
         );
       } else {

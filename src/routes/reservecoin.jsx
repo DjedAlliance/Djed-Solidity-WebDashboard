@@ -51,7 +51,11 @@ export default function ReserveCoin() {
     tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, amountScaled).then((data) => {
       setTradeData(data);
       if (isWalletConnected) {
-        checkBuyableRc(djedContract, data.amountUnscaled).then((res) => setCanBuy(res));
+        checkBuyableRc(
+          djedContract,
+          data.amountUnscaled,
+          coinBudgets?.unscaledBudgetRc
+        ).then((res) => setCanBuy(res));
       } else {
         setCanBuy(false);
       }
@@ -65,7 +69,7 @@ export default function ReserveCoin() {
         checkSellableRc(
           djedContract,
           data.amountUnscaled,
-          accountDetails.unscaledBalanceRc
+          accountDetails?.unscaledBalanceRc
         ).then((res) => setCanSell(res));
       } else {
         setCanSell(false);

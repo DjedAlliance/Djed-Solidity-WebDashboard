@@ -221,12 +221,16 @@ export const sellRcTx = (djed, account, amount) => {
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
-export const checkBuyableRc = (djed, unscaledAmountRc) =>
-  web3Promise(djed, "checkBuyableNReserveCoins", unscaledAmountRc);
+export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
+  if (new BN(unscaledAmountRc).gt(new BN(unscaledBudgetRc))) {
+    return new Promise((r) => r(false));
+  }
+  return web3Promise(djed, "checkBuyableNReserveCoins", unscaledAmountRc);
+};
 
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
   if (new BN(unscaledAmountRc).gt(new BN(unscaledBalanceRc))) {
-    return new Promise((r) => false);
+    return new Promise((r) => r(false));
   }
   return web3Promise(djed, "checkSellableNReserveCoins", unscaledAmountRc);
 };
@@ -275,8 +279,12 @@ export const sellScTx = (djed, account, amount) => {
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
-export const checkBuyableSc = (djed, unscaledAmountSc) =>
-  web3Promise(djed, "checkBuyableNStableCoins", unscaledAmountSc);
+export const checkBuyableSc = (djed, unscaledAmountSc, unscaledBudgetSc) => {
+  if (new BN(unscaledAmountSc).gt(new BN(unscaledBudgetSc))) {
+    return new Promise((r) => r(false));
+  }
+  return web3Promise(djed, "checkBuyableNStableCoins", unscaledAmountSc);
+};
 
 export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) =>
   new Promise((r) => r(!new BN(unscaledAmountSc).gt(new BN(unscaledBalanceSc))));
@@ -284,7 +292,7 @@ export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) =>
 export const getMaxBuySc = (djed, scDecimals, unscaledBudgetSc) => {
   return scaledPromise(
     web3Promise(djed, "getMaxBuyableStableCoins").then((protocolMax) =>
-      BN.min(new BN(protocolMax), BN(unscaledBudgetSc))
+      BN.min(new BN(protocolMax), new BN(unscaledBudgetSc))
     ),
     scDecimals
   );
