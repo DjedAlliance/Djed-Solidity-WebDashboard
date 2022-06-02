@@ -12,9 +12,8 @@ export default function App() {
       <AppProvider>
         <Routes>
           <Route path="/" element={<MainLayout />}>
-            <Route path="/" element={<Protocol />} />
+            <Route path="" element={<Protocol />} />
             <Route path="stabledjed" element={<Stablecoin />} />
-            <Route path="protocol" element={<Protocol />} />
             <Route path="reservedjed" element={<ReserveCoin />} />
             <Route path="my-balance" element={<MyBalance />} />
             <Route

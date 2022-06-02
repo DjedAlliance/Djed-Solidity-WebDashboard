@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { Layout, Menu, Dropdown } from "antd";
 import MetamaskStatusButton from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
 
@@ -14,6 +14,8 @@ const { Header, Content } = Layout;
 
 export default function MainLayout() {
   const { isWalletConnected } = useAppProvider();
+  const location = useLocation();
+
   return (
     <div>
       <Layout className="layout">
@@ -21,18 +23,18 @@ export default function MainLayout() {
           <div className="logo">
             <Logo />
           </div>
-          <Menu mode="horizontal">
-            <Menu.Item key="1">
-              <Link to="/protocol">Protocol</Link>
+          <Menu mode="horizontal" selectedKeys={[location.pathname]}>
+            <Menu.Item key="/">
+              <Link to="/">Protocol</Link>
             </Menu.Item>
-            <Menu.Item key="2">
+            <Menu.Item key="/stabledjed">
               <Link to="/stabledjed">StableDjed</Link>
             </Menu.Item>
-            <Menu.Item key="3">
+            <Menu.Item key="/reservedjed">
               <Link to="/reservedjed">ReserveDjed</Link>
             </Menu.Item>
             {isWalletConnected ? (
-              <Menu.Item key="4">
+              <Menu.Item key="/my-balance">
                 <Link to="/my-balance">My Balance</Link>
               </Menu.Item>
             ) : null}
@@ -70,17 +72,17 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
         onVisibleChange={handleVisibleChange}
         overlay={
           <Menu mode="vertical" onClick={() => setMenuOpen(false)}>
-            <Menu.Item key="1">
-              <Link to="/protocol">Protocol</Link>
+            <Menu.Item key="/">
+              <Link to="/">Protocol</Link>
             </Menu.Item>
-            <Menu.Item key="2">
+            <Menu.Item key="/stabledjed">
               <Link to="/stabledjed">StableDjed</Link>
             </Menu.Item>
-            <Menu.Item key="3">
+            <Menu.Item key="/reservedjed">
               <Link to="/reservedjed">ReserveDjed</Link>
             </Menu.Item>
             {isWalletConnected ? (
-              <Menu.Item key="4">
+              <Menu.Item key="/my-balance">
                 <Link to="/my-balance">My Balance</Link>
               </Menu.Item>
             ) : null}
