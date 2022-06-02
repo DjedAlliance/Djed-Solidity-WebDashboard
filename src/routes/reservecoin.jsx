@@ -30,6 +30,7 @@ export default function ReserveCoin() {
     coinsDetails,
     decimals,
     accountDetails,
+    coinBudgets,
     accounts,
     systemParams
   } = useAppProvider();
@@ -128,16 +129,17 @@ export default function ReserveCoin() {
       });
   };
 
-  const maxBuyRc = (djed, rcDecimals, unscaledNumberSc, thresholdNumberSc) => {
-    getMaxBuyRc(djed, rcDecimals, unscaledNumberSc, thresholdNumberSc)
+  const maxBuyRc = (
+    djed,
+    rcDecimals,
+    unscaledNumberSc,
+    thresholdNumberSc,
+    unscaledBudgetRc
+  ) => {
+    getMaxBuyRc(djed, rcDecimals, unscaledNumberSc, thresholdNumberSc, unscaledBudgetRc)
       .then((maxAmountScaled) => {
-        if (maxAmountScaled.length > 0) {
-          setValue(maxAmountScaled);
-          updateBuyTradeData(maxAmountScaled);
-        } else {
-          console.log("No limit on buying RCs right now!");
-          // no limit -- do something special?
-        }
+        setValue(maxAmountScaled);
+        updateBuyTradeData(maxAmountScaled);
       })
       .catch((err) => console.error("MAX Error:", err));
   };
@@ -204,7 +206,8 @@ export default function ReserveCoin() {
                 djedContract,
                 decimals?.rcDecimals,
                 coinsDetails?.unscaledNumberSc,
-                systemParams?.thresholdNumberSc
+                systemParams?.thresholdNumberSc,
+                coinBudgets?.unscaledBudgetRc
               )}
               onMaxSell={maxSellRc.bind(
                 null,

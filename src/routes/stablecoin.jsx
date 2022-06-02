@@ -30,6 +30,7 @@ export default function Stablecoin() {
     djedContract,
     decimals,
     accountDetails,
+    coinBudgets,
     accounts,
     systemParams
   } = useAppProvider();
@@ -126,8 +127,8 @@ export default function Stablecoin() {
       });
   };
 
-  const maxBuySc = (djed, scDecimals) => {
-    getMaxBuySc(djed, scDecimals)
+  const maxBuySc = (djed, scDecimals, unscaledBudgetSc) => {
+    getMaxBuySc(djed, scDecimals, unscaledBudgetSc)
       .then((maxAmountScaled) => {
         setValue(maxAmountScaled);
         updateBuyTradeData(maxAmountScaled);
@@ -191,7 +192,12 @@ export default function Stablecoin() {
               }}
               onChangeBuyInput={onChangeBuyInput}
               onChangeSellInput={onChangeSellInput}
-              onMaxBuy={maxBuySc.bind(null, djedContract, decimals?.scDecimals)}
+              onMaxBuy={maxBuySc.bind(
+                null,
+                djedContract,
+                decimals?.scDecimals,
+                coinBudgets?.unscaledBudgetSc
+              )}
               onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}
               inputValue={value}

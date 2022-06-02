@@ -231,22 +231,30 @@ export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
   return web3Promise(djed, "checkSellableNReserveCoins", unscaledAmountRc);
 };
 
-export const getMaxBuyRc = (djed, rcDecimals, unscaledNumberSc, thresholdNumberSc) => {
+export const getMaxBuyRc = (
+  djed,
+  rcDecimals,
+  unscaledNumberSc,
+  thresholdNumberSc,
+  unscaledBudgetRc
+) => {
   if (new BN(unscaledNumberSc).lt(new BN(thresholdNumberSc))) {
-    // empty string returned on no limit:
-    return new Promise((r) => r(""));
+    return new Promise((r) => r(decimalScaling(unscaledBudgetRc, rcDecimals)));
   }
-  return scaledPromise(web3Promise(djed, "getMaxBuyableReserveCoins"), rcDecimals);
+  return scaledPromise(
+    web3Promise(djed, "getMaxBuyableReserveCoins").then((protocolMax) =>
+      BN.min(new BN(protocolMax), new BN(unscaledBudgetRc))
+    ),
+    rcDecimals
+  );
 };
 
 export const getMaxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
-  return scaledUnscaledPromise(
-    web3Promise(djed, "getMaxSellableReserveCoins"),
+  return scaledPromise(
+    web3Promise(djed, "getMaxSellableReserveCoins").then((unscaledMax) =>
+      BN.min(new BN(unscaledBalanceRc), new BN(unscaledMax))
+    ),
     rcDecimals
-  ).then(([scaledMax, unscaledMax]) =>
-    new BN(unscaledBalanceRc).gt(new BN(unscaledMax))
-      ? scaledMax
-      : decimalScaling(unscaledBalanceRc.toString(10), rcDecimals)
   );
 };
 
@@ -273,8 +281,13 @@ export const checkBuyableSc = (djed, unscaledAmountSc) =>
 export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) =>
   new Promise((r) => r(!new BN(unscaledAmountSc).gt(new BN(unscaledBalanceSc))));
 
-export const getMaxBuySc = (djed, scDecimals) => {
-  return scaledPromise(web3Promise(djed, "getMaxBuyableStableCoins"), scDecimals);
+export const getMaxBuySc = (djed, scDecimals, unscaledBudgetSc) => {
+  return scaledPromise(
+    web3Promise(djed, "getMaxBuyableStableCoins").then((protocolMax) =>
+      BN.min(new BN(protocolMax), BN(unscaledBudgetSc))
+    ),
+    scDecimals
+  );
 };
 
 // maxSellSc is just the current account balance, no additional protocol limits:
