@@ -55,6 +55,7 @@ export default function MainLayout() {
 }
 
 const HeaderMobileMenu = ({ isWalletConnected }) => {
+  const location = useLocation();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const MenuIcon = isMenuOpen ? CloseOutlined : MenuOutlined;
   const handleVisibleChange = (flag) => {
@@ -71,7 +72,11 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
         visible={isMenuOpen}
         onVisibleChange={handleVisibleChange}
         overlay={
-          <Menu mode="vertical" onClick={() => setMenuOpen(false)}>
+          <Menu
+            mode="vertical"
+            selectedKeys={[location.pathname]}
+            onClick={() => setMenuOpen(false)}
+          >
             <Menu.Item key="/">
               <Link to="/">Protocol</Link>
             </Menu.Item>

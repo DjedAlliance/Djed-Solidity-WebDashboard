@@ -62,6 +62,10 @@ body {
   background: transparent;
 }
 
+.ant-dropdown-menu-item-selected {
+  background: #222433;
+}
+
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active,
