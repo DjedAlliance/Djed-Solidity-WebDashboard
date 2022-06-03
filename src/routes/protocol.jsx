@@ -13,18 +13,21 @@ export default function Protocol() {
       <div className="ProtocolSection">
         <div className="Left">
           <h1>
-            <strong>Protocol Name</strong> presentation goes here
+            <strong>Milkomeda Djed</strong>
           </h1>
           <div className="DescriptionContainer">
             <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
+              Milkomeda Djed is an implementation of Minimal Djed on the Milkomeda C1 Testnet. Djed is a novel collateral-backed stablecoin protocol
+              which has garnered attention since the release of its <a href="https://iohk.io/en/research/library/papers/djeda-formally-verified-crypto-backed-pegged-algorithmic-stablecoin/">whitepaper</a>
+              in August 2021.
             </p>
             <p>
-              It has survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged.
+              Milkomeda Djed is the very first publicly accessible implementation of Djed, thereby providing users the perfect opportunity to get a new taste of
+              the latest and greatest in DeFi, however without any of the risk. All assets are 100% testnet assets, meaning that users can learn the risks and upsides of the protocol 
+              in practice but with no real money on the line. 
+            </p>
+            <p>
+              You can learn more about the Milkomeda Djed implementation <a href="">in this blog post</a> or <a href="">follow this guide</a> to get started testing the dApp immediately.
             </p>
           </div>
           <CustomButton
