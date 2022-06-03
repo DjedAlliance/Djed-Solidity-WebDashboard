@@ -32,7 +32,7 @@ function intersperseCommas(s) {
   }
 }
 
-export function decimalScaling(unscaledString, decimals, show = 6) {
+export function decimalScaling(unscaledString, decimals, show = 3) {
   if (decimals <= 0) {
     return unscaledString + "0".repeat(-decimals);
   }
@@ -75,6 +75,6 @@ export function scaledUnscaledPromise(promise, scaling) {
 
 export function percentScaledPromise(promise, scaling) {
   return promise.then(
-    (value) => decimalScaling(value.toString(10), scaling - 2, 4) + "%"
+    (value) => decimalScaling(value.toString(10), scaling - 2, 2) + "%"
   );
 }

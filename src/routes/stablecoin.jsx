@@ -259,7 +259,7 @@ export default function Stablecoin() {
               transactionType="Success Transaction"
               transactionStatus="/transaction-success.svg"
               statusText="Succesful transaction!"
-              statusDescription="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+              statusDescription=""
             />
           ) : null}
         </div>

@@ -22,7 +22,9 @@ const DJED_ADDRESS = "0x5623ca4fe9c760bDDE8E2e62e830d493c9e0A07d"; // djedAddres
 //export const ORACLE_ADDRESS = "0x5A8E0B0B666A60Cf4f00E56A7C6C73FcE77eAaD6"; // oracleAddress
 const BC_DECIMALS = 18;
 const SCALING_DECIMALS = 24; // scalingFixed
+
 const REFRESH_PERIOD = 4000;
+const CONFIRMATION_WAIT_PERIOD = REFRESH_PERIOD + 1000;
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {
@@ -190,7 +192,7 @@ export const verifyTx = (web3, hash) => {
   return new Promise((res) => {
     setTimeout(() => {
       web3.eth.getTransactionReceipt(hash).then((receipt) => res(receipt.status));
-    }, REFRESH_PERIOD);
+    }, CONFIRMATION_WAIT_PERIOD);
   });
 };
 

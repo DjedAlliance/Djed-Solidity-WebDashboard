@@ -9,7 +9,6 @@ const { TabPane } = Tabs;
 const OperationSelector = ({
   coinName,
   selectionCallback,
-  onChangeInput,
   onChangeBuyInput,
   onChangeSellInput,
   onMaxBuy,
