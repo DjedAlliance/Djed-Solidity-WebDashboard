@@ -214,14 +214,16 @@ export default function Stablecoin() {
             <br />
             {isWalletConnected ? (
               <>
-                <p className="Disclaimer">
-                  This transaction is expected to{" "}
-                  {transactionValidated ? (
-                    <strong>succeed.</strong>
-                  ) : (
-                    <strong>fail!</strong>
-                  )}
-                </p>
+                {value != null ? (
+                  <p className="Disclaimer">
+                    This transaction is expected to{" "}
+                    {transactionValidated ? (
+                      <strong>succeed.</strong>
+                    ) : (
+                      <strong>fail!</strong>
+                    )}
+                  </p>
+                ) : null}
                 <BuySellButton
                   onClick={tradeFxn}
                   buyOrSell={buyOrSell}
