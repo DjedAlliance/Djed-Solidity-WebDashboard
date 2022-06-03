@@ -36,6 +36,20 @@
       color: $white;
     }
   }
+  &[disabled] {
+    opacity: 0.8;
+    border: 2px solid $grey-5;
+    background: transparent;
+    color: $grey-4;
+    .ButtonText {
+      color: $grey-4;
+    }
+    &:hover,
+    &:focus {
+      border: 2px solid $grey-5;
+      background: transparent;
+    }
+  }
 }
 
 .secondary {
@@ -55,5 +69,9 @@
     .ButtonText {
       color: $white;
     }
+  }
+  &[disabled] {
+    opacity: 0.5;
+    color: $black-3;
   }
 }
