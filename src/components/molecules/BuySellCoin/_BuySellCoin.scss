@@ -20,6 +20,14 @@
     }
   }
 
+  .Alert {
+    @include primary-text($body, #e8006f, 600);
+    margin: 1em 0;
+    .anticon {
+      margin-right: 0.25em;
+    }
+  }
+
   hr {
     border: none;
     border-top: 1px solid $black-1;
@@ -28,7 +36,19 @@
   .AdditionalInfo {
     margin: 0.5em 0;
     p {
-      @include number-text($label, $grey-5, 400);
+      @include number-text($label, $grey-2, 400);
+    }
+  }
+
+  .MaxButton {
+    cursor: pointer;
+    margin-left: 14px;
+    background: #0f1227;
+    color: $white;
+    border-radius: 4px;
+    border: 0;
+    &:hover {
+      background: $black-3;
     }
   }
 }

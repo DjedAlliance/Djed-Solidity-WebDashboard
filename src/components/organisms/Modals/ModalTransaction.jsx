@@ -1,35 +1,28 @@
 import React, { useState } from "react";
-import { Modal, Button } from "antd";
+import { Modal } from "antd";
 
 import "./_ModalTransaction.scss";
+import { Link } from "react-router-dom";
 
-const ModalTransaction = ({
-  transactionStatus,
-  statusText,
-  statusDescription,
-  transactionType
-}) => {
-  const [visible, setVisible] = useState(false);
+const ModalTransaction = ({ transactionStatus, statusText, statusDescription }) => {
+  const [visible, setVisible] = useState(true);
 
   return (
-    <>
-      <Button onClick={() => setVisible(true)}>{transactionType}</Button>
-      <Modal
-        className="CustomModal"
-        visible={visible}
-        onOk={() => setVisible(false)}
-        onCancel={() => setVisible(false)}
-        footer={[
-          <Button type="link">
-            Check your balance <img src="/arrow-right.svg" alt="" />
-          </Button>,
-        ]}
-      >
-        <img className="ModalImg" src={transactionStatus} alt="" />
-        <h3>{statusText}</h3>
-        <p>{statusDescription}</p>
-      </Modal>
-    </>
+    <Modal
+      className="CustomModal"
+      visible={visible}
+      onOk={() => setVisible(false)}
+      onCancel={() => setVisible(false)}
+      footer={[
+        <Link to="/my-balance">
+          Check your balance <img src="/arrow-right.svg" alt="" />
+        </Link>
+      ]}
+    >
+      <img className="ModalImg" src={transactionStatus} alt="" />
+      <h3>{statusText}</h3>
+      <p>{statusDescription}</p>
+    </Modal>
   );
 };
 

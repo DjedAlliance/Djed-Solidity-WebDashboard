@@ -2,34 +2,59 @@ import React from "react";
 import { Tabs } from "antd";
 import "./_OperationSelector.scss";
 import BuySellCoin from "../../molecules/BuySellCoin/BuySellCoin";
+import { BUY_SELL_OPTIONS } from "../../../utils/constants";
 
 const { TabPane } = Tabs;
 
-function callback(key) {
-  console.log(key);
-}
-
-const OperationSelector = ({ coinName }) => (
+const OperationSelector = ({
+  coinName,
+  selectionCallback,
+  onChangeBuyInput,
+  onChangeSellInput,
+  onMaxBuy,
+  onMaxSell,
+  tradeData,
+  inputValue,
+  scaledCoinBalance,
+  scaledBaseBalance,
+  fee
+}) => (
   <div className="OperationSelector">
-    <Tabs defaultActiveKey="1" onChange={callback}>
-      <TabPane tab="Buy" key="1">
+    <Tabs defaultActiveKey={BUY_SELL_OPTIONS.BUY} onChange={selectionCallback}>
+      <TabPane
+        tab={<div className="custom-tab tab-buy">Buy</div>}
+        key={BUY_SELL_OPTIONS.BUY}
+      >
         <BuySellCoin
           buyOrSell="Buy"
           coinName={coinName}
           priceAmount="0.000"
-          feeAmount="0.000"
-          totalAmount="0.000"
-          payOrGet="You will pay"
+          fee={fee}
+          totalAmount={tradeData.totalScaled}
+          payOrGet="pay"
+          onMaxClick={onMaxBuy}
+          onChangeInput={onChangeBuyInput}
+          inputValue={inputValue}
+          scaledCoinBalance={scaledCoinBalance}
+          scaledBaseBalance={scaledBaseBalance}
         />
       </TabPane>
-      <TabPane tab="Sell" key="2">
+      <TabPane
+        tab={<div className="custom-tab tab-sell">Sell</div>}
+        key={BUY_SELL_OPTIONS.SELL}
+      >
         <BuySellCoin
           buyOrSell="Sell"
           coinName={coinName}
           priceAmount="0.000"
-          feeAmount="0.000"
-          totalAmount="0.000"
-          payOrGet="You will get"
+          fee={fee}
+          totalAmount={tradeData.totalScaled}
+          onMaxClick={onMaxSell}
+          payOrGet="get"
+          onChangeInput={onChangeSellInput}
+          inputValue={inputValue}
+          scaledCoinBalance={scaledCoinBalance}
+          scaledBaseBalance={scaledBaseBalance}
         />
       </TabPane>
     </Tabs>

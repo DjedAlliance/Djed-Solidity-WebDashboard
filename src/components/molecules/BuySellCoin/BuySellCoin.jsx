@@ -1,38 +1,81 @@
 import React from "react";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { Input } from "antd";
 import "./_BuySellCoin.scss";
+import { useAppProvider } from "../../../context/AppProvider";
 
 const BuySellCoin = ({
   coinName,
-  priceAmount,
-  feeAmount,
+  //priceAmount,
+  fee,
   totalAmount,
   payOrGet,
   buyOrSell,
-}) => (
-  <div className="BuySellCoin">
-    <h3>
-      {buyOrSell} {coinName}
-    </h3>
-    <div className="AmountInput">
-      <Input size="large" placeholder="0.0" suffix={coinName} />
-    </div>
-    <p className="FeeInfo">
-      <InfoCircleOutlined /> A fee is charged for currency conversion
-    </p>
-    <hr />
-    <div className="AdditionalInfo">
-      <p>
-        {coinName} ≈ {priceAmount} milkADA
+  onChangeInput,
+  onMaxClick,
+  inputValue,
+  scaledCoinBalance,
+  scaledBaseBalance
+}) => {
+  const { isWalletConnected, isWrongChain } = useAppProvider();
+  const maxButton = (
+    <button className="MaxButton" onClick={onMaxClick}>
+      MAX
+    </button>
+  );
+
+  return (
+    <div className="BuySellCoin">
+      <h3>
+        {buyOrSell} {coinName}
+      </h3>
+      <div className="AmountInput">
+        <Input
+          size="large"
+          placeholder="0.0"
+          value={inputValue}
+          suffix={
+            <div>
+              {coinName}
+              {isWalletConnected ? maxButton : null}
+            </div>
+          }
+          onChange={onChangeInput}
+        />
+      </div>
+      <p className="FeeInfo">
+        <InfoCircleOutlined />
+        {isWalletConnected
+          ? `Your current balance is ${scaledCoinBalance} ${coinName}.`
+          : `Please connect your wallet to see your ${coinName} balance.`}
       </p>
-      <p>Fee ≈ {feeAmount} milkADA</p>
-      <p>
-        {payOrGet} ≈ {totalAmount} milkADA
+      <p className="FeeInfo">
+        <InfoCircleOutlined />
+        {isWalletConnected
+          ? `Your current balance is ${scaledBaseBalance} milktADA.`
+          : `Please connect your wallet to see your milktADA balance.`}
       </p>
+      {isWrongChain ? (
+        <p className="Alert">
+          <ExclamationCircleOutlined />
+          Please change your MetaMask Milkomeda network to Tesnet and refresh the page.
+        </p>
+      ) : null}
+      <hr />
+      <div className="AdditionalInfo">
+        {/*<p>
+        {coinName} ≈ {priceAmount} milktADA
+      </p>*/}
+        <p>Fee = {fee}</p>
+        <p>
+          {totalAmount
+            ? `You will ${payOrGet}  ~ ${totalAmount} milktADA`
+            : "Enter an amount above to compute transaction price."}
+        </p>
+      </div>
+      <hr />
     </div>
-    <hr />
-  </div>
-);
+  );
+};
 
 export default BuySellCoin;

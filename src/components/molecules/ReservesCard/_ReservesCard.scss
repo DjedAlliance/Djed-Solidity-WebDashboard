@@ -12,10 +12,10 @@
 
   .Content {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-
+    gap: 30px;
     .BaseReserves {
-      width: 55%;
       span {
         @include primary-text($label, $white, 400);
         margin: 0;
@@ -31,7 +31,7 @@
     }
     .ReservesRatio {
       display: flex;
-      width: 45%;
+      flex: 1;
       .NumberItem {
         margin-right: 2em;
       }
@@ -42,6 +42,7 @@
 @media only screen and (max-width: 1024px) {
   .ReservesCard {
     .Content {
+      gap: 10px;
       .BaseReserves {
         h3 {
           @include number-text($h3, $white, 600);
@@ -52,6 +53,10 @@
           @include number-text($body, $white, 600);
           margin-bottom: 0.75em;
         }
+      }
+      .ReservesRatio {
+        display: flex;
+        flex-direction: column;
       }
     }
   }

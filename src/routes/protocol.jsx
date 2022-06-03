@@ -1,13 +1,22 @@
 import React from "react";
-import { ArrowRightOutlined } from "@ant-design/icons";
-import { ReactComponent as Metamask } from "../images/metamask.svg";
-import CustomButton from "../components/atoms/CustomButton/CustomButton";
+//import { ArrowRightOutlined, PropertySafetyFilled } from "@ant-design/icons";
+//import { ReactComponent as Metamask } from "../images/metamask.svg";
+//import CustomButton from "../components/atoms/CustomButton/CustomButton";
+import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 
 import "./_protocol.scss";
 import ReservesCard from "../components/molecules/ReservesCard/ReservesCard";
+import { useAppProvider } from "../context/AppProvider";
+import { decimalScaling } from "../utils/helpers";
 
 export default function Protocol() {
+  const { coinsDetails, systemParams } = useAppProvider();
+  const scPriceFloat = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
+  const reservesFloat = parseFloat(coinsDetails?.scaledReserveBc.replaceAll(",", ""));
+  const eqPrice = 1e6 * scPriceFloat * reservesFloat;
+  //console.log(eqPrice, "=", scPriceFloat, "*", reservesFloat);
+  const eqPriceScaled = decimalScaling(eqPrice.toFixed(0).toString(10), 6);
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="ProtocolSection">
@@ -28,16 +37,10 @@ export default function Protocol() {
             </p>
             <p>
               You can learn more about the Milkomeda Djed implementation <a href="">in this blog post</a> or <a href="">follow this guide</a> to get started testing the dApp immediately.
+
             </p>
           </div>
-          <CustomButton
-            type="primary"
-            htmlType="submit"
-            text="Connect with Metamask"
-            theme="primary"
-            iconWallet={<Metamask />}
-            icon={<ArrowRightOutlined />}
-          />
+          <MetamaskConnectButton />
         </div>
         <div className="Right">
           <h2 className="SubtTitle">
@@ -46,23 +49,27 @@ export default function Protocol() {
           <div className="CoinsContainer">
             <CoinCard
               coinIcon="/coin-icon-one.png"
-              coinName="Stablecoin Name"
-              priceAmount="0.31152640"
-              circulatingAmount="1,345,402.15"
-              ratioAmount="1 milkADA ≈ 3.21 Token"
+              coinName="StableDjed"
+              priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
+              circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
+              tokenName="StableDjed"
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
-              coinName="Reservecoin Name"
-              priceAmount="0.31152640"
-              circulatingAmount="1,345,402.15"
-              ratioAmount="1 milkADA ≈ 3.21 Token"
+              coinName="ReserveDjed"
+              priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
+              sellPriceAmount={coinsDetails?.scaledSellPriceRc}
+              circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
+              tokenName="ReserveDjed"
             />
             <ReservesCard
-              priceAmount="1,453,338"
-              equivalence="≈ 4.51M StabeCoin"
+              priceAmount={coinsDetails?.scaledReserveBc}
+              equivalence={eqPriceScaled}
               coinIcon="/coin-icon-three.png"
               coinName="Reserves"
+              reserveRatio={coinsDetails?.percentReserveRatio}
+              reserveRatioMin={systemParams?.reserveRatioMin}
+              reserveRatioMax={systemParams?.reserveRatioMax}
             />
           </div>
         </div>

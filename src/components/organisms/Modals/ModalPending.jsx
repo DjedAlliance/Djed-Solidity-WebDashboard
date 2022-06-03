@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button } from "antd";
+import { Modal } from "antd";
 
 import "./_ModalTransaction.scss";
 import LabelMessage from "../../atoms/LabelMessage/LabelMessage";
@@ -9,30 +9,27 @@ const ModalPending = ({
   transactionStatus,
   statusText,
   statusDescription,
-  transactionType,
+  transactionType
 }) => {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   return (
-    <>
-      <Button onClick={() => setVisible(true)}>{transactionType}</Button>
-      <Modal
-        className="CustomModal"
-        visible={visible}
-        onOk={() => setVisible(false)}
-        onCancel={() => setVisible(false)}
-        footer={null}
-      >
-        <LoadingIcon />
-        <h3>{statusText}</h3>
-        <p>{statusDescription}</p>
-        <LabelMessage
-          labelIcon="/warning-icon.svg"
-          labelTitle="Warning!"
-          labelText="Do not close this page or the transaction will fail."
-        />
-      </Modal>
-    </>
+    <Modal
+      className="CustomModal"
+      visible={visible}
+      onOk={() => setVisible(false)}
+      onCancel={() => setVisible(false)}
+      footer={null}
+    >
+      <LoadingIcon />
+      <h3>{statusText}</h3>
+      <p>{statusDescription}</p>
+      <LabelMessage
+        labelIcon="/warning-icon.svg"
+        labelTitle="Warning!"
+        labelText="Do not close this page or the transaction will fail."
+      />
+    </Modal>
   );
 };
 

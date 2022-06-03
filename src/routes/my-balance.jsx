@@ -1,11 +1,13 @@
 import React from "react";
-import { ArrowRightOutlined } from "@ant-design/icons";
+//import { ArrowRightOutlined } from "@ant-design/icons";
 import TotalBalance from "../components/molecules/TotalBalance/TotalBalance";
 
 import "./_MyBalance.scss";
 import TransactionTable from "../components/organisms/TransactionTable/TransactionTable";
+import { useAppProvider } from "../context/AppProvider";
 
 export default function MyBalance() {
+  const { accountDetails } = useAppProvider();
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="MyBalanceSection">
@@ -15,18 +17,18 @@ export default function MyBalance() {
           <div className="Content">
             <TotalBalance
               coinIcon="/coin-icon-one.png"
-              coinName="Stablecoin"
-              balanceAmount="0.0054567890"
+              coinName="StableDjed"
+              balanceAmount={accountDetails?.scaledBalanceSc}
             />
             <TotalBalance
               coinIcon="/coin-icon-two.png"
-              coinName="ReserveCoin"
-              balanceAmount="0.0054567890"
+              coinName="ReserveDjed"
+              balanceAmount={accountDetails?.scaledBalanceRc}
             />
             <TotalBalance
               coinIcon="/coin-icon-three.png"
-              coinName="Basecoin"
-              balanceAmount="0.0054567890"
+              coinName="milktADA"
+              balanceAmount={accountDetails?.scaledBalanceBc}
             />
           </div>
         </div>

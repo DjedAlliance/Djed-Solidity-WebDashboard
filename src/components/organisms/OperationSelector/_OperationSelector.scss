@@ -2,4 +2,20 @@
 
 .OperationSelector {
   width: 100%;
+
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn .custom-tab.tab-buy {
+    height: -webkit-fill-available;
+    border-radius: 30px;
+    color: $white;
+    background: #4962fc;
+  }
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn .custom-tab.tab-sell {
+    height: -webkit-fill-available;
+    border-radius: 30px;
+    color: $white;
+    background: #e8006f;
+  }
+  .ant-tabs-tab:hover {
+    color: $white;
+  }
 }
