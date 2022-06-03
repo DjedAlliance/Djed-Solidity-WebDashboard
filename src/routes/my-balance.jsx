@@ -7,7 +7,12 @@ import "./_MyBalance.scss";
 import { useAppProvider } from "../context/AppProvider";
 
 export default function MyBalance() {
-  const { accountDetails } = useAppProvider();
+  const { coinsDetails, accountDetails } = useAppProvider();
+
+  const reserverDjedConverted =
+    (coinsDetails?.scaledPriceSc / coinsDetails?.scaledSellPriceRc) *
+    accountDetails?.scaledBalanceRc;
+
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="MyBalanceSection">
@@ -19,11 +24,13 @@ export default function MyBalance() {
               coinIcon="/coin-icon-one.png"
               coinName="StableDjed"
               balanceAmount={accountDetails?.scaledBalanceSc}
+              balanceAmountUSD={accountDetails?.scaledBalanceSc}
             />
             <TotalBalance
               coinIcon="/coin-icon-two.png"
               coinName="ReserveDjed"
               balanceAmount={accountDetails?.scaledBalanceRc}
+              balanceAmountUSD={reserverDjedConverted}
             />
             <TotalBalance
               coinIcon="/coin-icon-three.png"
