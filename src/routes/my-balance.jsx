@@ -3,7 +3,7 @@ import React from "react";
 import TotalBalance from "../components/molecules/TotalBalance/TotalBalance";
 
 import "./_MyBalance.scss";
-import TransactionTable from "../components/organisms/TransactionTable/TransactionTable";
+//import TransactionTable from "../components/organisms/TransactionTable/TransactionTable";
 import { useAppProvider } from "../context/AppProvider";
 
 export default function MyBalance() {
@@ -32,9 +32,9 @@ export default function MyBalance() {
             />
           </div>
         </div>
-        <div className="Bottom">
+        {/*<div className="Bottom">
           <TransactionTable />
-        </div>
+        </div>*/}
       </div>
     </main>
   );
