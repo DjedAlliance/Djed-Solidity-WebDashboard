@@ -29,7 +29,11 @@ export default function Protocol() {
               Milkomeda Djed is an implementation of Minimal Djed on the Milkomeda C1
               Testnet. Djed is a novel collateral-backed stablecoin protocol which has
               garnered attention since the release of its{" "}
-              <a href="https://iohk.io/en/research/library/papers/djeda-formally-verified-crypto-backed-pegged-algorithmic-stablecoin/">
+              <a
+                href="https://iohk.io/en/research/library/papers/djeda-formally-verified-crypto-backed-pegged-algorithmic-stablecoin/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 whitepaper
               </a>{" "}
               in August 2021.
@@ -43,8 +47,14 @@ export default function Protocol() {
             </p>
             <p>
               You can learn more about the Milkomeda Djed implementation{" "}
-              <a href="/">in this blog post</a> or <a href="/">follow this guide</a> to
-              get started testing the dApp immediately.
+              <a href="/" target="_blank" rel="noopener noreferrer">
+                in this blog post
+              </a>{" "}
+              or{" "}
+              <a href="/" target="_blank" rel="noopener noreferrer">
+                follow this guide
+              </a>{" "}
+              to get started testing the dApp immediately.
             </p>
           </div>
           <MetamaskConnectButton />

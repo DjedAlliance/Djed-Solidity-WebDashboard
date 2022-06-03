@@ -12,7 +12,7 @@
       margin-bottom: 0;
     }
     p {
-      @include primary-text($h4, $grey-5, 400);
+      @include primary-text($h4, #a0a0ac, 400);
       margin-bottom: 1em;
     }
     .Content {
