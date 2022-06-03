@@ -42,7 +42,7 @@ const BuySellCoin = ({
               {isWalletConnected ? maxButton : null}
             </div>
           }
-          status={!inputValue || inputValid ? null : "error"}
+          status={!inputValue || !isWalletConnected || inputValid ? null : "error"}
           onChange={onChangeInput}
         />
       </div>
