@@ -26,6 +26,7 @@ export default function ReserveCoin() {
   const {
     web3,
     isWalletConnected,
+    isWrongChain,
     djedContract,
     coinsDetails,
     decimals,
@@ -163,6 +164,8 @@ export default function ReserveCoin() {
 
   const transactionValidated = isBuyActive ? canBuy : canSell;
 
+  const buttonDisabled = value === null || isWrongChain || !transactionValidated;
+
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
@@ -224,6 +227,7 @@ export default function ReserveCoin() {
               )}
               tradeData={tradeData}
               inputValue={value}
+              inputValid={transactionValidated}
               scaledCoinBalance={accountDetails?.scaledBalanceRc}
               scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}
@@ -233,7 +237,7 @@ export default function ReserveCoin() {
             <br />
             {isWalletConnected ? (
               <>
-                {value != null ? (
+                {/*value != null ? (
                   <p className="Disclaimer">
                     This transaction is expected to{" "}
                     {transactionValidated ? (
@@ -242,8 +246,9 @@ export default function ReserveCoin() {
                       <strong>fail!</strong>
                     )}
                   </p>
-                ) : null}
+                    ) : null*/}
                 <BuySellButton
+                  disabled={buttonDisabled}
                   onClick={tradeFxn}
                   buyOrSell={buyOrSell}
                   currencyName="ReserveDjed"

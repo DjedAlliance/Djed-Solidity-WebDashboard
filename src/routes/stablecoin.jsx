@@ -26,6 +26,7 @@ export default function Stablecoin() {
   const {
     web3,
     isWalletConnected,
+    isWrongChain,
     coinsDetails,
     djedContract,
     decimals,
@@ -155,6 +156,8 @@ export default function Stablecoin() {
 
   const transactionValidated = isBuyActive ? canBuy : canSell;
 
+  const buttonDisabled = value === null || isWrongChain || !transactionValidated;
+
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
@@ -209,7 +212,8 @@ export default function Stablecoin() {
               onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}
               inputValue={value}
-              scaledCoinBalance={accountDetails?.scaledBalanceRc}
+              inputValid={transactionValidated}
+              scaledCoinBalance={accountDetails?.scaledBalanceSc}
               scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}
             />
@@ -218,7 +222,7 @@ export default function Stablecoin() {
             <br />
             {isWalletConnected ? (
               <>
-                {value != null ? (
+                {/*value != null ? (
                   <p className="Disclaimer">
                     This transaction is expected to{" "}
                     {transactionValidated ? (
@@ -227,8 +231,9 @@ export default function Stablecoin() {
                       <strong>fail!</strong>
                     )}
                   </p>
-                ) : null}
+                    ) : null*/}
                 <BuySellButton
+                  disabled={buttonDisabled}
                   onClick={tradeFxn}
                   buyOrSell={buyOrSell}
                   currencyName="StableDjed"

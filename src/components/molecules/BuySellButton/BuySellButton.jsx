@@ -6,7 +6,7 @@ const capitalizeString = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-const BuySellButton = ({ onClick, buyOrSell, currencyName }) => {
+const BuySellButton = ({ onClick, buyOrSell, currencyName, disabled }) => {
   return (
     <CustomButton
       type="submit"
@@ -14,6 +14,7 @@ const BuySellButton = ({ onClick, buyOrSell, currencyName }) => {
       variant="primary"
       icon={<ArrowRightOutlined />}
       onClick={onClick}
+      disabled={disabled}
     />
   );
 };

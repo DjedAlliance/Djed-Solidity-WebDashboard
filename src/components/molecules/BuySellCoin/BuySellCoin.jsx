@@ -9,11 +9,13 @@ const BuySellCoin = ({
   //priceAmount,
   fee,
   totalAmount,
+  payOrReceive,
   payOrGet,
   buyOrSell,
   onChangeInput,
   onMaxClick,
   inputValue,
+  inputValid,
   scaledCoinBalance,
   scaledBaseBalance
 }) => {
@@ -40,6 +42,7 @@ const BuySellCoin = ({
               {isWalletConnected ? maxButton : null}
             </div>
           }
+          status={!inputValue || inputValid ? null : "error"}
           onChange={onChangeInput}
         />
       </div>
@@ -67,11 +70,14 @@ const BuySellCoin = ({
         {coinName} ≈ {priceAmount} milktADA
       </p>*/}
         <p>Fee = {fee}</p>
-        <p>
-          {totalAmount
-            ? `You will ${payOrGet}  ~ ${totalAmount} milktADA`
-            : "Enter an amount above to compute transaction price."}
-        </p>
+        {inputValue ? (
+          <>
+            <p>{`You will ${payOrReceive}  ~ ${inputValue} ${coinName}`}</p>
+            <p>{`You will ${payOrGet}  ~ ${totalAmount} milktADA`}</p>
+          </>
+        ) : (
+          <p>Enter an amount above to compute transaction price.</p>
+        )}
       </div>
       <hr />
     </div>
