@@ -162,14 +162,14 @@ export default function Stablecoin() {
           <h1>StableDjed {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-              Lorem Ipsum has been the industry's standard dummy text ever since the
-              1500s, when an unknown printer took a galley of type and scrambled it to
-              make a type specimen book.
+              StableDjed is the USD-pegged stablecoin which is part of the Djed protocol. Each StableDjed is backed by 400-600% collateral
+              of testnet milkADA. As such, each StableDjed is able to maintain this peg without a centralized monetary policy based on the collateral requirements.
+              This peg is automatically maintained with price fluctuations up and until the price of ADA dips so low that the collateral value decreases to under 100%.
             </p>
             <p>
-              It has survived not only five centuries, but also the leap into electronic
-              typesetting, remaining essentially unchanged.
+              The Djed protocol allows users who own StableDjed to always sell their tokens back to the protocol in order to withdraw an equivalent value of 
+              testnet milkADA. As such, StableDjed is aimed for users who want to maintain stability of value in their assets.
+              electronic typesetting, remaining essentially unchanged.
             </p>
           </div>
           <CoinCard
