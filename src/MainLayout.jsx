@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { Layout, Menu, Dropdown } from "antd";
 import MetamaskStatusButton from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
 
-import { ReactComponent as Logo } from "./images/logoipsum.svg";
+import { ReactComponent as Logo } from "./images/mdjed_testnet_white.svg";
 
 import "antd/dist/antd.css";
 import "./App.scss";
