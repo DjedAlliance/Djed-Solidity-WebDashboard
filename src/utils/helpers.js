@@ -78,3 +78,23 @@ export function percentScaledPromise(promise, scaling) {
     (value) => decimalScaling(value.toString(10), scaling - 2, 2) + "%"
   );
 }
+
+// currency conversions:
+export function getBcUsdEquivalent(coinsDetails, amountFloat) {
+  const adaPerUsd = parseFloat(coinsDetails?.scaledScExchangeRate.replaceAll(",", ""));
+  const eqPrice = (1e6 * amountFloat) / adaPerUsd;
+  return "$" + decimalScaling(eqPrice.toFixed(0).toString(10), 6);
+}
+
+export function getRcUsdEquivalent(coinsDetails, amountFloat) {
+  const adaPerRc = parseFloat(coinsDetails?.scaledSellPriceRc);
+  const adaPerUsd = parseFloat(coinsDetails?.scaledScExchangeRate.replaceAll(",", ""));
+  const eqPrice = (1e6 * amountFloat * adaPerRc) / adaPerUsd;
+  return "$" + decimalScaling(eqPrice.toFixed(0).toString(10), 6);
+}
+
+export function getScAdaEquivalent(coinsDetails, amountFloat) {
+  const adaPerSc = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
+  const eqPrice = 1e6 * amountFloat * adaPerSc;
+  return decimalScaling(eqPrice.toFixed(0).toString(10), 6) + " milktADA";
+}

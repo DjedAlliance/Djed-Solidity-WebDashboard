@@ -9,7 +9,8 @@ const CoinCard = ({
   priceAmount,
   sellPriceAmount,
   circulatingAmount,
-  tokenName
+  tokenName,
+  equivalence
 }) => {
   const invPrice = 1e6 / parseFloat(priceAmount?.replaceAll(",", ""));
   const invPriceScaled = decimalScaling(invPrice.toFixed(0).toString(10), 6);
@@ -37,6 +38,7 @@ const CoinCard = ({
           <p>
             {circulatingAmount} {tokenName}
           </p>
+          {equivalence ? <p>≈ {equivalence}</p> : null}
         </div>
         <div className="InfoItem">
           <span>Current Ratio</span>

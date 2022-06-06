@@ -8,15 +8,24 @@ import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import "./_protocol.scss";
 import ReservesCard from "../components/molecules/ReservesCard/ReservesCard";
 import { useAppProvider } from "../context/AppProvider";
-import { decimalScaling } from "../utils/helpers";
+import {
+  getBcUsdEquivalent,
+  getRcUsdEquivalent,
+  getScAdaEquivalent
+} from "../utils/helpers";
 
 export default function Protocol() {
   const { coinsDetails, systemParams } = useAppProvider();
-  const scPriceFloat = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
-  const reservesFloat = parseFloat(coinsDetails?.scaledReserveBc.replaceAll(",", ""));
-  const eqPrice = 1e6 * scPriceFloat * reservesFloat;
-  //console.log(eqPrice, "=", scPriceFloat, "*", reservesFloat);
-  const eqPriceScaled = decimalScaling(eqPrice.toFixed(0).toString(10), 6);
+
+  const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
+  const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
+
+  const rcFloat = parseFloat(coinsDetails?.scaledNumberRc.replaceAll(",", ""));
+  const rcConverted = getRcUsdEquivalent(coinsDetails, rcFloat);
+
+  const bcFloat = parseFloat(coinsDetails?.scaledReserveBc.replaceAll(",", ""));
+  const bcConverted = getBcUsdEquivalent(coinsDetails, bcFloat);
+
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="ProtocolSection">
@@ -70,6 +79,7 @@ export default function Protocol() {
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
               tokenName="StableDjed"
+              equivalence={scConverted}
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
@@ -78,10 +88,11 @@ export default function Protocol() {
               sellPriceAmount={coinsDetails?.scaledSellPriceRc}
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
               tokenName="ReserveDjed"
+              equivalence={rcConverted}
             />
             <ReservesCard
               priceAmount={coinsDetails?.scaledReserveBc}
-              equivalence={eqPriceScaled}
+              equivalence={bcConverted}
               coinIcon="/coin-icon-three.png"
               coinName="Reserves"
               reserveRatio={coinsDetails?.percentReserveRatio}

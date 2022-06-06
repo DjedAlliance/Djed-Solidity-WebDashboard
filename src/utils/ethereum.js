@@ -21,6 +21,7 @@ export const CHAIN_ID = 200101;
 const DJED_ADDRESS = "0xFE7E66e02A80dcFa9267fE2F2b3f70f743A15bBe"; // djedAddress
 //export const ORACLE_ADDRESS = "0x5A8E0B0B666A60Cf4f00E56A7C6C73FcE77eAaD6"; // oracleAddress
 const BC_DECIMALS = 18;
+const ORACLE_DECIMALS = 6;
 const SCALING_DECIMALS = 24; // scalingFixed
 
 const REFRESH_PERIOD = 4000;
@@ -79,7 +80,8 @@ export const getCoinDetails = async (
   reserveCoin,
   djed,
   scDecimals,
-  rcDecimals
+  rcDecimals,
+  oracle
 ) => {
   const [
     [scaledNumberSc, unscaledNumberSc],
@@ -88,7 +90,8 @@ export const getCoinDetails = async (
     scaledReserveBc,
     percentReserveRatio,
     scaledBuyPriceRc,
-    scaledSellPriceRc
+    scaledSellPriceRc,
+    scaledScExchangeRate
   ] = await Promise.all([
     scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
     scaledPromise(web3Promise(djed, "getStableCoinWholeTargetPriceBC"), BC_DECIMALS), //oracle, "exchangeRate"), BC_DECIMALS),
@@ -98,7 +101,8 @@ export const getCoinDetails = async (
       (value) => (parseFloat(value) * 100).toFixed(4) + "%"
     )*/,
     scaledPromise(web3Promise(djed, "getReserveCoinWholeBuyPriceBC"), BC_DECIMALS),
-    scaledPromise(web3Promise(djed, "getReserveCoinWholeSellPriceBC"), BC_DECIMALS)
+    scaledPromise(web3Promise(djed, "getReserveCoinWholeSellPriceBC"), BC_DECIMALS),
+    scaledPromise(web3Promise(oracle, "exchangeRate"), ORACLE_DECIMALS)
   ]);
 
   return {
@@ -109,7 +113,8 @@ export const getCoinDetails = async (
     scaledReserveBc,
     percentReserveRatio,
     scaledBuyPriceRc,
-    scaledSellPriceRc
+    scaledSellPriceRc,
+    scaledScExchangeRate
   };
 };
 

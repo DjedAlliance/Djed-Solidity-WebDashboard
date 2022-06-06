@@ -2,7 +2,7 @@ import React from "react";
 //import { ArrowRightOutlined } from "@ant-design/icons";
 import "./_TotalBalance.scss";
 
-const TotalBalance = ({ coinIcon, coinName, balanceAmount, balanceAmountUSD }) => (
+const TotalBalance = ({ coinIcon, coinName, balanceAmount, balanceEquivalent }) => (
   <div className="TotalBalance">
     {/* <div className="Title"> */}
     {/* <span>{coinName}</span> */}
@@ -15,8 +15,8 @@ const TotalBalance = ({ coinIcon, coinName, balanceAmount, balanceAmountUSD }) =
       <div className="Cointext">
         <p className="CoinTitle">{coinName}</p>
         <h4 className="CoinAmount">{balanceAmount}</h4>
-        {balanceAmountUSD ? (
-          <p className="CoinAmountConverted">{balanceAmountUSD} USD</p>
+        {balanceEquivalent ? (
+          <p className="CoinAmountConverted">≈ {balanceEquivalent}</p>
         ) : null}
       </div>
     </div>

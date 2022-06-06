@@ -9,6 +9,7 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
+import { getScAdaEquivalent } from "../utils/helpers";
 import {
   buyScTx,
   promiseTx,
@@ -158,6 +159,9 @@ export default function Stablecoin() {
 
   const buttonDisabled = value === null || isWrongChain || !transactionValidated;
 
+  const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
+  const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
+
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
@@ -185,6 +189,7 @@ export default function Stablecoin() {
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
             tokenName="StableDjed"
+            equivalence={scConverted}
           />
         </div>
         <div className="Right">
