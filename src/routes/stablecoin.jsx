@@ -9,7 +9,8 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
-import { getScAdaEquivalent } from "../utils/helpers";
+import { TRANSACTION_VALIDITY } from "../utils/constants";
+import { getScAdaEquivalent, validatePositiveNumber } from "../utils/helpers";
 import {
   buyScTx,
   promiseTx,
@@ -41,39 +42,57 @@ export default function Stablecoin() {
   const [value, setValue] = useState(null);
   const [txError, setTxError] = useState(null);
   const [txStatus, setTxStatus] = useState("idle");
-  const [canBuy, setCanBuy] = useState(false);
-  const [canSell, setCanSell] = useState(false);
+  const [buyValidity, setBuyValidity] = useState(
+    TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
+  );
+  const [sellValidity, setSellValidity] = useState(
+    TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
+  );
 
   const txStatusPending = txStatus === "pending";
   const txStatusRejected = txStatus === "rejected";
   const txStatusSuccess = txStatus === "success";
 
   const updateBuyTradeData = (amountScaled) => {
+    const inputSanity = validatePositiveNumber(amountScaled);
+    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
+      setBuyValidity(inputSanity);
+      return;
+    }
     tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled).then((data) => {
       setTradeData(data);
-      if (isWalletConnected) {
+      if (!isWalletConnected) {
+        setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
+      } else if (isWrongChain) {
+        setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+      } else {
         checkBuyableSc(
           djedContract,
           data.amountUnscaled,
           coinBudgets?.unscaledBudgetSc
         ).then((res) => {
-          setCanBuy(res);
+          setBuyValidity(res);
         });
-      } else {
-        setCanBuy(false);
       }
     });
   };
 
   const updateSellTradeData = (amountScaled) => {
+    const inputSanity = validatePositiveNumber(amountScaled);
+    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
+      setSellValidity(inputSanity);
+      return;
+    }
     tradeDataPriceSellSc(djedContract, decimals.scDecimals, amountScaled).then((data) => {
       setTradeData(data);
-      if (isWalletConnected) {
-        checkSellableSc(data.amountUnscaled, accountDetails?.unscaledBalanceSc).then(
-          (res) => setCanSell(res)
-        );
+      if (!isWalletConnected) {
+        setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
+      } else if (isWrongChain) {
+        setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
       } else {
-        setCanSell(false);
+        checkSellableSc(data.amountUnscaled, accountDetails?.unscaledBalanceSc).then(
+          (res) => setSellValidity(res)
+        );
       }
     });
   };
@@ -155,7 +174,9 @@ export default function Stablecoin() {
     ? buySc.bind(null, tradeData.totalUnscaled)
     : sellSc.bind(null, tradeData.amountUnscaled);
 
-  const transactionValidated = isBuyActive ? canBuy : canSell;
+  const transactionValidated = isBuyActive
+    ? buyValidity === TRANSACTION_VALIDITY.OK
+    : sellValidity === TRANSACTION_VALIDITY.OK;
 
   const buttonDisabled = value === null || isWrongChain || !transactionValidated;
 
@@ -205,6 +226,8 @@ export default function Stablecoin() {
               selectionCallback={() => {
                 setBuyOrSell();
                 setValue(null);
+                setBuyValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
+                setSellValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
               }}
               onChangeBuyInput={onChangeBuyInput}
               onChangeSellInput={onChangeSellInput}
@@ -217,10 +240,11 @@ export default function Stablecoin() {
               onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}
               inputValue={value}
-              inputValid={transactionValidated}
               scaledCoinBalance={accountDetails?.scaledBalanceSc}
               scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}
+              buyValidity={buyValidity}
+              sellValidity={sellValidity}
             />
           </div>
           <div className="ConnectWallet">

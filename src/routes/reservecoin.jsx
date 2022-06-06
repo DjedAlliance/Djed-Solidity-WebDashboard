@@ -9,7 +9,8 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
-import { getRcUsdEquivalent } from "../utils/helpers";
+import { TRANSACTION_VALIDITY } from "../utils/constants";
+import { getRcUsdEquivalent, validatePositiveNumber } from "../utils/helpers";
 import {
   buyRcTx,
   promiseTx,
@@ -42,39 +43,57 @@ export default function ReserveCoin() {
   const [value, setValue] = useState(null);
   const [txError, setTxError] = useState(null);
   const [txStatus, setTxStatus] = useState("idle");
-  const [canBuy, setCanBuy] = useState(false);
-  const [canSell, setCanSell] = useState(false);
+  const [buyValidity, setBuyValidity] = useState(
+    TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
+  );
+  const [sellValidity, setSellValidity] = useState(
+    TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
+  );
 
   const txStatusPending = txStatus === "pending";
   const txStatusRejected = txStatus === "rejected";
   const txStatusSuccess = txStatus === "success";
 
   const updateBuyTradeData = (amountScaled) => {
+    const inputSanity = validatePositiveNumber(amountScaled);
+    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
+      setBuyValidity(inputSanity);
+      return;
+    }
     tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, amountScaled).then((data) => {
       setTradeData(data);
-      if (isWalletConnected) {
+      if (!isWalletConnected) {
+        setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
+      } else if (isWrongChain) {
+        setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+      } else {
         checkBuyableRc(
           djedContract,
           data.amountUnscaled,
           coinBudgets?.unscaledBudgetRc
-        ).then((res) => setCanBuy(res));
-      } else {
-        setCanBuy(false);
+        ).then((res) => setBuyValidity(res));
       }
     });
   };
 
   const updateSellTradeData = (amountScaled) => {
+    const inputSanity = validatePositiveNumber(amountScaled);
+    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
+      setSellValidity(inputSanity);
+      return;
+    }
     tradeDataPriceSellRc(djedContract, decimals.rcDecimals, amountScaled).then((data) => {
       setTradeData(data);
-      if (isWalletConnected) {
+      if (!isWalletConnected) {
+        setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
+      } else if (isWrongChain) {
+        setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+      } else {
         checkSellableRc(
           djedContract,
           data.amountUnscaled,
           accountDetails?.unscaledBalanceRc
-        ).then((res) => setCanSell(res));
-      } else {
-        setCanSell(false);
+        ).then((res) => setSellValidity(res));
       }
     });
   };
@@ -163,7 +182,9 @@ export default function ReserveCoin() {
     ? buyRc.bind(null, tradeData.totalUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
 
-  const transactionValidated = isBuyActive ? canBuy : canSell;
+  const transactionValidated = isBuyActive
+    ? buyValidity === TRANSACTION_VALIDITY.OK
+    : sellValidity === TRANSACTION_VALIDITY.OK;
 
   const buttonDisabled = value === null || isWrongChain || !transactionValidated;
 
@@ -213,6 +234,8 @@ export default function ReserveCoin() {
               selectionCallback={() => {
                 setBuyOrSell();
                 setValue(null);
+                setBuyValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
+                setSellValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
               }}
               onChangeBuyInput={onChangeBuyInput}
               onChangeSellInput={onChangeSellInput}
@@ -236,6 +259,8 @@ export default function ReserveCoin() {
               scaledCoinBalance={accountDetails?.scaledBalanceRc}
               scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}
+              buyValidity={buyValidity}
+              sellValidity={sellValidity}
             />
           </div>
           <div className="ConnectWallet">

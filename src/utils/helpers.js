@@ -1,6 +1,7 @@
 // TODO: remove unused functions and remove unncessary promises
 
 import { BN } from "web3-utils";
+import { TRANSACTION_VALIDITY } from "./constants";
 
 export function web3Promise(contract, method, ...args) {
   return contract.methods[method](...args).call();
@@ -97,4 +98,20 @@ export function getScAdaEquivalent(coinsDetails, amountFloat) {
   const adaPerSc = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
   const eqPrice = 1e6 * amountFloat * adaPerSc;
   return decimalScaling(eqPrice.toFixed(0).toString(10), 6) + " milktADA";
+}
+
+export function validatePositiveNumber(amountScaled) {
+  const amountString = amountScaled.replaceAll(",", "");
+  if (isNaN(amountString)) {
+    return TRANSACTION_VALIDITY.NONNUMERIC_INPUT;
+  }
+
+  const amountFloat = parseFloat(amountString);
+  if (amountFloat < 0.0) {
+    return TRANSACTION_VALIDITY.NEGATIVE_INPUT;
+  } else if (amountFloat === 0.0) {
+    return TRANSACTION_VALIDITY.ZERO_INPUT;
+  } else {
+    return TRANSACTION_VALIDITY.OK;
+  }
 }

@@ -3,6 +3,7 @@ import { InfoCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons
 import { Input } from "antd";
 import "./_BuySellCoin.scss";
 import { useAppProvider } from "../../../context/AppProvider";
+import { TRANSACTION_VALIDITY } from "../../../utils/constants";
 
 const BuySellCoin = ({
   coinName,
@@ -15,9 +16,9 @@ const BuySellCoin = ({
   onChangeInput,
   onMaxClick,
   inputValue,
-  inputValid,
   scaledCoinBalance,
-  scaledBaseBalance
+  scaledBaseBalance,
+  validity
 }) => {
   const { isWalletConnected, isWrongChain } = useAppProvider();
   const maxButton = (
@@ -25,6 +26,9 @@ const BuySellCoin = ({
       MAX
     </button>
   );
+  const inputValid = validity === TRANSACTION_VALIDITY.OK;
+  const inputBarNotMarked =
+    !inputValue || !isWalletConnected || isWrongChain || inputValid;
 
   return (
     <div className="BuySellCoin">
@@ -42,7 +46,7 @@ const BuySellCoin = ({
               {isWalletConnected ? maxButton : null}
             </div>
           }
-          status={!inputValue || !isWalletConnected || inputValid ? null : "error"}
+          status={inputBarNotMarked ? null : "error"}
           onChange={onChangeInput}
         />
       </div>
@@ -74,6 +78,7 @@ const BuySellCoin = ({
           <>
             <p>{`You will ${payOrReceive}  ~ ${inputValue} ${coinName}`}</p>
             <p>{`You will ${payOrGet}  ~ ${totalAmount} milktADA`}</p>
+            <p>{inputValid ? null : `Transaction is invalid: ${validity}.`}</p>
           </>
         ) : (
           <p>Enter an amount above to compute transaction price.</p>

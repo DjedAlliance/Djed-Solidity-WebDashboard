@@ -15,6 +15,7 @@ import {
   percentScaledPromise,
   web3Promise
 } from "./helpers";
+import { TRANSACTION_VALIDITY } from "./constants";
 
 const BLOCKCHAIN_URI = "https://rpc-devnet-cardano-evm.c1.milkomeda.com/";
 export const CHAIN_ID = 200101;
@@ -230,16 +231,22 @@ export const sellRcTx = (djed, account, amount) => {
 
 export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
   if (new BN(unscaledAmountRc).gt(new BN(unscaledBudgetRc))) {
-    return new Promise((r) => r(false));
+    return new Promise((r) => r(TRANSACTION_VALIDITY.INSUFFICIENT_BC));
   }
-  return web3Promise(djed, "checkBuyableNReserveCoins", unscaledAmountRc);
+  return web3Promise(djed, "checkBuyableNReserveCoins", unscaledAmountRc).then(
+    (buyable) =>
+      buyable ? TRANSACTION_VALIDITY.OK : TRANSACTION_VALIDITY.RESERVE_RATIO_HIGH
+  );
 };
 
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
   if (new BN(unscaledAmountRc).gt(new BN(unscaledBalanceRc))) {
-    return new Promise((r) => r(false));
+    return new Promise((r) => r(TRANSACTION_VALIDITY.INSUFFICIENT_RC));
   }
-  return web3Promise(djed, "checkSellableNReserveCoins", unscaledAmountRc);
+  return web3Promise(djed, "checkSellableNReserveCoins", unscaledAmountRc).then(
+    (sellable) =>
+      sellable ? TRANSACTION_VALIDITY.OK : TRANSACTION_VALIDITY.RESERVE_RATIO_LOW
+  );
 };
 
 export const getMaxBuyRc = (
@@ -288,13 +295,21 @@ export const sellScTx = (djed, account, amount) => {
 
 export const checkBuyableSc = (djed, unscaledAmountSc, unscaledBudgetSc) => {
   if (new BN(unscaledAmountSc).gt(new BN(unscaledBudgetSc))) {
-    return new Promise((r) => r(false));
+    return new Promise((r) => r(TRANSACTION_VALIDITY.INSUFFICIENT_BC));
   }
-  return web3Promise(djed, "checkBuyableNStableCoins", unscaledAmountSc);
+  return web3Promise(djed, "checkBuyableNStableCoins", unscaledAmountSc).then((buyable) =>
+    buyable ? TRANSACTION_VALIDITY.OK : TRANSACTION_VALIDITY.RESERVE_RATIO_LOW
+  );
 };
 
 export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) =>
-  new Promise((r) => r(!new BN(unscaledAmountSc).gt(new BN(unscaledBalanceSc))));
+  new Promise((r) =>
+    r(
+      new BN(unscaledAmountSc).gt(new BN(unscaledBalanceSc))
+        ? TRANSACTION_VALIDITY.INSUFFICIENT_SC
+        : TRANSACTION_VALIDITY.OK
+    )
+  );
 
 export const getMaxBuySc = (djed, scDecimals, unscaledBudgetSc) => {
   return scaledPromise(
