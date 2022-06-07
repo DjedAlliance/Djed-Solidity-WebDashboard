@@ -35,11 +35,9 @@ export default function MainLayout() {
             <Menu.Item key="/reservedjed">
               <Link to="/reservedjed">ReserveDjed</Link>
             </Menu.Item>
-            {isWalletConnected ? (
-              <Menu.Item key="/my-balance">
-                <Link to="/my-balance">My Balance</Link>
-              </Menu.Item>
-            ) : null}
+            <Menu.Item key="/my-balance" disabled={!isWalletConnected}>
+              <Link to="/my-balance">My Balance</Link>
+            </Menu.Item>
           </Menu>
           <div className="WalletConfig">
             {isWalletConnected ? <DisconnectButton /> : null}
@@ -89,11 +87,9 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
             <Menu.Item key="/reservedjed">
               <Link to="/reservedjed">ReserveDjed</Link>
             </Menu.Item>
-            {isWalletConnected ? (
-              <Menu.Item key="/my-balance">
-                <Link to="/my-balance">My Balance</Link>
-              </Menu.Item>
-            ) : null}
+            <Menu.Item key="/my-balance" disabled={!isWalletConnected}>
+              <Link to="/my-balance">My Balance</Link>
+            </Menu.Item>
             <div className="WalletConfig">
               {isWalletConnected ? <DisconnectButton /> : null}
               <MetamaskStatusButton />

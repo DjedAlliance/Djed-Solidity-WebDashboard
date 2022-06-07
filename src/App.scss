@@ -78,6 +78,12 @@ body {
   color: white;
 }
 
+.ant-layout-header .ant-menu-item-disabled a {
+  color: $grey-5 !important;
+}
+.ant-dropdown-menu-item-disabled a {
+  color: $grey-5 !important;
+}
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover::after,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover::after,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active::after,
