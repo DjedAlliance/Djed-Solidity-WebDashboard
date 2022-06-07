@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { Layout, Menu, Dropdown } from "antd";
-import MetamaskStatusButton from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
+import MetamaskStatusButton, {
+  DisconnectButton
+} from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
 
 import { ReactComponent as Logo } from "./images/mdjed_testnet_white.svg";
 
@@ -40,6 +42,7 @@ export default function MainLayout() {
             ) : null}
           </Menu>
           <div className="WalletConfig">
+            {isWalletConnected ? <DisconnectButton /> : null}
             <MetamaskStatusButton />
           </div>
         </Header>
@@ -92,6 +95,7 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
               </Menu.Item>
             ) : null}
             <div className="WalletConfig">
+              {isWalletConnected ? <DisconnectButton /> : null}
               <MetamaskStatusButton />
             </div>
           </Menu>

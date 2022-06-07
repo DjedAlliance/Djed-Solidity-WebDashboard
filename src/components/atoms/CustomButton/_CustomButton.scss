@@ -21,7 +21,7 @@
 .primary {
   background: $gradient-theme-3;
   border: 2px solid $grey-5;
-  transition: 0.5s;
+  transition: 0.3s;
   color: $white;
   .ButtonText {
     color: $white;
@@ -55,7 +55,7 @@
 .secondary {
   background: $black-3;
   border: 2px solid $black-3;
-  transition: 0.5s;
+  transition: 0.3s;
   color: $white;
   .ButtonText {
     color: $white;
@@ -73,5 +73,21 @@
   &[disabled] {
     opacity: 0.5;
     color: $black-3;
+  }
+}
+
+.tertiary {
+  background: transparent;
+  border: 2px solid darken($black-3, 10%);
+  margin-right: 14px;
+  &:hover,
+  &:focus {
+    background: rgba(255, 255, 255, 0.12);
+    .ButtonText {
+      color: #f5f5f5;
+    }
+  }
+  &[disabled] {
+    opacity: 0.5;
   }
 }
