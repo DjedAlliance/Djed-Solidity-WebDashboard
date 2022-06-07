@@ -47,7 +47,13 @@ const BuySellCoin = ({
             </div>
           }
           status={inputBarNotMarked ? null : "error"}
-          onChange={onChangeInput}
+          onChange={(e) => {
+            const reg = /^-?\d*(\.\d*)?$/;
+            const inputValue = e.target.value;
+            if (reg.test(inputValue) || inputValue === "" || inputValue === "-") {
+              onChangeInput(inputValue);
+            }
+          }}
         />
       </div>
       <p className="FeeInfo">

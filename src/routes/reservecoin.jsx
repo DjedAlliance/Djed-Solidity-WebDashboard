@@ -98,14 +98,12 @@ export default function ReserveCoin() {
     });
   };
 
-  const onChangeBuyInput = (e) => {
-    const amountScaled = e.target.value;
+  const onChangeBuyInput = (amountScaled) => {
     setValue(amountScaled);
     updateBuyTradeData(amountScaled);
   };
 
-  const onChangeSellInput = (e) => {
-    const amountScaled = e.target.value;
+  const onChangeSellInput = (amountScaled) => {
     setValue(amountScaled);
     updateSellTradeData(amountScaled);
   };
