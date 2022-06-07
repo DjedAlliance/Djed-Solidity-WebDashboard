@@ -19,13 +19,14 @@ import {
   ACCOUNT_DETAILS_REQUEST_INTERVAL,
   COIN_DETAILS_REQUEST_INTERVAL
 } from "../utils/constants";
+import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [web3, setWeb3] = useState(null);
-  const [accounts, setAccounts] = useState([]);
+  const [accounts, setAccounts] = useLocalStorage("accounts", []);
   const [djedContract, setDjedContract] = useState(null);
   const [oracleContract, setOracleContract] = useState(null);
   const [coinContracts, setCoinContracts] = useState(null);
