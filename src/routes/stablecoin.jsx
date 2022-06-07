@@ -117,14 +117,15 @@ export default function Stablecoin() {
             setTxStatus("success");
           } else {
             console.log("Buy SC reverted!");
+            setTxError("The transaction reverted.");
             setTxStatus("rejected");
           }
         });
       })
       .catch((err) => {
-        console.error("Buy SC error:", err);
+        console.error("Buy SC error:", err.message);
         setTxStatus("rejected");
-        setTxError(err.message);
+        setTxError("MetaMask error. See developer console for details.");
       });
   };
 
@@ -139,14 +140,15 @@ export default function Stablecoin() {
             setTxStatus("success");
           } else {
             console.log("Sell SC reverted!");
+            setTxError("The transaction reverted.");
             setTxStatus("rejected");
           }
         });
       })
       .catch((err) => {
-        console.error("Sell SC error:", err);
+        console.error("Sell SC error:", err.message);
         setTxStatus("rejected");
-        setTxError(err.message);
+        setTxError("MetaMask error. See developer console for details.");
       });
   };
 

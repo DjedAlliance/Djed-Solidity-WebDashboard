@@ -119,14 +119,15 @@ export default function ReserveCoin() {
             setTxStatus("success");
           } else {
             console.log("Buy RC reverted!");
+            setTxError("The transaction reverted.");
             setTxStatus("rejected");
           }
         });
       })
       .catch((err) => {
-        console.error("Error:", err);
+        console.error("Error:", err.message);
         setTxStatus("rejected");
-        setTxError(err.message);
+        setTxError("MetaMask error. See developer console for details.");
       });
   };
 
@@ -141,14 +142,15 @@ export default function ReserveCoin() {
             setTxStatus("success");
           } else {
             console.log("Sell RC reverted!");
+            setTxError("The transaction reverted.");
             setTxStatus("rejected");
           }
         });
       })
       .catch((err) => {
-        console.error("Error:", err);
+        console.error("Error:", err.message);
         setTxStatus("rejected");
-        setTxError(err.message);
+        setTxError("MetaMask error. See developer console for details.");
       });
   };
 
