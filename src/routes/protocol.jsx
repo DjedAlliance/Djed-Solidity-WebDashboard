@@ -56,11 +56,19 @@ export default function Protocol() {
             </p>
             <p>
               You can learn more about the Milkomeda Djed implementation{" "}
-              <a href="/" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://medium.com/@milkomedafoundation/djed-stablecoin-live-on-milkomeda-c1-testnet-ff93710b0881"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 in this blog post
               </a>{" "}
               or{" "}
-              <a href="/" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://medium.com/@milkomedafoundation/getting-started-with-milkomeda-djed-on-c1-testnet-d335ebf65305"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 follow this guide
               </a>{" "}
               to get started testing the dApp immediately.
