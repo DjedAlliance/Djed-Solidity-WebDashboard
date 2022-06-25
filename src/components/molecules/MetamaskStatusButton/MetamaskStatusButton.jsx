@@ -39,9 +39,10 @@ export const ConnectedWalletCard = ({ address }) => {
 
 export const DisconnectButton = () => {
   let navigate = useNavigate();
-  const { setAccounts } = useAppProvider();
+  const { setAccounts, setStoredAccounts } = useAppProvider();
   const handleDisconnect = () => {
     setAccounts([]);
+    setStoredAccounts([]);
     navigate("/");
   };
 
