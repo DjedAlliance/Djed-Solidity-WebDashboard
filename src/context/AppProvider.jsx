@@ -26,7 +26,8 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [web3, setWeb3] = useState(null);
-  const [accounts, setAccounts] = useLocalStorage("accounts", []);
+  const [accounts, setAccounts] = useState([]);
+  const [storedAccounts, setStoredAccounts] = useLocalStorage("accounts", []);
   const [djedContract, setDjedContract] = useState(null);
   const [oracleContract, setOracleContract] = useState(null);
   const [coinContracts, setCoinContracts] = useState(null);
@@ -36,6 +37,13 @@ export const AppProvider = ({ children }) => {
   const [accountDetails, setAccountDetails] = useState(null);
   const [coinBudgets, setCoinBudgets] = useState(null);
   const [isWrongChain, setIsWrongChain] = useState(false);
+
+  useEffect(() => {
+    const setUp = async () => {
+      await setUpAccountSpecificValues();
+    };
+    setUp();
+  }, [accounts]);
 
   useEffect(() => {
     const init = async () => {
@@ -66,11 +74,26 @@ export const AppProvider = ({ children }) => {
         setDecimals(decimals);
         setCoinsDetails(coinsDetails);
         setSystemParams(systemParams);
+        if (storedAccounts.length > 0) {
+          const newAccounts = await window.ethereum.request({
+            method: "eth_requestAccounts"
+          });
+          if (
+            storedAccounts.length !== newAccounts.length ||
+            storedAccounts[0] !== newAccounts[0]
+          ) {
+            setAccounts(accounts);
+            setStoredAccounts(accounts);
+          } else {
+            setAccounts(storedAccounts);
+          }
+        }
       } catch (e) {
         console.error(e);
       } finally {
         setIsLoading(false);
       }
+      //console.log("Accs:", accounts);
     };
     setIsLoading(true);
     init();
@@ -93,31 +116,38 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const setUpAccountSpecificValues = async () => {
+    if (accounts.length === 0) {
+      return;
+    }
+    window.ethereum
+      .request({ method: "eth_chainId" })
+      .then((chainId) => handleChain(parseInt(chainId)));
+    const accountDetails = await getAccountDetails(
+      web3,
+      accounts[0],
+      coinContracts.stableCoin,
+      coinContracts.reserveCoin,
+      decimals.scDecimals,
+      decimals.rcDecimals
+    );
+    setAccountDetails(accountDetails);
+    const coinBudgets = await getCoinBudgets(
+      djedContract,
+      accountDetails.unscaledBalanceBc,
+      decimals.scDecimals,
+      decimals.rcDecimals
+    );
+    setCoinBudgets(coinBudgets);
+  };
+
   const connectMetamask = async () => {
     try {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts"
       });
       setAccounts(accounts);
-      window.ethereum
-        .request({ method: "eth_chainId" })
-        .then((chainId) => handleChain(parseInt(chainId)));
-      const accountDetails = await getAccountDetails(
-        web3,
-        accounts[0],
-        coinContracts.stableCoin,
-        coinContracts.reserveCoin,
-        decimals.scDecimals,
-        decimals.rcDecimals
-      );
-      setAccountDetails(accountDetails);
-      const coinBudgets = await getCoinBudgets(
-        djedContract,
-        accountDetails.unscaledBalanceBc,
-        decimals.scDecimals,
-        decimals.rcDecimals
-      );
-      setCoinBudgets(coinBudgets);
+      setStoredAccounts(accounts);
     } catch (e) {
       console.error(e);
     }
@@ -181,7 +211,8 @@ export const AppProvider = ({ children }) => {
           connectMetamask,
           redirectToMetamask,
           accounts,
-          setAccounts
+          setAccounts,
+          setStoredAccounts
         }}
       >
         {children}
