@@ -17,9 +17,9 @@ import {
 } from "./helpers";
 import { TRANSACTION_VALIDITY } from "./constants";
 
-const BLOCKCHAIN_URI = "https://rpc-devnet-cardano-evm.c1.milkomeda.com/";
-export const CHAIN_ID = 200101;
-const DJED_ADDRESS = "0xFE7E66e02A80dcFa9267fE2F2b3f70f743A15bBe"; // djedAddress
+const BLOCKCHAIN_URI = "https://rpc-devnet-algorand-rollup.a1.milkomeda.com/";
+export const CHAIN_ID = 200202;
+const DJED_ADDRESS = "0xDB82328B50FF8DeF36e996Eb0DA211D4FD079Cce"; // djedAddress
 //export const ORACLE_ADDRESS = "0x5A8E0B0B666A60Cf4f00E56A7C6C73FcE77eAaD6"; // oracleAddress
 const BC_DECIMALS = 18;
 const ORACLE_DECIMALS = 6;
