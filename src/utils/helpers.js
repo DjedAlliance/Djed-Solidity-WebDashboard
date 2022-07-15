@@ -97,7 +97,7 @@ export function getRcUsdEquivalent(coinsDetails, amountFloat) {
 export function getScAdaEquivalent(coinsDetails, amountFloat) {
   const adaPerSc = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
   const eqPrice = 1e6 * amountFloat * adaPerSc;
-  return decimalScaling(eqPrice.toFixed(0).toString(10), 6) + " milktADA";
+  return decimalScaling(eqPrice.toFixed(0).toString(10), 6) + " milktALGO";
 }
 
 export function validatePositiveNumber(amountScaled) {

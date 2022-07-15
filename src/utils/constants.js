@@ -10,7 +10,7 @@ export const TRANSACTION_VALIDITY = {
   NONNUMERIC_INPUT: "Amount has to be a number",
   NEGATIVE_INPUT: "Amount cannot be negative",
   ZERO_INPUT: "Amount cannot be zero",
-  INSUFFICIENT_BC: "Insufficient milktADA balance",
+  INSUFFICIENT_BC: "Insufficient milktALGO balance",
   INSUFFICIENT_SC: "Insufficient StableDjed balance",
   INSUFFICIENT_RC: "Insufficient ReserveDjed balance",
   RESERVE_RATIO_LOW: "Reserve ratio too low",
