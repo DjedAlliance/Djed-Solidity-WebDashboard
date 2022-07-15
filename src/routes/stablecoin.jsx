@@ -191,16 +191,16 @@ export default function Stablecoin() {
           <div className="DescriptionContainer">
             <p>
               StableDjed is the USD-pegged stablecoin which is part of the Djed protocol.
-              Each StableDjed is backed by 400-600% collateral of testnet milkADA. As
+              Each StableDjed is backed by 400-600% collateral of testnet milkALGO. As
               such, each StableDjed is able to maintain this peg without a centralized
               monetary policy based on the collateral requirements. This peg is
               automatically maintained with price fluctuations up and until the price of
-              ADA dips so low that the collateral value decreases to under 100%.
+              ALGO dips so low that the collateral value decreases to under 100%.
             </p>
             <p>
               The Djed protocol allows users who own StableDjed to always sell their
               tokens back to the protocol in order to withdraw an equivalent value of
-              testnet milkADA. As such, StableDjed is aimed for users who want to maintain
+              testnet milkALGO. As such, StableDjed is aimed for users who want to maintain
               stability of value in their assets.
             </p>
           </div>

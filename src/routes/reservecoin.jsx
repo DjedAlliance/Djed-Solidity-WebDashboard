@@ -201,14 +201,14 @@ export default function ReserveCoin() {
               ReserveDjed is the second token of the Djed protocol which is aimed at users
               who are looking to trade stability in value for potential upside gain. Every
               ReserveDjed bought from the protocol represents a portion of the underlying
-              testnet milkADA which is held in the Djed protocol reserves. As such, if the
-              price of ADA increases, then the outstanding liabilities to cover all
+              testnet milkALGO which is held in the Djed protocol reserves. As such, if the
+              price of ALGO increases, then the outstanding liabilities to cover all
               existing StableDjed decreases, and thus the value of ReserveDjed increases.
             </p>
             <p>
               As such ReserveDjed is the riskier of the two assets (compared to
               StableDjed), yet offers users who have a stronger risk tolerance to have
-              potential upside gain if the price of ADA increases.
+              potential upside gain if the price of ALGO increases.
             </p>
           </div>
           <CoinCard
