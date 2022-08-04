@@ -164,6 +164,13 @@ export const getAccountDetails = async (
 };
 
 export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDecimals) => {
+  return {
+    scaledBudgetSc: null,
+    unscaledBudgetSc: null,
+    scaledBudgetRc: null,
+    unscaledBudgetRc: null
+  };
+  /*
   const [[scaledBudgetSc, unscaledBudgetSc], [scaledBudgetRc, unscaledBudgetRc]] =
     await Promise.all([
       scaledUnscaledPromise(
@@ -182,6 +189,7 @@ export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDeci
     scaledBudgetRc,
     unscaledBudgetRc
   };
+  */
 };
 
 export const promiseTx = (accounts, tx) => {
@@ -213,11 +221,13 @@ const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
 };
 
 // reservecoin
+
 export const tradeDataPriceBuyRc = (djed, rcDecimals, amountScaled) =>
   tradeDataPriceCore(djed, "getPriceBuyNReserveCoinsBC", rcDecimals, amountScaled);
 
 export const tradeDataPriceSellRc = (djed, rcDecimals, amountScaled) =>
   tradeDataPriceCore(djed, "getPriceSellNReserveCoinsBC", rcDecimals, amountScaled);
+
 
 export const buyRcTx = (djed, account, value) => {
   const data = djed.methods.buyReserveCoins().encodeABI();
@@ -229,32 +239,53 @@ export const sellRcTx = (djed, account, amount) => {
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
+// NOTE: Reserve ratio not checked!
 export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
+  return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
+
+  // NOTE: reserve ratio not checked
+  // NOTE: balance not checked
+
+  /*
   if (new BN(unscaledAmountRc).gt(new BN(unscaledBudgetRc))) {
     return new Promise((r) => r(TRANSACTION_VALIDITY.INSUFFICIENT_BC));
   }
+  */
+  /*
   return web3Promise(djed, "checkBuyableNReserveCoins", unscaledAmountRc).then(
     (buyable) =>
       buyable ? TRANSACTION_VALIDITY.OK : TRANSACTION_VALIDITY.RESERVE_RATIO_HIGH
   );
+  */
 };
 
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
+  return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
+
+  // NOTE: reserve ratio not checked
+  // NOTE: balance not checked
+
+  /*
   if (new BN(unscaledAmountRc).gt(new BN(unscaledBalanceRc))) {
     return new Promise((r) => r(TRANSACTION_VALIDITY.INSUFFICIENT_RC));
   }
+  */
+  /*
   return web3Promise(djed, "checkSellableNReserveCoins", unscaledAmountRc).then(
     (sellable) =>
       sellable ? TRANSACTION_VALIDITY.OK : TRANSACTION_VALIDITY.RESERVE_RATIO_LOW
   );
+  */
 };
 
 // stablecoin
+
 export const tradeDataPriceBuySc = (djed, scDecimals, amountScaled) =>
   tradeDataPriceCore(djed, "getPriceBuyNStableCoinsBC", scDecimals, amountScaled);
 
 export const tradeDataPriceSellSc = (djed, scDecimals, amountScaled) =>
   tradeDataPriceCore(djed, "getPriceSellNStableCoinsBC", scDecimals, amountScaled);
+
 
 export const buyScTx = (djed, account, value) => {
   const data = djed.methods.buyStableCoins().encodeABI();
@@ -267,19 +298,34 @@ export const sellScTx = (djed, account, amount) => {
 };
 
 export const checkBuyableSc = (djed, unscaledAmountSc, unscaledBudgetSc) => {
+  return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
+
+  // NOTE: reserve ratio not checked
+  // NOTE: balance not checked
+
+  /*
   if (new BN(unscaledAmountSc).gt(new BN(unscaledBudgetSc))) {
     return new Promise((r) => r(TRANSACTION_VALIDITY.INSUFFICIENT_BC));
   }
+  */
+  /*
   return web3Promise(djed, "checkBuyableNStableCoins", unscaledAmountSc).then((buyable) =>
     buyable ? TRANSACTION_VALIDITY.OK : TRANSACTION_VALIDITY.RESERVE_RATIO_LOW
   );
+  */
 };
 
-export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) =>
-  new Promise((r) =>
-    r(
-      new BN(unscaledAmountSc).gt(new BN(unscaledBalanceSc))
-        ? TRANSACTION_VALIDITY.INSUFFICIENT_SC
-        : TRANSACTION_VALIDITY.OK
-    )
-  );
+export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) => {
+  return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
+
+  // NOTE: balance not checked
+
+  /*
+  return new Promise((r) =>
+  r(
+    new BN(unscaledAmountSc).gt(new BN(unscaledBalanceSc))
+      ? TRANSACTION_VALIDITY.INSUFFICIENT_SC
+      : TRANSACTION_VALIDITY.OK
+  )
+  */
+}
