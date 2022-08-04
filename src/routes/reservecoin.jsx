@@ -17,8 +17,6 @@ import {
   sellRcTx,
   tradeDataPriceBuyRc,
   tradeDataPriceSellRc,
-  getMaxBuyRc,
-  getMaxSellRc,
   checkBuyableRc,
   checkSellableRc,
   verifyTx
@@ -154,30 +152,6 @@ export default function ReserveCoin() {
       });
   };
 
-  const maxBuyRc = (
-    djed,
-    rcDecimals,
-    unscaledNumberSc,
-    thresholdNumberSc,
-    unscaledBudgetRc
-  ) => {
-    getMaxBuyRc(djed, rcDecimals, unscaledNumberSc, thresholdNumberSc, unscaledBudgetRc)
-      .then((maxAmountScaled) => {
-        setValue(maxAmountScaled);
-        updateBuyTradeData(maxAmountScaled);
-      })
-      .catch((err) => console.error("MAX Error:", err));
-  };
-
-  const maxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
-    getMaxSellRc(djed, rcDecimals, unscaledBalanceRc)
-      .then((maxAmountScaled) => {
-        setValue(maxAmountScaled);
-        updateSellTradeData(maxAmountScaled);
-      })
-      .catch((err) => console.error("MAX Error:", err));
-  };
-
   const tradeFxn = isBuyActive
     ? buyRc.bind(null, tradeData.totalUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
@@ -239,20 +213,6 @@ export default function ReserveCoin() {
               }}
               onChangeBuyInput={onChangeBuyInput}
               onChangeSellInput={onChangeSellInput}
-              onMaxBuy={maxBuyRc.bind(
-                null,
-                djedContract,
-                decimals?.rcDecimals,
-                coinsDetails?.unscaledNumberSc,
-                systemParams?.thresholdNumberSc,
-                coinBudgets?.unscaledBudgetRc
-              )}
-              onMaxSell={maxSellRc.bind(
-                null,
-                djedContract,
-                decimals?.rcDecimals,
-                accountDetails?.unscaledBalanceRc
-              )}
               tradeData={tradeData}
               inputValue={value}
               inputValid={transactionValidated}

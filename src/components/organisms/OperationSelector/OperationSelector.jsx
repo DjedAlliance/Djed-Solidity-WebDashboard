@@ -11,8 +11,6 @@ const OperationSelector = ({
   selectionCallback,
   onChangeBuyInput,
   onChangeSellInput,
-  onMaxBuy,
-  onMaxSell,
   tradeData,
   inputValue,
   scaledCoinBalance,
@@ -35,7 +33,6 @@ const OperationSelector = ({
           totalAmount={tradeData.totalScaled}
           payOrReceive="receive"
           payOrGet="pay"
-          onMaxClick={onMaxBuy}
           onChangeInput={onChangeBuyInput}
           inputValue={inputValue}
           scaledCoinBalance={scaledCoinBalance}
@@ -53,7 +50,6 @@ const OperationSelector = ({
           priceAmount="0.000"
           fee={fee}
           totalAmount={tradeData.totalScaled}
-          onMaxClick={onMaxSell}
           payOrReceive="pay"
           payOrGet="get"
           onChangeInput={onChangeSellInput}

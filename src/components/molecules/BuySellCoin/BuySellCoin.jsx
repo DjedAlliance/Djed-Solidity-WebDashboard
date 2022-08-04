@@ -14,18 +14,12 @@ const BuySellCoin = ({
   payOrGet,
   buyOrSell,
   onChangeInput,
-  onMaxClick,
   inputValue,
   scaledCoinBalance,
   scaledBaseBalance,
   validity
 }) => {
   const { isWalletConnected, isWrongChain } = useAppProvider();
-  const maxButton = (
-    <button className="MaxButton" onClick={onMaxClick}>
-      MAX
-    </button>
-  );
   const inputValid = validity === TRANSACTION_VALIDITY.OK;
   const inputBarNotMarked =
     !inputValue || !isWalletConnected || isWrongChain || inputValid;
@@ -43,7 +37,6 @@ const BuySellCoin = ({
           suffix={
             <div>
               {coinName}
-              {isWalletConnected ? maxButton : null}
             </div>
           }
           status={inputBarNotMarked ? null : "error"}

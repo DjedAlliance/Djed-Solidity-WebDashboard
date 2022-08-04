@@ -17,8 +17,6 @@ import {
   sellScTx,
   tradeDataPriceBuySc,
   tradeDataPriceSellSc,
-  getMaxBuySc,
-  getMaxSellSc,
   checkBuyableSc,
   checkSellableSc,
   verifyTx
@@ -152,24 +150,6 @@ export default function Stablecoin() {
       });
   };
 
-  const maxBuySc = (djed, scDecimals, unscaledBudgetSc) => {
-    getMaxBuySc(djed, scDecimals, unscaledBudgetSc)
-      .then((maxAmountScaled) => {
-        setValue(maxAmountScaled);
-        updateBuyTradeData(maxAmountScaled);
-      })
-      .catch((err) => console.error("MAX Error:", err));
-  };
-
-  const maxSellSc = (scaledBalanceSc) => {
-    getMaxSellSc(scaledBalanceSc)
-      .then((maxAmountScaled) => {
-        setValue(maxAmountScaled);
-        updateSellTradeData(maxAmountScaled);
-      })
-      .catch((err) => console.error("MAX Error:", err));
-  };
-
   const tradeFxn = isBuyActive
     ? buySc.bind(null, tradeData.totalUnscaled)
     : sellSc.bind(null, tradeData.amountUnscaled);
@@ -231,13 +211,6 @@ export default function Stablecoin() {
               }}
               onChangeBuyInput={onChangeBuyInput}
               onChangeSellInput={onChangeSellInput}
-              onMaxBuy={maxBuySc.bind(
-                null,
-                djedContract,
-                decimals?.scDecimals,
-                coinBudgets?.unscaledBudgetSc
-              )}
-              onMaxSell={maxSellSc.bind(null, accountDetails?.scaledBalanceSc)}
               tradeData={tradeData}
               inputValue={value}
               scaledCoinBalance={accountDetails?.scaledBalanceSc}

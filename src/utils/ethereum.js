@@ -249,33 +249,6 @@ export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
   );
 };
 
-export const getMaxBuyRc = (
-  djed,
-  rcDecimals,
-  unscaledNumberSc,
-  thresholdNumberSc,
-  unscaledBudgetRc
-) => {
-  if (new BN(unscaledNumberSc).lt(new BN(thresholdNumberSc))) {
-    return new Promise((r) => r(decimalScaling(unscaledBudgetRc, rcDecimals)));
-  }
-  return scaledPromise(
-    web3Promise(djed, "getMaxBuyableReserveCoins").then((protocolMax) =>
-      BN.min(new BN(protocolMax), new BN(unscaledBudgetRc))
-    ),
-    rcDecimals
-  );
-};
-
-export const getMaxSellRc = (djed, rcDecimals, unscaledBalanceRc) => {
-  return scaledPromise(
-    web3Promise(djed, "getMaxSellableReserveCoins").then((unscaledMax) =>
-      BN.min(new BN(unscaledBalanceRc), new BN(unscaledMax))
-    ),
-    rcDecimals
-  );
-};
-
 // stablecoin
 export const tradeDataPriceBuySc = (djed, scDecimals, amountScaled) =>
   tradeDataPriceCore(djed, "getPriceBuyNStableCoinsBC", scDecimals, amountScaled);
@@ -310,15 +283,3 @@ export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) =>
         : TRANSACTION_VALIDITY.OK
     )
   );
-
-export const getMaxBuySc = (djed, scDecimals, unscaledBudgetSc) => {
-  return scaledPromise(
-    web3Promise(djed, "getMaxBuyableStableCoins").then((protocolMax) =>
-      BN.min(new BN(protocolMax), new BN(unscaledBudgetSc))
-    ),
-    scDecimals
-  );
-};
-
-// maxSellSc is just the current account balance, no additional protocol limits:
-export const getMaxSellSc = (scaledBalanceSc) => new Promise((r) => r(scaledBalanceSc));
