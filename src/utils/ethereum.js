@@ -1,10 +1,8 @@
 import Web3 from "web3";
-import djedArtifact from "../artifacts/DjedProtocol.json";
-import oracleArtifact from "../artifacts/AdaUsdSimpleOracle.json";
-import { BN } from "web3-utils";
+import djedArtifact from "../artifacts/Djed.json";
+import coinArtifact from "../artifacts/Coin.json";
+import oracleArtifact from "../artifacts/Oracle.json";
 
-import djedStableCoinArtifact from "../artifacts/DjedStableCoin.json";
-import djedReserveCoinArtifact from "../artifacts/DjedReserveCoin.json";
 import {
   buildTx,
   convertInt,
@@ -20,10 +18,9 @@ import { TRANSACTION_VALIDITY } from "./constants";
 const BLOCKCHAIN_URI = "https://rpc-devnet-cardano-evm.c1.milkomeda.com/";
 export const CHAIN_ID = 200101;
 const DJED_ADDRESS = "0xFE7E66e02A80dcFa9267fE2F2b3f70f743A15bBe"; // djedAddress
-//export const ORACLE_ADDRESS = "0x5A8E0B0B666A60Cf4f00E56A7C6C73FcE77eAaD6"; // oracleAddress
 const BC_DECIMALS = 18;
-const ORACLE_DECIMALS = 6;
-const SCALING_DECIMALS = 24; // scalingFixed
+const ORACLE_DECIMALS = 18;
+const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
 
 const REFRESH_PERIOD = 4000;
 const CONFIRMATION_WAIT_PERIOD = REFRESH_PERIOD + 1000;
@@ -60,11 +57,8 @@ export const getCoinContracts = async (djedContract, web3) => {
     web3Promise(djedContract, "stableCoin"),
     web3Promise(djedContract, "reserveCoin")
   ]);
-  const stableCoin = new web3.eth.Contract(djedStableCoinArtifact.abi, stableCoinAddress);
-  const reserveCoin = new web3.eth.Contract(
-    djedReserveCoinArtifact.abi,
-    reserveCoinAddress
-  );
+  const stableCoin = new web3.eth.Contract(coinArtifact.abi, stableCoinAddress);
+  const reserveCoin = new web3.eth.Contract(coinArtifact.abi, reserveCoinAddress);
   return { stableCoin, reserveCoin };
 };
 
@@ -95,15 +89,15 @@ export const getCoinDetails = async (
     scaledScExchangeRate
   ] = await Promise.all([
     scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
-    scaledPromise(web3Promise(djed, "getStableCoinWholeTargetPriceBC"), BC_DECIMALS), //oracle, "exchangeRate"), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "scPrice"), BC_DECIMALS), 
     scaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
-    scaledPromise(web3Promise(djed, "reserveBC"), BC_DECIMALS),
-    percentScaledPromise(web3Promise(djed, "getReserveRatio"), SCALING_DECIMALS) /*.then(
+    scaledPromise(web3Promise(djed, "R"), BC_DECIMALS),
+    percentScaledPromise(web3Promise(djed, "ratio"), SCALING_DECIMALS) /*.then(
       (value) => (parseFloat(value) * 100).toFixed(4) + "%"
     )*/,
-    scaledPromise(web3Promise(djed, "getReserveCoinWholeBuyPriceBC"), BC_DECIMALS),
-    scaledPromise(web3Promise(djed, "getReserveCoinWholeSellPriceBC"), BC_DECIMALS),
-    scaledPromise(web3Promise(oracle, "exchangeRate"), ORACLE_DECIMALS)
+    scaledPromise(web3Promise(djed, "rcBuyingPrice"), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "rcTargetPrice"), BC_DECIMALS),
+    scaledPromise(web3Promise(oracle, "readData"), ORACLE_DECIMALS)
   ]);
 
   return {
@@ -120,18 +114,18 @@ export const getCoinDetails = async (
 };
 
 export const getSystemParams = async (djed) => {
-  const [reserveRatioMin, reserveRatioMax, fee, thresholdNumberSc] = await Promise.all([
+  const [reserveRatioMin, reserveRatioMax, fee, thresholdSupplySC] = await Promise.all([
     percentScaledPromise(web3Promise(djed, "reserveRatioMin"), SCALING_DECIMALS),
     percentScaledPromise(web3Promise(djed, "reserveRatioMax"), SCALING_DECIMALS),
     percentScaledPromise(web3Promise(djed, "fee"), SCALING_DECIMALS),
-    web3Promise(djed, "thresholdNumberSC")
+    web3Promise(djed, "thresholdSupplySC")
   ]);
 
   return {
     reserveRatioMin,
     reserveRatioMax,
     fee,
-    thresholdNumberSc
+    thresholdSupplySC
   };
 };
 
@@ -170,26 +164,6 @@ export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDeci
     scaledBudgetRc: null,
     unscaledBudgetRc: null
   };
-  /*
-  const [[scaledBudgetSc, unscaledBudgetSc], [scaledBudgetRc, unscaledBudgetRc]] =
-    await Promise.all([
-      scaledUnscaledPromise(
-        web3Promise(djed, "getAmountForValueBuyStableCoins", unscaledBalanceBc),
-        scDecimals
-      ),
-      scaledUnscaledPromise(
-        web3Promise(djed, "getAmountForValueBuyReserveCoins", unscaledBalanceBc),
-        rcDecimals
-      )
-    ]);
-
-  return {
-    scaledBudgetSc,
-    unscaledBudgetSc,
-    scaledBudgetRc,
-    unscaledBudgetRc
-  };
-  */
 };
 
 export const promiseTx = (accounts, tx) => {
@@ -222,11 +196,13 @@ const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
 
 // reservecoin
 
+// TODO: change the buy and sell functions to conform to the new ABI
+
 export const tradeDataPriceBuyRc = (djed, rcDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "getPriceBuyNReserveCoinsBC", rcDecimals, amountScaled);
+  tradeDataPriceCore(djed, "rcBuyingPrice", rcDecimals, amountScaled); // TODO: multiply by amount?
 
 export const tradeDataPriceSellRc = (djed, rcDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "getPriceSellNReserveCoinsBC", rcDecimals, amountScaled);
+  tradeDataPriceCore(djed, "rcTargetPrice", rcDecimals, amountScaled); // TODO: multiply by amount?
 
 
 export const buyRcTx = (djed, account, value) => {
@@ -239,52 +215,22 @@ export const sellRcTx = (djed, account, amount) => {
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
-// NOTE: Reserve ratio not checked!
+// TODO: Check reserve ratio!
 export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
   return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
-
-  // NOTE: reserve ratio not checked
-  // NOTE: balance not checked
-
-  /*
-  if (new BN(unscaledAmountRc).gt(new BN(unscaledBudgetRc))) {
-    return new Promise((r) => r(TRANSACTION_VALIDITY.INSUFFICIENT_BC));
-  }
-  */
-  /*
-  return web3Promise(djed, "checkBuyableNReserveCoins", unscaledAmountRc).then(
-    (buyable) =>
-      buyable ? TRANSACTION_VALIDITY.OK : TRANSACTION_VALIDITY.RESERVE_RATIO_HIGH
-  );
-  */
 };
 
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
   return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
-
-  // NOTE: reserve ratio not checked
-  // NOTE: balance not checked
-
-  /*
-  if (new BN(unscaledAmountRc).gt(new BN(unscaledBalanceRc))) {
-    return new Promise((r) => r(TRANSACTION_VALIDITY.INSUFFICIENT_RC));
-  }
-  */
-  /*
-  return web3Promise(djed, "checkSellableNReserveCoins", unscaledAmountRc).then(
-    (sellable) =>
-      sellable ? TRANSACTION_VALIDITY.OK : TRANSACTION_VALIDITY.RESERVE_RATIO_LOW
-  );
-  */
 };
 
 // stablecoin
 
 export const tradeDataPriceBuySc = (djed, scDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "getPriceBuyNStableCoinsBC", scDecimals, amountScaled);
+  tradeDataPriceCore(oracle, "readData", scDecimals, amountScaled); // TODO: FIXME multiply by amount?
 
 export const tradeDataPriceSellSc = (djed, scDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "getPriceSellNStableCoinsBC", scDecimals, amountScaled);
+  tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled); // TODO: multiply by amount?
 
 
 export const buyScTx = (djed, account, value) => {
@@ -299,33 +245,8 @@ export const sellScTx = (djed, account, amount) => {
 
 export const checkBuyableSc = (djed, unscaledAmountSc, unscaledBudgetSc) => {
   return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
-
-  // NOTE: reserve ratio not checked
-  // NOTE: balance not checked
-
-  /*
-  if (new BN(unscaledAmountSc).gt(new BN(unscaledBudgetSc))) {
-    return new Promise((r) => r(TRANSACTION_VALIDITY.INSUFFICIENT_BC));
-  }
-  */
-  /*
-  return web3Promise(djed, "checkBuyableNStableCoins", unscaledAmountSc).then((buyable) =>
-    buyable ? TRANSACTION_VALIDITY.OK : TRANSACTION_VALIDITY.RESERVE_RATIO_LOW
-  );
-  */
 };
 
 export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) => {
   return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
-
-  // NOTE: balance not checked
-
-  /*
-  return new Promise((r) =>
-  r(
-    new BN(unscaledAmountSc).gt(new BN(unscaledBalanceSc))
-      ? TRANSACTION_VALIDITY.INSUFFICIENT_SC
-      : TRANSACTION_VALIDITY.OK
-  )
-  */
 }
