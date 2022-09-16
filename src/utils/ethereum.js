@@ -196,7 +196,7 @@ const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
 
 // reservecoin
 
-// TODO: change the buy and sell functions to conform to the new ABI
+// TODO: change the buy and sell functions to conform to the new ABI: need ui address and fee
 
 export const tradeDataPriceBuyRc = (djed, rcDecimals, amountScaled) =>
   tradeDataPriceCore(djed, "rcBuyingPrice", rcDecimals, amountScaled); // TODO: multiply by amount?
