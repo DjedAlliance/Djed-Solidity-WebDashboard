@@ -11,8 +11,7 @@ import {
   getCoinDetails,
   getSystemParams,
   getAccountDetails,
-  getCoinBudgets,
-  CHAIN_ID
+  getCoinBudgets
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
@@ -20,6 +19,7 @@ import {
   COIN_DETAILS_REQUEST_INTERVAL
 } from "../utils/constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { CHAIN_ID } from "../config";
 
 const AppContext = createContext();
 

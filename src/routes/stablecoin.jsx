@@ -29,6 +29,7 @@ export default function Stablecoin() {
     isWrongChain,
     coinsDetails,
     djedContract,
+    oracleContract,
     decimals,
     accountDetails,
     coinBudgets,
@@ -57,22 +58,24 @@ export default function Stablecoin() {
       setBuyValidity(inputSanity);
       return;
     }
-    tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled).then((data) => {
-      setTradeData(data);
-      if (!isWalletConnected) {
-        setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-      } else if (isWrongChain) {
-        setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-      } else {
-        checkBuyableSc(
-          djedContract,
-          data.amountUnscaled,
-          coinBudgets?.unscaledBudgetSc
-        ).then((res) => {
-          setBuyValidity(res);
-        });
+    tradeDataPriceBuySc(oracleContract, decimals.scDecimals, amountScaled).then(
+      (data) => {
+        setTradeData(data);
+        if (!isWalletConnected) {
+          setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
+        } else if (isWrongChain) {
+          setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+        } else {
+          checkBuyableSc(
+            djedContract,
+            data.amountUnscaled,
+            coinBudgets?.unscaledBudgetSc
+          ).then((res) => {
+            setBuyValidity(res);
+          });
+        }
       }
-    });
+    );
   };
 
   const updateSellTradeData = (amountScaled) => {

@@ -14,16 +14,16 @@ import {
   web3Promise
 } from "./helpers";
 import { TRANSACTION_VALIDITY } from "./constants";
-
-const BLOCKCHAIN_URI = "https://rpc-devnet-cardano-evm.c1.milkomeda.com/";
-export const CHAIN_ID = 200101;
-const DJED_ADDRESS = "0xFE7E66e02A80dcFa9267fE2F2b3f70f743A15bBe"; // djedAddress
-const BC_DECIMALS = 18;
-const ORACLE_DECIMALS = 18;
-const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
-
-const REFRESH_PERIOD = 4000;
-const CONFIRMATION_WAIT_PERIOD = REFRESH_PERIOD + 1000;
+import {
+  BLOCKCHAIN_URI,
+  DJED_ADDRESS,
+  BC_DECIMALS,
+  ORACLE_DECIMALS,
+  SCALING_DECIMALS,
+  CONFIRMATION_WAIT_PERIOD,
+  FEE_UI,
+  UI
+} from "../config";
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {
@@ -89,7 +89,7 @@ export const getCoinDetails = async (
     scaledScExchangeRate
   ] = await Promise.all([
     scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
-    scaledPromise(web3Promise(djed, "scPrice"), BC_DECIMALS), 
+    scaledPromise(web3Promise(djed, "scPrice"), BC_DECIMALS),
     scaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
     scaledPromise(web3Promise(djed, "R"), BC_DECIMALS),
     percentScaledPromise(web3Promise(djed, "ratio"), SCALING_DECIMALS) /*.then(
@@ -186,32 +186,41 @@ export const verifyTx = (web3, hash) => {
 
 const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
   const amountUnscaled = decimalUnscaling(amountScaled, decimals);
-  return web3Promise(djed, method, amountUnscaled.toString(10)).then((totalUnscaled) => ({
-    amountScaled,
-    amountUnscaled,
-    totalScaled: decimalScaling(totalUnscaled, BC_DECIMALS),
-    totalUnscaled
-  }));
+  return web3Promise(djed, method).then((priceUnscaled) => {
+    const priceScaled = decimalScaling(priceUnscaled, BC_DECIMALS);
+
+    const total = priceScaled * amountScaled;
+    const totalUnscaled = decimalUnscaling(total.toString(), BC_DECIMALS);
+    const totalScaled = decimalScaling(totalUnscaled, BC_DECIMALS);
+    console.log({
+      amountScaled,
+      amountUnscaled,
+      totalScaled,
+      totalUnscaled
+    });
+    return {
+      amountScaled,
+      amountUnscaled,
+      totalScaled,
+      totalUnscaled
+    };
+  });
 };
 
 // reservecoin
 
-// TODO: change the buy and sell functions to conform to the new ABI: need ui address and fee
-
 export const tradeDataPriceBuyRc = (djed, rcDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "rcBuyingPrice", rcDecimals, amountScaled); // TODO: multiply by amount?
+  tradeDataPriceCore(djed, "rcBuyingPrice", rcDecimals, amountScaled);
 
 export const tradeDataPriceSellRc = (djed, rcDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "rcTargetPrice", rcDecimals, amountScaled); // TODO: multiply by amount?
-
-
+  tradeDataPriceCore(djed, "rcTargetPrice", rcDecimals, amountScaled);
 export const buyRcTx = (djed, account, value) => {
-  const data = djed.methods.buyReserveCoins().encodeABI();
+  const data = djed.methods.buyReserveCoins(account, FEE_UI, UI).encodeABI();
   return buildTx(account, DJED_ADDRESS, value, data);
 };
 
 export const sellRcTx = (djed, account, amount) => {
-  const data = djed.methods.sellReserveCoins(amount).encodeABI();
+  const data = djed.methods.sellReserveCoins(amount, account, FEE_UI, UI).encodeABI();
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
@@ -226,20 +235,19 @@ export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
 
 // stablecoin
 
-export const tradeDataPriceBuySc = (djed, scDecimals, amountScaled) =>
-  tradeDataPriceCore(oracle, "readData", scDecimals, amountScaled); // TODO: FIXME multiply by amount?
+export const tradeDataPriceBuySc = (oracle, scDecimals, amountScaled) =>
+  tradeDataPriceCore(oracle, "readData", scDecimals, amountScaled);
 
 export const tradeDataPriceSellSc = (djed, scDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled); // TODO: multiply by amount?
-
+  tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
 
 export const buyScTx = (djed, account, value) => {
-  const data = djed.methods.buyStableCoins().encodeABI();
+  const data = djed.methods.buyStableCoins(account, FEE_UI, UI).encodeABI();
   return buildTx(account, DJED_ADDRESS, value, data);
 };
 
 export const sellScTx = (djed, account, amount) => {
-  const data = djed.methods.sellStableCoins(amount).encodeABI();
+  const data = djed.methods.sellStableCoins(amount, account, FEE_UI, UI).encodeABI();
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
@@ -249,4 +257,4 @@ export const checkBuyableSc = (djed, unscaledAmountSc, unscaledBudgetSc) => {
 
 export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) => {
   return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
-}
+};
