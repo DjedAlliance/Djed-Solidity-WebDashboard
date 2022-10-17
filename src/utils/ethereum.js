@@ -14,16 +14,18 @@ import {
   web3Promise
 } from "./helpers";
 import { TRANSACTION_VALIDITY } from "./constants";
-import {
-  BLOCKCHAIN_URI,
-  DJED_ADDRESS,
-  BC_DECIMALS,
-  ORACLE_DECIMALS,
-  SCALING_DECIMALS,
-  CONFIRMATION_WAIT_PERIOD,
-  FEE_UI,
-  UI
-} from "../config";
+
+const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
+const DJED_ADDRESS = process.env.REACT_APP_DJED_ADDRESS;
+const FEE_UI = process.env.REACT_APP_FEE_UI;
+const UI = process.env.REACT_APP_UI;
+
+const BC_DECIMALS = 18;
+const ORACLE_DECIMALS = 18;
+const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
+
+const REFRESH_PERIOD = 4000;
+const CONFIRMATION_WAIT_PERIOD = REFRESH_PERIOD + 1000;
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {

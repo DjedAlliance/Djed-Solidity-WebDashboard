@@ -2,6 +2,8 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+We handle environment variables in `.env` files with default values in `env` folder, i.e. `src/env` contains `local.env` and `production.env` that contain default values for specified environments. If the repo is freshly cloned, you can copy `local.env` file to the root folder as `.env`.
+
 ## Available Scripts
 
 In the project directory, you can run:
