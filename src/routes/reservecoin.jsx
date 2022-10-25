@@ -230,6 +230,7 @@ export default function ReserveCoin() {
               scaledCoinBalance={accountDetails?.scaledBalanceRc}
               scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}
+              treasuryFee={systemParams?.treasuryFee}
               buyValidity={buyValidity}
               sellValidity={sellValidity}
             />

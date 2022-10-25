@@ -237,6 +237,7 @@ export default function Stablecoin() {
               scaledCoinBalance={accountDetails?.scaledBalanceSc}
               scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}
+              treasuryFee={systemParams?.treasuryFee}
               buyValidity={buyValidity}
               sellValidity={sellValidity}
             />

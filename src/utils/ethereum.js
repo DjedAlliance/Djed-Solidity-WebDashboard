@@ -119,17 +119,20 @@ export const getCoinDetails = async (
 };
 
 export const getSystemParams = async (djed) => {
-  const [reserveRatioMin, reserveRatioMax, fee, thresholdSupplySC] = await Promise.all([
-    percentScaledPromise(web3Promise(djed, "reserveRatioMin"), SCALING_DECIMALS),
-    percentScaledPromise(web3Promise(djed, "reserveRatioMax"), SCALING_DECIMALS),
-    percentScaledPromise(web3Promise(djed, "fee"), SCALING_DECIMALS),
-    web3Promise(djed, "thresholdSupplySC")
-  ]);
+  const [reserveRatioMin, reserveRatioMax, fee, treasuryFee, thresholdSupplySC] =
+    await Promise.all([
+      percentScaledPromise(web3Promise(djed, "reserveRatioMin"), SCALING_DECIMALS),
+      percentScaledPromise(web3Promise(djed, "reserveRatioMax"), SCALING_DECIMALS),
+      percentScaledPromise(web3Promise(djed, "fee"), SCALING_DECIMALS),
+      percentScaledPromise(web3Promise(djed, "treasuryFee"), SCALING_DECIMALS),
+      web3Promise(djed, "thresholdSupplySC")
+    ]);
 
   return {
     reserveRatioMin,
     reserveRatioMax,
     fee,
+    treasuryFee,
     thresholdSupplySC
   };
 };
