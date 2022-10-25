@@ -14,6 +14,7 @@ import {
   web3Promise
 } from "./helpers";
 import { TRANSACTION_VALIDITY } from "./constants";
+import { BigNumber } from "@ethersproject/bignumber";
 
 const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
 const DJED_ADDRESS = process.env.REACT_APP_DJED_ADDRESS;
@@ -26,6 +27,8 @@ const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
 
 const REFRESH_PERIOD = 4000;
 const CONFIRMATION_WAIT_PERIOD = REFRESH_PERIOD + 1000;
+const scalingFactor = decimalUnscaling("1", SCALING_DECIMALS);
+const FEE_UI_UNSCALED = decimalUnscaling(FEE_UI, SCALING_DECIMALS);
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {
@@ -186,43 +189,128 @@ export const verifyTx = (web3, hash) => {
   });
 };
 
+/**
+ * Function that deducts all platform fees from the mtADA amount
+ * @param {*} value The amount of mtADA from which fees should be deducted
+ * @param {*} fee The platform fee
+ * @param {*} treasuryFee The treasury fee
+ * @returns mtADA value with all fees calculated
+ */
+export const calculateTxFees = (value, fee, treasuryFee) => {
+  const f = BigNumber.from(value)
+    .mul(BigNumber.from(fee))
+    .div(BigNumber.from(scalingFactor));
+  const f_ui = BigNumber.from(value)
+    .mul(BigNumber.from(FEE_UI_UNSCALED))
+    .div(BigNumber.from(scalingFactor));
+  const f_t = BigNumber.from(value)
+    .mul(BigNumber.from(treasuryFee))
+    .div(BigNumber.from(scalingFactor));
+  return { f, f_ui, f_t };
+};
+
+/**
+ * Function deductFees deducts all platform fees from the mtADA amount
+ * Function appendFees apends all platform fees to the mtADA amount
+ * @param {*} value The amount of mtADA from which fees should be deducted/appended
+ * @param {*} f The platform fee
+ * @param {*} f_ui The UI fee
+ * @param {*} f_t The treasury fee
+ * @returns mtADA value with all fees calculated
+ */
+export const deductFees = (value, f, f_ui, f_t) =>
+  BigNumber.from(value).sub(f).sub(f_ui).sub(f_t);
+export const appendFees = (value, f, f_ui, f_t) =>
+  BigNumber.from(value).add(f).add(f_ui).add(f_t);
+
+/**
+ * Function that returns treasury and platform fees
+ * @param {*} djed Djed contract
+ * @returns Treasury and platform fee
+ */
+const getFees = async (djed) => {
+  try {
+    const [treasuryFee, fee] = await Promise.all([
+      web3Promise(djed, "treasuryFee"),
+      web3Promise(djed, "fee")
+    ]);
+    return {
+      treasuryFee,
+      fee
+    };
+  } catch (error) {}
+};
+
+/**
+ * Function that converts coin amount to mtADA
+ * @param {*} amount unscaled coin amount to be converted to mtADA
+ * @param {*} price unscaled coin price
+ * @param {*} decimals coin decimals
+ * @returns unscaled mtADA amount
+ */
+const convertToMtADA = (amount, price, decimals) => {
+  const decimalScalingFactor = Math.pow(10, decimals);
+  return (amount * price) / decimalScalingFactor;
+};
+
 const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
   const amountUnscaled = decimalUnscaling(amountScaled, decimals);
-  return web3Promise(djed, method).then((priceUnscaled) => {
-    const priceScaled = decimalScaling(priceUnscaled, BC_DECIMALS);
-
-    const total = priceScaled * amountScaled;
+  return scaledUnscaledPromise(web3Promise(djed, method), BC_DECIMALS).then((price) => {
+    const [priceScaled, priceUnscaled] = price;
+    const total = priceScaled.replaceAll(",", "") * amountScaled;
     const totalUnscaled = decimalUnscaling(total.toString(), BC_DECIMALS);
     const totalScaled = decimalScaling(totalUnscaled, BC_DECIMALS);
-    console.log({
-      amountScaled,
-      amountUnscaled,
-      totalScaled,
-      totalUnscaled
-    });
+
     return {
       amountScaled,
       amountUnscaled,
       totalScaled,
-      totalUnscaled
+      totalUnscaled,
+      priceUnscaled
     };
   });
 };
 
 // reservecoin
 
-export const tradeDataPriceBuyRc = (djed, rcDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "rcBuyingPrice", rcDecimals, amountScaled);
+/**
+ * Function that calculates fees and how much mtADA (totalmtADAAmount) user should pay to receive desired amount of reserve coin
+ * @param {*} djed DjedContract
+ * @param {*} rcDecimals Reserve coin decimals
+ * @param {*} amountScaled Reserve coin amount that user wants to buy
+ * @returns
+ */
+export const tradeDataPriceBuyRc = async (djed, rcDecimals, amountScaled) => {
+  try {
+    const data = await tradeDataPriceCore(
+      djed,
+      "rcBuyingPrice",
+      rcDecimals,
+      amountScaled
+    );
+    const { treasuryFee, fee } = await getFees(djed);
+    const { f, f_ui, f_t } = calculateTxFees(data.totalUnscaled, fee, treasuryFee);
+    const totalmtADAAmount = appendFees(data.totalUnscaled, f, f_ui, f_t);
+
+    return {
+      ...data,
+      totalmtADAScaled: decimalScaling(totalmtADAAmount.toString(), BC_DECIMALS),
+      totalmtADAUnscaled: totalmtADAAmount.toString()
+    };
+  } catch (error) {}
+};
 
 export const tradeDataPriceSellRc = (djed, rcDecimals, amountScaled) =>
   tradeDataPriceCore(djed, "rcTargetPrice", rcDecimals, amountScaled);
 export const buyRcTx = (djed, account, value) => {
-  const data = djed.methods.buyReserveCoins(account, FEE_UI, UI).encodeABI();
+  const data = djed.methods.buyReserveCoins(account, FEE_UI_UNSCALED, UI).encodeABI();
   return buildTx(account, DJED_ADDRESS, value, data);
 };
 
 export const sellRcTx = (djed, account, amount) => {
-  const data = djed.methods.sellReserveCoins(amount, account, FEE_UI, UI).encodeABI();
+  const data = djed.methods
+    .sellReserveCoins(amount, account, FEE_UI_UNSCALED, UI)
+    .encodeABI();
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
@@ -237,19 +325,64 @@ export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
 
 // stablecoin
 
-export const tradeDataPriceBuySc = (oracle, scDecimals, amountScaled) =>
-  tradeDataPriceCore(oracle, "readData", scDecimals, amountScaled);
+/**
+ * Function that calculates fees and how much mtADA (totalmtADAAmount) user should pay to receive desired amount of stable coin
+ * @param {*} djed DjedContract
+ * @param {*} scDecimals Stable coin decimals
+ * @param {*} amountScaled Stable coin amount that user wants to buy
+ * @returns
+ */
+export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
+  try {
+    const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
+    const { treasuryFee, fee } = await getFees(djed);
+    const { f, f_ui, f_t } = calculateTxFees(data.totalUnscaled, fee, treasuryFee);
+    const totalmtADAAmount = appendFees(data.totalUnscaled, f, f_ui, f_t);
 
-export const tradeDataPriceSellSc = (djed, scDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
+    return {
+      ...data,
+      totalmtADAScaled: decimalScaling(totalmtADAAmount.toString(), BC_DECIMALS),
+      totalmtADAUnscaled: totalmtADAAmount.toString()
+    };
+  } catch (error) {}
+};
+
+/**
+ * Function that calculates fees and how much mtADA (totalmtADAAmount) user will receive if he sells desired amount of stable coin
+ * @param {*} djed DjedContract
+ * @param {*} scDecimals Stable coin decimals
+ * @param {*} amountScaled Stable coin amount that user wants to sell
+ * @returns
+ */
+export const tradeDataPriceSellSc = async (djed, scDecimals, amountScaled) => {
+  try {
+    const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
+    const { treasuryFee, fee } = await getFees(djed);
+    const value = convertToMtADA(
+      data.amountUnscaled,
+      data.priceUnscaled,
+      scDecimals
+    ).toString();
+
+    const { f, f_ui, f_t } = calculateTxFees(value, fee, treasuryFee);
+    const totalmtADAAmount = deductFees(value, f, f_ui, f_t);
+
+    return {
+      ...data,
+      totalmtADAScaled: decimalScaling(totalmtADAAmount.toString(), BC_DECIMALS)
+    };
+  } catch (error) {}
+};
 
 export const buyScTx = (djed, account, value) => {
-  const data = djed.methods.buyStableCoins(account, FEE_UI, UI).encodeABI();
+  const data = djed.methods.buyStableCoins(account, FEE_UI_UNSCALED, UI).encodeABI();
   return buildTx(account, DJED_ADDRESS, value, data);
 };
 
 export const sellScTx = (djed, account, amount) => {
-  const data = djed.methods.sellStableCoins(amount, account, FEE_UI, UI).encodeABI();
+  const data = djed.methods
+    .sellStableCoins(amount, account, FEE_UI_UNSCALED, UI)
+    .encodeABI();
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
