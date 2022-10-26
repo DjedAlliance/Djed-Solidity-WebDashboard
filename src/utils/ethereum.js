@@ -11,7 +11,8 @@ import {
   scaledPromise,
   scaledUnscaledPromise,
   percentScaledPromise,
-  web3Promise
+  web3Promise,
+  percentageScale
 } from "./helpers";
 import { TRANSACTION_VALIDITY } from "./constants";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -213,18 +214,32 @@ export const calculateTxFees = (value, fee, treasuryFee) => {
 };
 
 /**
- * Function deductFees deducts all platform fees from the BC amount
- * Function appendFees apends all platform fees to the BC amount
- * @param {*} value The amount of BC from which fees should be deducted/appended
- * @param {*} f The platform fee
- * @param {*} f_ui The UI fee
- * @param {*} f_t The treasury fee
+ * Function that deducts all platform fees from the BC amount
+ * @param {*} value The amount of BC from which fees should be deducted
+ * @param {*} f Calculated platform fee of the value
+ * @param {*} f_ui Calculated UI fee of the value
+ * @param {*} f_t Calculated treasury fee of the value
  * @returns BC value with all fees calculated
  */
 export const deductFees = (value, f, f_ui, f_t) =>
   BigNumber.from(value).sub(f).sub(f_ui).sub(f_t);
-export const appendFees = (value, f, f_ui, f_t) =>
-  BigNumber.from(value).add(f).add(f_ui).add(f_t);
+
+/**
+ * Function that appends all platform fees to the BC amount
+ * @param {*} value The scaled amount of coins that user wants to buy
+ * @param {*} price The scaled price of 1 coin
+ * @param {*} treasuryFee Treasury fee scaled in % (e.g. 1.2)
+ * @param {*} fee Fee scaled in % (e.g. 1.2)
+ * @param {*} fee_UI UI fee scaled in % (e.g. 1.2)
+ * @returns Unscaled BC amount with calculated fees
+ */
+const appendFees = (value, price, treasuryFee, fee, fee_UI) => {
+  console.log("params", { value, price, treasuryFee, fee, fee_UI });
+  const totalFees = parseFloat(treasuryFee) + parseFloat(fee) + parseFloat(fee_UI);
+  const calculatedFee = (value * totalFees) / 100;
+  const amountBC = (value * price * 1) / (1 - calculatedFee);
+  return decimalUnscaling(amountBC.toString(), BC_DECIMALS);
+};
 
 /**
  * Function that returns treasury and platform fees
@@ -271,7 +286,8 @@ const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
       amountUnscaled,
       totalScaled,
       totalUnscaled,
-      priceUnscaled
+      priceUnscaled,
+      priceScaled
     };
   });
 };
@@ -294,13 +310,18 @@ export const tradeDataPriceBuyRc = async (djed, rcDecimals, amountScaled) => {
       amountScaled
     );
     const { treasuryFee, fee } = await getFees(djed);
-    const { f, f_ui, f_t } = calculateTxFees(data.totalUnscaled, fee, treasuryFee);
-    const totalBCAmount = appendFees(data.totalUnscaled, f, f_ui, f_t);
 
+    const totalBCUnscaled = appendFees(
+      parseFloat(data.amountScaled),
+      parseFloat(data.priceScaled),
+      percentageScale(treasuryFee, SCALING_DECIMALS),
+      percentageScale(fee, SCALING_DECIMALS),
+      FEE_UI
+    );
     return {
       ...data,
-      totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS),
-      totalBCUnscaled: totalBCAmount.toString()
+      totalBCScaled: decimalScaling(totalBCUnscaled, BC_DECIMALS),
+      totalBCUnscaled
     };
   } catch (error) {
     console.log("error", error);
@@ -343,13 +364,19 @@ export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
   try {
     const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
     const { treasuryFee, fee } = await getFees(djed);
-    const { f, f_ui, f_t } = calculateTxFees(data.totalUnscaled, fee, treasuryFee);
-    const totalBCAmount = appendFees(data.totalUnscaled, f, f_ui, f_t);
+
+    const totalBCUnscaled = appendFees(
+      parseFloat(data.amountScaled),
+      parseFloat(data.priceScaled),
+      percentageScale(treasuryFee, SCALING_DECIMALS),
+      percentageScale(fee, SCALING_DECIMALS),
+      FEE_UI
+    );
 
     return {
       ...data,
-      totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS),
-      totalBCUnscaled: totalBCAmount.toString()
+      totalBCScaled: decimalScaling(totalBCUnscaled, BC_DECIMALS),
+      totalBCUnscaled
     };
   } catch (error) {
     console.log("error", error);

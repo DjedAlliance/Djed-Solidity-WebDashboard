@@ -74,10 +74,12 @@ export function scaledUnscaledPromise(promise, scaling) {
   return promise.then((value) => [decimalScaling(value.toString(10), scaling), value]);
 }
 
+export function percentageScale(value, scaling) {
+  return decimalScaling(value.toString(10), scaling - 2, 2);
+}
+
 export function percentScaledPromise(promise, scaling) {
-  return promise.then(
-    (value) => decimalScaling(value.toString(10), scaling - 2, 2) + "%"
-  );
+  return promise.then((value) => percentageScale(value, scaling) + "%");
 }
 
 // currency conversions:
