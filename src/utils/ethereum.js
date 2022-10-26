@@ -193,11 +193,11 @@ export const verifyTx = (web3, hash) => {
 };
 
 /**
- * Function that deducts all platform fees from the mtADA amount
- * @param {*} value The amount of mtADA from which fees should be deducted
+ * Function that deducts all platform fees from the BC amount
+ * @param {*} value The amount of BC from which fees should be deducted
  * @param {*} fee The platform fee
  * @param {*} treasuryFee The treasury fee
- * @returns mtADA value with all fees calculated
+ * @returns BC value with all fees calculated
  */
 export const calculateTxFees = (value, fee, treasuryFee) => {
   const f = BigNumber.from(value)
@@ -213,13 +213,13 @@ export const calculateTxFees = (value, fee, treasuryFee) => {
 };
 
 /**
- * Function deductFees deducts all platform fees from the mtADA amount
- * Function appendFees apends all platform fees to the mtADA amount
- * @param {*} value The amount of mtADA from which fees should be deducted/appended
+ * Function deductFees deducts all platform fees from the BC amount
+ * Function appendFees apends all platform fees to the BC amount
+ * @param {*} value The amount of BC from which fees should be deducted/appended
  * @param {*} f The platform fee
  * @param {*} f_ui The UI fee
  * @param {*} f_t The treasury fee
- * @returns mtADA value with all fees calculated
+ * @returns BC value with all fees calculated
  */
 export const deductFees = (value, f, f_ui, f_t) =>
   BigNumber.from(value).sub(f).sub(f_ui).sub(f_t);
@@ -241,17 +241,19 @@ const getFees = async (djed) => {
       treasuryFee,
       fee
     };
-  } catch (error) {}
+  } catch (error) {
+    console.log("error", error);
+  }
 };
 
 /**
- * Function that converts coin amount to mtADA
- * @param {*} amount unscaled coin amount to be converted to mtADA
+ * Function that converts coin amount to BC
+ * @param {*} amount unscaled coin amount to be converted to BC
  * @param {*} price unscaled coin price
  * @param {*} decimals coin decimals
- * @returns unscaled mtADA amount
+ * @returns unscaled BC amount
  */
-const convertToMtADA = (amount, price, decimals) => {
+const convertToBC = (amount, price, decimals) => {
   const decimalScalingFactor = Math.pow(10, decimals);
   return (amount * price) / decimalScalingFactor;
 };
@@ -277,7 +279,7 @@ const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
 // reservecoin
 
 /**
- * Function that calculates fees and how much mtADA (totalmtADAAmount) user should pay to receive desired amount of reserve coin
+ * Function that calculates fees and how much BC (totalBCAmount) user should pay to receive desired amount of reserve coin
  * @param {*} djed DjedContract
  * @param {*} rcDecimals Reserve coin decimals
  * @param {*} amountScaled Reserve coin amount that user wants to buy
@@ -293,14 +295,16 @@ export const tradeDataPriceBuyRc = async (djed, rcDecimals, amountScaled) => {
     );
     const { treasuryFee, fee } = await getFees(djed);
     const { f, f_ui, f_t } = calculateTxFees(data.totalUnscaled, fee, treasuryFee);
-    const totalmtADAAmount = appendFees(data.totalUnscaled, f, f_ui, f_t);
+    const totalBCAmount = appendFees(data.totalUnscaled, f, f_ui, f_t);
 
     return {
       ...data,
-      totalmtADAScaled: decimalScaling(totalmtADAAmount.toString(), BC_DECIMALS),
-      totalmtADAUnscaled: totalmtADAAmount.toString()
+      totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS),
+      totalBCUnscaled: totalBCAmount.toString()
     };
-  } catch (error) {}
+  } catch (error) {
+    console.log("error", error);
+  }
 };
 
 export const tradeDataPriceSellRc = (djed, rcDecimals, amountScaled) =>
@@ -329,7 +333,7 @@ export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
 // stablecoin
 
 /**
- * Function that calculates fees and how much mtADA (totalmtADAAmount) user should pay to receive desired amount of stable coin
+ * Function that calculates fees and how much BC (totalBCAmount) user should pay to receive desired amount of stable coin
  * @param {*} djed DjedContract
  * @param {*} scDecimals Stable coin decimals
  * @param {*} amountScaled Stable coin amount that user wants to buy
@@ -340,18 +344,20 @@ export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
     const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
     const { treasuryFee, fee } = await getFees(djed);
     const { f, f_ui, f_t } = calculateTxFees(data.totalUnscaled, fee, treasuryFee);
-    const totalmtADAAmount = appendFees(data.totalUnscaled, f, f_ui, f_t);
+    const totalBCAmount = appendFees(data.totalUnscaled, f, f_ui, f_t);
 
     return {
       ...data,
-      totalmtADAScaled: decimalScaling(totalmtADAAmount.toString(), BC_DECIMALS),
-      totalmtADAUnscaled: totalmtADAAmount.toString()
+      totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS),
+      totalBCUnscaled: totalBCAmount.toString()
     };
-  } catch (error) {}
+  } catch (error) {
+    console.log("error", error);
+  }
 };
 
 /**
- * Function that calculates fees and how much mtADA (totalmtADAAmount) user will receive if he sells desired amount of stable coin
+ * Function that calculates fees and how much BC (totalBCAmount) user will receive if he sells desired amount of stable coin
  * @param {*} djed DjedContract
  * @param {*} scDecimals Stable coin decimals
  * @param {*} amountScaled Stable coin amount that user wants to sell
@@ -361,20 +367,22 @@ export const tradeDataPriceSellSc = async (djed, scDecimals, amountScaled) => {
   try {
     const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
     const { treasuryFee, fee } = await getFees(djed);
-    const value = convertToMtADA(
+    const value = convertToBC(
       data.amountUnscaled,
       data.priceUnscaled,
       scDecimals
     ).toString();
 
     const { f, f_ui, f_t } = calculateTxFees(value, fee, treasuryFee);
-    const totalmtADAAmount = deductFees(value, f, f_ui, f_t);
+    const totalBCAmount = deductFees(value, f, f_ui, f_t);
 
     return {
       ...data,
-      totalmtADAScaled: decimalScaling(totalmtADAAmount.toString(), BC_DECIMALS)
+      totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS)
     };
-  } catch (error) {}
+  } catch (error) {
+    console.log("error", error);
+  }
 };
 
 export const buyScTx = (djed, account, value) => {

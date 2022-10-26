@@ -164,7 +164,7 @@ export default function ReserveCoin() {
   };
 
   const tradeFxn = isBuyActive
-    ? buyRc.bind(null, tradeData.totalmtADAUnscaled)
+    ? buyRc.bind(null, tradeData.totalBCUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
 
   const transactionValidated = isBuyActive

@@ -172,7 +172,7 @@ export default function Stablecoin() {
   };
 
   const tradeFxn = isBuyActive
-    ? buySc.bind(null, tradeData.totalmtADAUnscaled)
+    ? buySc.bind(null, tradeData.totalBCUnscaled)
     : sellSc.bind(null, tradeData.amountUnscaled);
 
   const transactionValidated = isBuyActive
