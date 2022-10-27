@@ -270,7 +270,10 @@ const getFees = async (djed) => {
  */
 const convertToBC = (amount, price, decimals) => {
   const decimalScalingFactor = Math.pow(10, decimals);
-  return (amount * price) / decimalScalingFactor;
+
+  return BigNumber.from(amount)
+    .mul(BigNumber.from(price))
+    .div(BigNumber.from(decimalScalingFactor));
 };
 
 const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
