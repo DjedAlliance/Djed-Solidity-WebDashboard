@@ -91,20 +91,31 @@ export default function ReserveCoin() {
       setSellValidity(inputSanity);
       return;
     }
-    tradeDataPriceSellRc(djedContract, decimals.rcDecimals, amountScaled).then((data) => {
-      setTradeData(data);
-      if (!isWalletConnected) {
-        setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-      } else if (isWrongChain) {
-        setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-      } else {
-        checkSellableRc(
+    const getTradeData = async () => {
+      try {
+        const data = await tradeDataPriceSellRc(
           djedContract,
-          data.amountUnscaled,
-          accountDetails?.unscaledBalanceRc
-        ).then((res) => setSellValidity(res));
+          decimals.rcDecimals,
+          amountScaled
+        );
+
+        setTradeData(data);
+        if (!isWalletConnected) {
+          setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
+        } else if (isWrongChain) {
+          setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+        } else {
+          checkSellableRc(
+            djedContract,
+            data.amountUnscaled,
+            accountDetails?.unscaledBalanceRc
+          ).then((res) => setSellValidity(res));
+        }
+      } catch (error) {
+        console.log("error", error);
       }
-    });
+    };
+    getTradeData();
   };
 
   const onChangeBuyInput = (amountScaled) => {

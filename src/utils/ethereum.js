@@ -328,8 +328,34 @@ export const tradeDataPriceBuyRc = async (djed, rcDecimals, amountScaled) => {
   }
 };
 
-export const tradeDataPriceSellRc = (djed, rcDecimals, amountScaled) =>
-  tradeDataPriceCore(djed, "rcTargetPrice", rcDecimals, amountScaled);
+export const tradeDataPriceSellRc = async (djed, rcDecimals, amountScaled) => {
+  try {
+    const data = await tradeDataPriceCore(
+      djed,
+      "rcTargetPrice",
+      rcDecimals,
+      amountScaled
+    );
+
+    const { treasuryFee, fee } = await getFees(djed);
+    const value = convertToBC(
+      data.amountUnscaled,
+      data.priceUnscaled,
+      rcDecimals
+    ).toString();
+
+    const { f, f_ui, f_t } = calculateTxFees(value, fee, treasuryFee);
+    const totalBCAmount = deductFees(value, f, f_ui, f_t);
+
+    return {
+      ...data,
+      totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS)
+    };
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
 export const buyRcTx = (djed, account, value) => {
   const data = djed.methods.buyReserveCoins(account, FEE_UI_UNSCALED, UI).encodeABI();
   return buildTx(account, DJED_ADDRESS, value, data);
