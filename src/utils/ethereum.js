@@ -22,7 +22,7 @@ const DJED_ADDRESS = process.env.REACT_APP_DJED_ADDRESS;
 const FEE_UI = process.env.REACT_APP_FEE_UI;
 const UI = process.env.REACT_APP_UI;
 
-const BC_DECIMALS = 18;
+export const BC_DECIMALS = 18;
 const ORACLE_DECIMALS = 18;
 const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
 
@@ -226,19 +226,17 @@ export const deductFees = (value, f, f_ui, f_t) =>
 
 /**
  * Function that appends all platform fees to the BC amount
- * @param {*} value The scaled amount of coins that user wants to buy
- * @param {*} price The scaled price of 1 coin
+ * @param {*} amountBC The scaled amount of BC that user wants to buy
  * @param {*} treasuryFee Treasury fee scaled in % (e.g. 1.2)
  * @param {*} fee Fee scaled in % (e.g. 1.2)
  * @param {*} fee_UI UI fee scaled in % (e.g. 1.2)
  * @returns Unscaled BC amount with calculated fees
  */
-const appendFees = (value, price, treasuryFee, fee, fee_UI) => {
-  console.log("params", { value, price, treasuryFee, fee, fee_UI });
+export const appendFees = (amountBC, treasuryFee, fee, fee_UI) => {
   const totalFees = parseFloat(treasuryFee) + parseFloat(fee) + parseFloat(fee_UI);
-  const calculatedFee = (value * totalFees) / 100;
-  const amountBC = (value * price * 1) / (1 - calculatedFee);
-  return decimalUnscaling(amountBC.toString(), BC_DECIMALS);
+
+  const appendedFeesAmount = amountBC / (1 - totalFees / 100);
+  return decimalUnscaling(appendedFeesAmount.toString(), BC_DECIMALS);
 };
 
 /**
@@ -315,8 +313,7 @@ export const tradeDataPriceBuyRc = async (djed, rcDecimals, amountScaled) => {
     const { treasuryFee, fee } = await getFees(djed);
 
     const totalBCUnscaled = appendFees(
-      parseFloat(data.amountScaled),
-      parseFloat(data.priceScaled),
+      parseFloat(data.totalScaled),
       percentageScale(treasuryFee, SCALING_DECIMALS),
       percentageScale(fee, SCALING_DECIMALS),
       FEE_UI
@@ -367,10 +364,8 @@ export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
   try {
     const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
     const { treasuryFee, fee } = await getFees(djed);
-
     const totalBCUnscaled = appendFees(
-      parseFloat(data.amountScaled),
-      parseFloat(data.priceScaled),
+      parseFloat(data.totalScaled),
       percentageScale(treasuryFee, SCALING_DECIMALS),
       percentageScale(fee, SCALING_DECIMALS),
       FEE_UI
