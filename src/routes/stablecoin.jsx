@@ -57,22 +57,33 @@ export default function Stablecoin() {
       setBuyValidity(inputSanity);
       return;
     }
-    tradeDataPriceBuySc(djedContract, decimals.scDecimals, amountScaled).then((data) => {
-      setTradeData(data);
-      if (!isWalletConnected) {
-        setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-      } else if (isWrongChain) {
-        setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-      } else {
-        checkBuyableSc(
+    const getTradeData = async () => {
+      try {
+        const data = await tradeDataPriceBuySc(
           djedContract,
-          data.amountUnscaled,
-          coinBudgets?.unscaledBudgetSc
-        ).then((res) => {
-          setBuyValidity(res);
-        });
+          decimals.scDecimals,
+          amountScaled
+        );
+
+        setTradeData(data);
+        if (!isWalletConnected) {
+          setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
+        } else if (isWrongChain) {
+          setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+        } else {
+          checkBuyableSc(
+            djedContract,
+            data.amountUnscaled,
+            coinBudgets?.unscaledBudgetSc
+          ).then((res) => {
+            setBuyValidity(res);
+          });
+        }
+      } catch (error) {
+        console.log("error", error);
       }
-    });
+    };
+    getTradeData();
   };
 
   const updateSellTradeData = (amountScaled) => {
@@ -81,18 +92,28 @@ export default function Stablecoin() {
       setSellValidity(inputSanity);
       return;
     }
-    tradeDataPriceSellSc(djedContract, decimals.scDecimals, amountScaled).then((data) => {
-      setTradeData(data);
-      if (!isWalletConnected) {
-        setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-      } else if (isWrongChain) {
-        setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-      } else {
-        checkSellableSc(data.amountUnscaled, accountDetails?.unscaledBalanceSc).then(
-          (res) => setSellValidity(res)
+    const getTradeData = async () => {
+      try {
+        const data = await tradeDataPriceSellSc(
+          djedContract,
+          decimals.scDecimals,
+          amountScaled
         );
+        setTradeData(data);
+        if (!isWalletConnected) {
+          setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
+        } else if (isWrongChain) {
+          setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+        } else {
+          checkSellableSc(data.amountUnscaled, accountDetails?.unscaledBalanceSc).then(
+            (res) => setSellValidity(res)
+          );
+        }
+      } catch (error) {
+        console.log("error", error);
       }
-    });
+    };
+    getTradeData();
   };
 
   const onChangeBuyInput = (amountScaled) => {
@@ -151,7 +172,7 @@ export default function Stablecoin() {
   };
 
   const tradeFxn = isBuyActive
-    ? buySc.bind(null, tradeData.totalUnscaled)
+    ? buySc.bind(null, tradeData.totalBCUnscaled)
     : sellSc.bind(null, tradeData.amountUnscaled);
 
   const transactionValidated = isBuyActive
@@ -216,6 +237,7 @@ export default function Stablecoin() {
               scaledCoinBalance={accountDetails?.scaledBalanceSc}
               scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}
+              treasuryFee={systemParams?.treasuryFee}
               buyValidity={buyValidity}
               sellValidity={sellValidity}
             />

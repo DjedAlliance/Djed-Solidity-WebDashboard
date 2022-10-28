@@ -9,6 +9,7 @@ const BuySellCoin = ({
   coinName,
   //priceAmount,
   fee,
+  treasuryFee,
   totalAmount,
   payOrReceive,
   payOrGet,
@@ -19,6 +20,7 @@ const BuySellCoin = ({
   scaledBaseBalance,
   validity
 }) => {
+  const FEE_UI = process.env.REACT_APP_FEE_UI;
   const { isWalletConnected, isWrongChain } = useAppProvider();
   const inputValid = validity === TRANSACTION_VALIDITY.OK;
   const inputBarNotMarked =
@@ -34,11 +36,7 @@ const BuySellCoin = ({
           size="large"
           placeholder="0.0"
           value={inputValue}
-          suffix={
-            <div>
-              {coinName}
-            </div>
-          }
+          suffix={<div>{coinName}</div>}
           status={inputBarNotMarked ? null : "error"}
           onChange={(e) => {
             const reg = /^-?\d*(\.\d*)?$/;
@@ -73,6 +71,8 @@ const BuySellCoin = ({
         {coinName} ≈ {priceAmount} milktADA
       </p>*/}
         <p>Fee = {fee}</p>
+        <p>Treasury Fee = {treasuryFee}</p>
+        <p>UI Fee = {FEE_UI}%</p>
         {inputValue ? (
           <>
             <p>{`You will ${payOrReceive}  ~ ${inputValue} ${coinName}`}</p>

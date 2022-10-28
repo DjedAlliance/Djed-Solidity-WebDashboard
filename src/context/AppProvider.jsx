@@ -11,8 +11,7 @@ import {
   getCoinDetails,
   getSystemParams,
   getAccountDetails,
-  getCoinBudgets,
-  CHAIN_ID
+  getCoinBudgets
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
@@ -22,6 +21,7 @@ import {
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 
 const AppContext = createContext();
+const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
 export const AppProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);

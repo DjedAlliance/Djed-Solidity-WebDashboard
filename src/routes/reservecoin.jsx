@@ -58,20 +58,31 @@ export default function ReserveCoin() {
       setBuyValidity(inputSanity);
       return;
     }
-    tradeDataPriceBuyRc(djedContract, decimals.rcDecimals, amountScaled).then((data) => {
-      setTradeData(data);
-      if (!isWalletConnected) {
-        setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-      } else if (isWrongChain) {
-        setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-      } else {
-        checkBuyableRc(
+    const getTradeData = async () => {
+      try {
+        const data = await tradeDataPriceBuyRc(
           djedContract,
-          data.amountUnscaled,
-          coinBudgets?.unscaledBudgetRc
-        ).then((res) => setBuyValidity(res));
+          decimals.rcDecimals,
+          amountScaled
+        );
+
+        setTradeData(data);
+        if (!isWalletConnected) {
+          setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
+        } else if (isWrongChain) {
+          setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+        } else {
+          checkBuyableRc(
+            djedContract,
+            data.amountUnscaled,
+            coinBudgets?.unscaledBudgetRc
+          ).then((res) => setBuyValidity(res));
+        }
+      } catch (error) {
+        console.log("error", error);
       }
-    });
+    };
+    getTradeData();
   };
 
   const updateSellTradeData = (amountScaled) => {
@@ -153,7 +164,7 @@ export default function ReserveCoin() {
   };
 
   const tradeFxn = isBuyActive
-    ? buyRc.bind(null, tradeData.totalUnscaled)
+    ? buyRc.bind(null, tradeData.totalBCUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
 
   const transactionValidated = isBuyActive
@@ -219,6 +230,7 @@ export default function ReserveCoin() {
               scaledCoinBalance={accountDetails?.scaledBalanceRc}
               scaledBaseBalance={accountDetails?.scaledBalanceBc}
               fee={systemParams?.fee}
+              treasuryFee={systemParams?.treasuryFee}
               buyValidity={buyValidity}
               sellValidity={sellValidity}
             />

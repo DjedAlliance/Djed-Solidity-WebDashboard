@@ -16,6 +16,7 @@ const OperationSelector = ({
   scaledCoinBalance,
   scaledBaseBalance,
   fee,
+  treasuryFee,
   buyValidity,
   sellValidity
 }) => (
@@ -30,7 +31,8 @@ const OperationSelector = ({
           coinName={coinName}
           priceAmount="0.000"
           fee={fee}
-          totalAmount={tradeData.totalScaled}
+          treasuryFee={treasuryFee}
+          totalAmount={tradeData.totalBCScaled}
           payOrReceive="receive"
           payOrGet="pay"
           onChangeInput={onChangeBuyInput}
@@ -49,7 +51,8 @@ const OperationSelector = ({
           coinName={coinName}
           priceAmount="0.000"
           fee={fee}
-          totalAmount={tradeData.totalScaled}
+          treasuryFee={treasuryFee}
+          totalAmount={tradeData.totalBCScaled}
           payOrReceive="pay"
           payOrGet="get"
           onChangeInput={onChangeSellInput}
