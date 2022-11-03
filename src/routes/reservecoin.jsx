@@ -9,8 +9,13 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
-import { TRANSACTION_VALIDITY } from "../utils/constants";
-import { getRcUsdEquivalent, validatePositiveNumber } from "../utils/helpers";
+import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY } from "../utils/constants";
+import {
+  calculateBcUsdEquivalent,
+  calculateRcUsdEquivalent,
+  getRcUsdEquivalent,
+  validatePositiveNumber
+} from "../utils/helpers";
 import {
   buyRcTx,
   promiseTx,
@@ -66,11 +71,18 @@ export default function ReserveCoin() {
           amountScaled
         );
 
+        const bcUsdEquivalent = calculateBcUsdEquivalent(
+          coinsDetails,
+          parseFloat(data.totalBCScaled.replaceAll(",", ""))
+        ).replaceAll(",", "");
+
         setTradeData(data);
         if (!isWalletConnected) {
           setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+        } else if (bcUsdEquivalent >= TRANSACTION_USD_LIMIT) {
+          setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else {
           checkBuyableRc(
             djedContract,
@@ -98,12 +110,18 @@ export default function ReserveCoin() {
           decimals.rcDecimals,
           amountScaled
         );
+        const rcUsdEquivalent = calculateRcUsdEquivalent(
+          coinsDetails,
+          parseFloat(data.amountScaled.replaceAll(",", ""))
+        ).replaceAll(",", "");
 
         setTradeData(data);
         if (!isWalletConnected) {
           setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
+        } else if (rcUsdEquivalent >= TRANSACTION_USD_LIMIT) {
+          setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else {
           checkSellableRc(
             djedContract,

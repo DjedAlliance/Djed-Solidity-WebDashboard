@@ -313,7 +313,7 @@ export const tradeDataPriceBuyRc = async (djed, rcDecimals, amountScaled) => {
     const { treasuryFee, fee } = await getFees(djed);
 
     const totalBCUnscaled = appendFees(
-      parseFloat(data.totalScaled),
+      parseFloat(data.totalScaled.replaceAll(",", "")),
       percentageScale(treasuryFee, SCALING_DECIMALS),
       percentageScale(fee, SCALING_DECIMALS),
       FEE_UI
@@ -391,7 +391,7 @@ export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
     const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
     const { treasuryFee, fee } = await getFees(djed);
     const totalBCUnscaled = appendFees(
-      parseFloat(data.totalScaled),
+      parseFloat(data.totalScaled.replaceAll(",", "")),
       percentageScale(treasuryFee, SCALING_DECIMALS),
       percentageScale(fee, SCALING_DECIMALS),
       FEE_UI
