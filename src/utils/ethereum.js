@@ -81,8 +81,7 @@ export const getCoinDetails = async (
   reserveCoin,
   djed,
   scDecimals,
-  rcDecimals,
-  oracle
+  rcDecimals
 ) => {
   const [
     [scaledNumberSc, unscaledNumberSc],
@@ -103,7 +102,7 @@ export const getCoinDetails = async (
     )*/,
     scaledPromise(web3Promise(djed, "rcBuyingPrice"), BC_DECIMALS),
     scaledPromise(web3Promise(djed, "rcTargetPrice"), BC_DECIMALS),
-    scaledPromise(web3Promise(oracle, "readData"), ORACLE_DECIMALS)
+    scaledPromise(web3Promise(djed, "scPrice"), BC_DECIMALS)
   ]);
 
   return {

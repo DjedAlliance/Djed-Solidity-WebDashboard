@@ -63,8 +63,7 @@ export const AppProvider = ({ children }) => {
           coinContracts.reserveCoin,
           djed,
           decimals.scDecimals,
-          decimals.rcDecimals,
-          oracle
+          decimals.rcDecimals
         );
         const systemParams = await getSystemParams(djed);
         setWeb3(web3);
