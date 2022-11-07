@@ -14,8 +14,10 @@ export const TRANSACTION_VALIDITY = {
   INSUFFICIENT_SC: "Insufficient StableDjed balance",
   INSUFFICIENT_RC: "Insufficient ReserveDjed balance",
   RESERVE_RATIO_LOW: "Reserve ratio too low",
-  RESERVE_RATIO_HIGH: "Reserve ratio too high"
+  RESERVE_RATIO_HIGH: "Reserve ratio too high",
+  TRANSACTION_LIMIT_REACHED: "Transaction limit is reached"
 };
 
 export const COIN_DETAILS_REQUEST_INTERVAL = 4000;
 export const ACCOUNT_DETAILS_REQUEST_INTERVAL = 4000;
+export const TRANSACTION_USD_LIMIT = 10000;

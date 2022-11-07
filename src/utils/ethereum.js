@@ -81,8 +81,7 @@ export const getCoinDetails = async (
   reserveCoin,
   djed,
   scDecimals,
-  rcDecimals,
-  oracle
+  rcDecimals
 ) => {
   const [
     [scaledNumberSc, unscaledNumberSc],
@@ -103,7 +102,7 @@ export const getCoinDetails = async (
     )*/,
     scaledPromise(web3Promise(djed, "rcBuyingPrice"), BC_DECIMALS),
     scaledPromise(web3Promise(djed, "rcTargetPrice"), BC_DECIMALS),
-    scaledPromise(web3Promise(oracle, "readData"), ORACLE_DECIMALS)
+    scaledPromise(web3Promise(djed, "scPrice"), BC_DECIMALS)
   ]);
 
   return {
@@ -313,7 +312,7 @@ export const tradeDataPriceBuyRc = async (djed, rcDecimals, amountScaled) => {
     const { treasuryFee, fee } = await getFees(djed);
 
     const totalBCUnscaled = appendFees(
-      parseFloat(data.totalScaled),
+      parseFloat(data.totalScaled.replaceAll(",", "")),
       percentageScale(treasuryFee, SCALING_DECIMALS),
       percentageScale(fee, SCALING_DECIMALS),
       FEE_UI
@@ -391,7 +390,7 @@ export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
     const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
     const { treasuryFee, fee } = await getFees(djed);
     const totalBCUnscaled = appendFees(
-      parseFloat(data.totalScaled),
+      parseFloat(data.totalScaled.replaceAll(",", "")),
       percentageScale(treasuryFee, SCALING_DECIMALS),
       percentageScale(fee, SCALING_DECIMALS),
       FEE_UI
