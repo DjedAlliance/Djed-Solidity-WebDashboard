@@ -265,7 +265,7 @@ const getFees = async (djed) => {
  * @param {*} decimals coin decimals
  * @returns unscaled BC amount
  */
-const convertToBC = (amount, price, decimals) => {
+export const convertToBC = (amount, price, decimals) => {
   const decimalScalingFactor = Math.pow(10, decimals);
 
   return BigNumber.from(amount)
