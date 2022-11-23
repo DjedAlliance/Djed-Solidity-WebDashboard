@@ -9,36 +9,43 @@ import {
 //Scaling/unscaling functions
 
 describe("Scaling functions", () => {
+  const decimals = 18;
+
   it("Scale dacimal amount", () => {
+    //Unscaled amount 0.023 * 10^18
     const amount = "23000000000000000";
-    expect(decimalScaling(amount, 18)).toEqual("0.023");
+    expect(decimalScaling(amount, decimals)).toEqual("0.023");
   });
 
   it("Scale thousand amount", () => {
+    //Unscaled amount 230000 * 10^18
     const amount = "230000000000000000000000";
-    expect(decimalScaling(amount, 18)).toEqual("230,000.000");
+    expect(decimalScaling(amount, decimals)).toEqual("230,000.000");
   });
 
   it("Scale million amount", () => {
+    //Unscaled amount 230,000,000 * 10^18
     const amount = "230000000000000000000000000";
-    expect(decimalScaling(amount, 18)).toEqual("230,000,000.000");
+    expect(decimalScaling(amount, decimals)).toEqual("230,000,000.000");
   });
 });
 
 describe("Unscaling functions", () => {
+  const decimals = 18;
+
   it("Unscale amount", () => {
     const amount = "0.023";
-    expect(decimalUnscaling(amount, 18)).toEqual("0023000000000000000");
+    expect(decimalUnscaling(amount, decimals)).toEqual("0023000000000000000");
   });
 
   it("Unscale thousand amount", () => {
     const amount = "230,000.000";
-    expect(decimalUnscaling(amount, 18)).toEqual("230000000000000000000000");
+    expect(decimalUnscaling(amount, decimals)).toEqual("230000000000000000000000");
   });
 
   it("Unscale million amount", () => {
     const amount = "230000000";
-    expect(decimalUnscaling(amount, 18)).toEqual("230000000000000000000000000");
+    expect(decimalUnscaling(amount, decimals)).toEqual("230000000000000000000000000");
   });
 });
 
