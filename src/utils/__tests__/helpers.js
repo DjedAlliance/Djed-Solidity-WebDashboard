@@ -1,3 +1,4 @@
+import { TRANSACTION_VALIDITY } from "../constants";
 import { SCALING_DECIMALS } from "../ethereum";
 import {
   calculateBcUsdEquivalent,
@@ -5,10 +6,9 @@ import {
   decimalScaling,
   decimalUnscaling,
   getScAdaEquivalent,
-  percentageScale
+  percentageScale,
+  validatePositiveNumber
 } from "../helpers";
-
-//Scaling/unscaling functions
 
 describe("Scaling functions", () => {
   const decimals = 18;
@@ -80,30 +80,52 @@ describe("Percentage scale", () => {
   });
 });
 
-// currency conversions:
-const coinsDetails = {
-  scaledNumberSc: "3.802",
-  unscaledNumberSc: "3802822",
-  scaledPriceSc: "10.000",
-  scaledNumberRc: "12.602",
-  scaledReserveBc: "59.691",
-  percentReserveRatio: "0.00%",
-  scaledBuyPriceRc: "1.718",
-  scaledSellPriceRc: "1.718",
-  scaledScExchangeRate: "10.000"
-};
+describe("Currency conversions", () => {
+  const coinsDetails = {
+    scaledNumberSc: "3.802",
+    unscaledNumberSc: "3802822",
+    scaledPriceSc: "10.000",
+    scaledNumberRc: "12.602",
+    scaledReserveBc: "59.691",
+    percentReserveRatio: "0.00%",
+    scaledBuyPriceRc: "1.718",
+    scaledSellPriceRc: "1.718",
+    scaledScExchangeRate: "10.000"
+  };
 
-it("Calculate base coin to USD equivalent", () => {
-  const amount = 1.554;
-  expect(calculateBcUsdEquivalent(coinsDetails, amount)).toEqual("0.155");
+  it("Calculate base coin to USD equivalent", () => {
+    const amount = 1.554;
+    expect(calculateBcUsdEquivalent(coinsDetails, amount)).toEqual("0.155");
+  });
+
+  it("Calculate reserve coin to USD equivalent", () => {
+    const amount = 4.538;
+    expect(calculateRcUsdEquivalent(coinsDetails, amount)).toEqual("0.779");
+  });
+
+  it("Calculate stable coin to USD equivalent", () => {
+    const amount = 1.734;
+    expect(getScAdaEquivalent(coinsDetails, amount)).toEqual("17.340 milktADA");
+  });
 });
 
-it("Calculate reserve coin to USD equivalent", () => {
-  const amount = 4.538;
-  expect(calculateRcUsdEquivalent(coinsDetails, amount)).toEqual("0.779");
-});
+describe("Validate positive number", () => {
+  it("Validate negative input", () => {
+    const amount = -1.234;
+    expect(validatePositiveNumber(amount.toString())).toEqual(
+      TRANSACTION_VALIDITY.NEGATIVE_INPUT
+    );
+  });
 
-it("Calculate stable coin to USD equivalent", () => {
-  const amount = 1.734;
-  expect(getScAdaEquivalent(coinsDetails, amount)).toEqual("17.340 milktADA");
+  it("Validate zero input", () => {
+    const amount = 0;
+    expect(validatePositiveNumber(amount.toString())).toEqual(
+      TRANSACTION_VALIDITY.ZERO_INPUT
+    );
+  });
+
+  it("Validate positive input", () => {
+    const amount = 1.234;
+    expect(validatePositiveNumber(amount.toString())).toEqual(TRANSACTION_VALIDITY.OK);
+  });
 });
