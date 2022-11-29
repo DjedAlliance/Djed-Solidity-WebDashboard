@@ -7,6 +7,7 @@ import {
   decimalUnscaling,
   getScAdaEquivalent,
   percentageScale,
+  reverseString,
   validatePositiveNumber
 } from "../helpers";
 
@@ -127,5 +128,17 @@ describe("Validate positive number", () => {
   it("Validate positive input", () => {
     const amount = 1.234;
     expect(validatePositiveNumber(amount.toString())).toEqual(TRANSACTION_VALIDITY.OK);
+  });
+});
+
+describe("Reverse string", () => {
+  it("Reverse string", () => {
+    const string = "example";
+    expect(reverseString(string)).toEqual("elpmaxe");
+  });
+
+  it("Reverse string with spaces", () => {
+    const string = "some example string";
+    expect(reverseString(string)).toEqual("gnirts elpmaxe emos");
   });
 });
