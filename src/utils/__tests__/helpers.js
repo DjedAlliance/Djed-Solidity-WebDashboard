@@ -1,9 +1,11 @@
+import { SCALING_DECIMALS } from "../ethereum";
 import {
   calculateBcUsdEquivalent,
   calculateRcUsdEquivalent,
   decimalScaling,
   decimalUnscaling,
-  getScAdaEquivalent
+  getScAdaEquivalent,
+  percentageScale
 } from "../helpers";
 
 //Scaling/unscaling functions
@@ -46,6 +48,35 @@ describe("Unscaling functions", () => {
   it("Unscale million amount", () => {
     const amount = "230000000";
     expect(decimalUnscaling(amount, decimals)).toEqual("230000000000000000000000000");
+  });
+});
+
+describe("Percentage scale", () => {
+  it("Percentage scale 1%", () => {
+    const amount = "1";
+    const decimals = SCALING_DECIMALS;
+    const expectedResult = "1.00";
+
+    const amountUnscaled = decimalUnscaling(amount, decimals - 2);
+    expect(percentageScale(amountUnscaled, decimals)).toEqual(expectedResult);
+  });
+
+  it("Percentage scale 0.1%", () => {
+    const amount = "0.1";
+    const decimals = SCALING_DECIMALS;
+    const expectedResult = "0.10";
+
+    const amountUnscaled = decimalUnscaling(amount, decimals - 2);
+    expect(percentageScale(amountUnscaled, decimals)).toEqual(expectedResult);
+  });
+
+  it("Percentage scale 100%", () => {
+    const amount = "100";
+    const decimals = SCALING_DECIMALS;
+    const expectedResult = "100.00";
+
+    const amountUnscaled = decimalUnscaling(amount, decimals - 2);
+    expect(percentageScale(amountUnscaled, decimals)).toEqual(expectedResult);
   });
 });
 
