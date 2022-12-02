@@ -282,8 +282,12 @@ const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
   return scaledUnscaledPromise(web3Promise(djed, method, 0), BC_DECIMALS).then(
     (price) => {
       const [priceScaled, priceUnscaled] = price;
-      const total = priceScaled.replaceAll(",", "") * amountScaled;
-      const totalUnscaled = decimalUnscaling(total.toString(), BC_DECIMALS);
+      const totalUnscaled = convertToBC(
+        amountUnscaled,
+        priceUnscaled,
+        decimals
+      ).toString();
+
       const totalScaled = decimalScaling(totalUnscaled, BC_DECIMALS);
 
       return {
