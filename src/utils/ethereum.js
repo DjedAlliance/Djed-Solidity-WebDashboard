@@ -23,13 +23,12 @@ const FEE_UI = process.env.REACT_APP_FEE_UI;
 const UI = process.env.REACT_APP_UI;
 
 export const BC_DECIMALS = 18;
-const ORACLE_DECIMALS = 18;
 export const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
 
 const REFRESH_PERIOD = 4000;
 const CONFIRMATION_WAIT_PERIOD = REFRESH_PERIOD + 1000;
 const scalingFactor = decimalUnscaling("1", SCALING_DECIMALS);
-const FEE_UI_UNSCALED = decimalUnscaling(FEE_UI, SCALING_DECIMALS);
+const FEE_UI_UNSCALED = decimalUnscaling((FEE_UI / 100).toString(), SCALING_DECIMALS);
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {
@@ -88,23 +87,27 @@ export const getCoinDetails = async (
     scaledPriceSc,
     scaledNumberRc,
     scaledReserveBc,
-    percentReserveRatio,
     scaledBuyPriceRc,
-    scaledSellPriceRc,
+
     scaledScExchangeRate
   ] = await Promise.all([
     scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
-    scaledPromise(web3Promise(djed, "scPrice"), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS),
     scaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
-    scaledPromise(web3Promise(djed, "R"), BC_DECIMALS),
-    percentScaledPromise(web3Promise(djed, "ratio"), SCALING_DECIMALS) /*.then(
-      (value) => (parseFloat(value) * 100).toFixed(4) + "%"
-    )*/,
-    scaledPromise(web3Promise(djed, "rcBuyingPrice"), BC_DECIMALS),
-    scaledPromise(web3Promise(djed, "rcTargetPrice"), BC_DECIMALS),
-    scaledPromise(web3Promise(djed, "scPrice"), BC_DECIMALS)
+    scaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS)
   ]);
+  const emptyValue = decimalScaling("0".toString(10), BC_DECIMALS);
+  let scaledSellPriceRc = emptyValue;
+  let percentReserveRatio = emptyValue;
 
+  if (Number(scaledNumberSc) > 0) {
+    [scaledSellPriceRc, percentReserveRatio] = await Promise.all([
+      scaledPromise(web3Promise(djed, "rcTargetPrice", 0), BC_DECIMALS),
+      percentScaledPromise(web3Promise(djed, "ratio"), SCALING_DECIMALS)
+    ]);
+  }
   return {
     scaledNumberSc,
     unscaledNumberSc,
@@ -204,7 +207,7 @@ export const calculateTxFees = (value, fee, treasuryFee) => {
     .mul(BigNumber.from(fee))
     .div(BigNumber.from(scalingFactor));
   const f_ui = BigNumber.from(value)
-    .mul(BigNumber.from(FEE_UI_UNSCALED))
+    .mul(BigNumber.from(decimalUnscaling(FEE_UI, SCALING_DECIMALS)))
     .div(BigNumber.from(scalingFactor));
   const f_t = BigNumber.from(value)
     .mul(BigNumber.from(treasuryFee))
@@ -276,21 +279,23 @@ export const convertToBC = (amount, price, decimals) => {
 
 const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
   const amountUnscaled = decimalUnscaling(amountScaled, decimals);
-  return scaledUnscaledPromise(web3Promise(djed, method), BC_DECIMALS).then((price) => {
-    const [priceScaled, priceUnscaled] = price;
-    const total = priceScaled.replaceAll(",", "") * amountScaled;
-    const totalUnscaled = decimalUnscaling(total.toString(), BC_DECIMALS);
-    const totalScaled = decimalScaling(totalUnscaled, BC_DECIMALS);
+  return scaledUnscaledPromise(web3Promise(djed, method, 0), BC_DECIMALS).then(
+    (price) => {
+      const [priceScaled, priceUnscaled] = price;
+      const total = priceScaled.replaceAll(",", "") * amountScaled;
+      const totalUnscaled = decimalUnscaling(total.toString(), BC_DECIMALS);
+      const totalScaled = decimalScaling(totalUnscaled, BC_DECIMALS);
 
-    return {
-      amountScaled,
-      amountUnscaled,
-      totalScaled,
-      totalUnscaled,
-      priceUnscaled,
-      priceScaled
-    };
-  });
+      return {
+        amountScaled,
+        amountUnscaled,
+        totalScaled,
+        totalUnscaled,
+        priceUnscaled,
+        priceScaled
+      };
+    }
+  );
 };
 
 // reservecoin
