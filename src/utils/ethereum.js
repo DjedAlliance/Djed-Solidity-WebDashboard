@@ -24,7 +24,7 @@ const UI = process.env.REACT_APP_UI;
 
 export const BC_DECIMALS = 18;
 const ORACLE_DECIMALS = 18;
-const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
+export const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
 
 const REFRESH_PERIOD = 4000;
 const CONFIRMATION_WAIT_PERIOD = REFRESH_PERIOD + 1000;
@@ -215,13 +215,14 @@ export const calculateTxFees = (value, fee, treasuryFee) => {
 /**
  * Function that deducts all platform fees from the BC amount
  * @param {*} value The amount of BC from which fees should be deducted
- * @param {*} f Calculated platform fee of the value
- * @param {*} f_ui Calculated UI fee of the value
- * @param {*} f_t Calculated treasury fee of the value
+ * @param {*} fee The platform fee
+ * @param {*} treasuryFee The treasury fee
  * @returns BC value with all fees calculated
  */
-export const deductFees = (value, f, f_ui, f_t) =>
-  BigNumber.from(value).sub(f).sub(f_ui).sub(f_t);
+export const deductFees = (value, fee, treasuryFee) => {
+  const { f, f_ui, f_t } = calculateTxFees(value, fee, treasuryFee);
+  return BigNumber.from(value).sub(f).sub(f_ui).sub(f_t);
+};
 
 /**
  * Function that appends all platform fees to the BC amount
@@ -265,7 +266,7 @@ const getFees = async (djed) => {
  * @param {*} decimals coin decimals
  * @returns unscaled BC amount
  */
-const convertToBC = (amount, price, decimals) => {
+export const convertToBC = (amount, price, decimals) => {
   const decimalScalingFactor = Math.pow(10, decimals);
 
   return BigNumber.from(amount)
@@ -343,8 +344,7 @@ export const tradeDataPriceSellRc = async (djed, rcDecimals, amountScaled) => {
       rcDecimals
     ).toString();
 
-    const { f, f_ui, f_t } = calculateTxFees(value, fee, treasuryFee);
-    const totalBCAmount = deductFees(value, f, f_ui, f_t);
+    const totalBCAmount = deductFees(value, fee, treasuryFee);
 
     return {
       ...data,
@@ -423,8 +423,7 @@ export const tradeDataPriceSellSc = async (djed, scDecimals, amountScaled) => {
       scDecimals
     ).toString();
 
-    const { f, f_ui, f_t } = calculateTxFees(value, fee, treasuryFee);
-    const totalBCAmount = deductFees(value, f, f_ui, f_t);
+    const totalBCAmount = deductFees(value, fee, treasuryFee);
 
     return {
       ...data,
