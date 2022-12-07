@@ -207,7 +207,7 @@ export const calculateTxFees = (value, fee, treasuryFee) => {
     .mul(BigNumber.from(fee))
     .div(BigNumber.from(scalingFactor));
   const f_ui = BigNumber.from(value)
-    .mul(BigNumber.from(decimalUnscaling(FEE_UI, SCALING_DECIMALS)))
+    .mul(BigNumber.from(FEE_UI_UNSCALED))
     .div(BigNumber.from(scalingFactor));
   const f_t = BigNumber.from(value)
     .mul(BigNumber.from(treasuryFee))
