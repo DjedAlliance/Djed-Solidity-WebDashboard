@@ -14,6 +14,7 @@ import {
   calculateBcUsdEquivalent,
   calculateRcUsdEquivalent,
   getRcUsdEquivalent,
+  stringToBigNumber,
   validatePositiveNumber
 } from "../utils/helpers";
 import {
@@ -24,7 +25,8 @@ import {
   tradeDataPriceSellRc,
   checkBuyableRc,
   checkSellableRc,
-  verifyTx
+  verifyTx,
+  BC_DECIMALS
 } from "../utils/ethereum";
 
 export default function ReserveCoin() {
@@ -83,6 +85,12 @@ export default function ReserveCoin() {
           setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
         } else if (bcUsdEquivalent >= TRANSACTION_USD_LIMIT) {
           setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
+        } else if (
+          stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
+            stringToBigNumber(data.totalBCUnscaled, BC_DECIMALS)
+          )
+        ) {
+          setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
         } else {
           checkBuyableRc(
             djedContract,
@@ -122,6 +130,12 @@ export default function ReserveCoin() {
           setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
         } else if (rcUsdEquivalent >= TRANSACTION_USD_LIMIT) {
           setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
+        } else if (
+          stringToBigNumber(accountDetails.unscaledBalanceRc, decimals.rcDecimals).lt(
+            stringToBigNumber(data.amountUnscaled, decimals.rcDecimals)
+          )
+        ) {
+          setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
         } else {
           checkSellableRc(
             djedContract,
