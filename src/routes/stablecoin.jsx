@@ -10,7 +10,11 @@ import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
 import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY } from "../utils/constants";
-import { getScAdaEquivalent, validatePositiveNumber } from "../utils/helpers";
+import {
+  getScAdaEquivalent,
+  stringToBigNumber,
+  validatePositiveNumber
+} from "../utils/helpers";
 import {
   buyScTx,
   promiseTx,
@@ -19,7 +23,8 @@ import {
   tradeDataPriceSellSc,
   checkBuyableSc,
   checkSellableSc,
-  verifyTx
+  verifyTx,
+  BC_DECIMALS
 } from "../utils/ethereum";
 
 export default function Stablecoin() {
@@ -72,6 +77,12 @@ export default function Stablecoin() {
           setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
         } else if (amountScaled >= TRANSACTION_USD_LIMIT) {
           setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
+        } else if (
+          stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
+            stringToBigNumber(data.totalBCUnscaled, BC_DECIMALS)
+          )
+        ) {
+          setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
         } else {
           checkBuyableSc(
             djedContract,
@@ -108,6 +119,12 @@ export default function Stablecoin() {
           setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
         } else if (amountScaled >= TRANSACTION_USD_LIMIT) {
           setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
+        } else if (
+          stringToBigNumber(accountDetails.unscaledBalanceSc, decimals.scDecimals).lt(
+            stringToBigNumber(data.amountUnscaled, decimals.scDecimals)
+          )
+        ) {
+          setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_SC);
         } else {
           checkSellableSc(data.amountUnscaled, accountDetails?.unscaledBalanceSc).then(
             (res) => setSellValidity(res)

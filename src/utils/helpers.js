@@ -2,6 +2,7 @@
 
 import { BN } from "web3-utils";
 import { TRANSACTION_VALIDITY } from "./constants";
+import { ethers } from "ethers";
 
 export function web3Promise(contract, method, ...args) {
   return contract.methods[method](...args).call();
@@ -123,4 +124,8 @@ export function validatePositiveNumber(amountScaled) {
   } else {
     return TRANSACTION_VALIDITY.OK;
   }
+}
+
+export function stringToBigNumber(value, decimals) {
+  return ethers.utils.parseUnits(value, decimals);
 }
