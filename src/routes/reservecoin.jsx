@@ -28,6 +28,7 @@ import {
   verifyTx,
   BC_DECIMALS
 } from "../utils/ethereum";
+import { BigNumber } from "@ethersproject/bignumber";
 
 export default function ReserveCoin() {
   const {
@@ -40,7 +41,9 @@ export default function ReserveCoin() {
     accountDetails,
     coinBudgets,
     accounts,
-    systemParams
+    systemParams,
+    isRatioBelowMax,
+    isRatioAboveMin
   } = useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
@@ -73,6 +76,12 @@ export default function ReserveCoin() {
           amountScaled
         );
 
+        const isRatioBelowMaximum = isRatioBelowMax({
+          scPrice: BigNumber.from(coinsDetails.unscaledPriceSc),
+          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
+            BigNumber.from(data.totalUnscaled)
+          )
+        });
         const bcUsdEquivalent = calculateBcUsdEquivalent(
           coinsDetails,
           parseFloat(data.totalBCScaled.replaceAll(",", ""))
@@ -91,6 +100,8 @@ export default function ReserveCoin() {
           )
         ) {
           setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
+        } else if (!isRatioBelowMaximum) {
+          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_HIGH);
         } else {
           checkBuyableRc(
             djedContract,
@@ -123,6 +134,14 @@ export default function ReserveCoin() {
           parseFloat(data.amountScaled.replaceAll(",", ""))
         ).replaceAll(",", "");
 
+        const isRatioAboveMinimum = isRatioAboveMin({
+          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
+          scPrice: BigNumber.from(coinsDetails.unscaledPriceSc),
+          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).sub(
+            BigNumber.from(data.totalBCUnscaled)
+          )
+        });
+
         setTradeData(data);
         if (!isWalletConnected) {
           setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
@@ -136,6 +155,8 @@ export default function ReserveCoin() {
           )
         ) {
           setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
+        } else if (!isRatioAboveMinimum) {
+          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
         } else {
           checkSellableRc(
             djedContract,

@@ -27,7 +27,7 @@ export const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this
 
 const REFRESH_PERIOD = 4000;
 const CONFIRMATION_WAIT_PERIOD = REFRESH_PERIOD + 1000;
-const scalingFactor = decimalUnscaling("1", SCALING_DECIMALS);
+export const scalingFactor = decimalUnscaling("1", SCALING_DECIMALS);
 const FEE_UI_UNSCALED = decimalUnscaling((FEE_UI / 100).toString(), SCALING_DECIMALS);
 
 export const getWeb3 = () =>
@@ -84,17 +84,17 @@ export const getCoinDetails = async (
 ) => {
   const [
     [scaledNumberSc, unscaledNumberSc],
-    scaledPriceSc,
+    [scaledPriceSc, unscaledPriceSc],
     scaledNumberRc,
-    scaledReserveBc,
+    [scaledReserveBc, unscaledReserveBc],
     scaledBuyPriceRc,
 
     scaledScExchangeRate
   ] = await Promise.all([
     scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
-    scaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS),
+    scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS),
     scaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
-    scaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
+    scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
     scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
     scaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS)
   ]);
@@ -112,8 +112,10 @@ export const getCoinDetails = async (
     scaledNumberSc,
     unscaledNumberSc,
     scaledPriceSc,
+    unscaledPriceSc,
     scaledNumberRc,
     scaledReserveBc,
+    unscaledReserveBc,
     percentReserveRatio,
     scaledBuyPriceRc,
     scaledSellPriceRc,
@@ -122,18 +124,25 @@ export const getCoinDetails = async (
 };
 
 export const getSystemParams = async (djed) => {
-  const [reserveRatioMin, reserveRatioMax, fee, treasuryFee, thresholdSupplySC] =
-    await Promise.all([
-      percentScaledPromise(web3Promise(djed, "reserveRatioMin"), SCALING_DECIMALS),
-      percentScaledPromise(web3Promise(djed, "reserveRatioMax"), SCALING_DECIMALS),
-      percentScaledPromise(web3Promise(djed, "fee"), SCALING_DECIMALS),
-      percentScaledPromise(web3Promise(djed, "treasuryFee"), SCALING_DECIMALS),
-      web3Promise(djed, "thresholdSupplySC")
-    ]);
+  const [
+    reserveRatioMinUnscaled,
+    reserveRatioMaxUnscaled,
+    fee,
+    treasuryFee,
+    thresholdSupplySC
+  ] = await Promise.all([
+    web3Promise(djed, "reserveRatioMin"),
+    web3Promise(djed, "reserveRatioMax"),
+    percentScaledPromise(web3Promise(djed, "fee"), SCALING_DECIMALS),
+    percentScaledPromise(web3Promise(djed, "treasuryFee"), SCALING_DECIMALS),
+    web3Promise(djed, "thresholdSupplySC")
+  ]);
 
   return {
-    reserveRatioMin,
-    reserveRatioMax,
+    reserveRatioMin: percentageScale(reserveRatioMinUnscaled, SCALING_DECIMALS, true),
+    reserveRatioMax: percentageScale(reserveRatioMaxUnscaled, SCALING_DECIMALS, true),
+    reserveRatioMinUnscaled,
+    reserveRatioMaxUnscaled,
     fee,
     treasuryFee,
     thresholdSupplySC
@@ -357,7 +366,8 @@ export const tradeDataPriceSellRc = async (djed, rcDecimals, amountScaled) => {
 
     return {
       ...data,
-      totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS)
+      totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS),
+      totalBCUnscaled: totalBCAmount.toString()
     };
   } catch (error) {
     console.log("error", error);

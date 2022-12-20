@@ -26,6 +26,7 @@ import {
   verifyTx,
   BC_DECIMALS
 } from "../utils/ethereum";
+import { BigNumber } from "@ethersproject/bignumber";
 
 export default function Stablecoin() {
   const {
@@ -38,7 +39,8 @@ export default function Stablecoin() {
     accountDetails,
     coinBudgets,
     accounts,
-    systemParams
+    systemParams,
+    isRatioAboveMin
   } = useAppProvider();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
@@ -69,6 +71,15 @@ export default function Stablecoin() {
           decimals.scDecimals,
           amountScaled
         );
+        const isRatioAboveMinimum = isRatioAboveMin({
+          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc).add(
+            BigNumber.from(data.amountUnscaled)
+          ),
+          scPrice: BigNumber.from(data.priceUnscaled),
+          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
+            BigNumber.from(data.totalUnscaled)
+          )
+        });
 
         setTradeData(data);
         if (!isWalletConnected) {
@@ -83,6 +94,8 @@ export default function Stablecoin() {
           )
         ) {
           setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
+        } else if (!isRatioAboveMinimum) {
+          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
         } else {
           checkBuyableSc(
             djedContract,

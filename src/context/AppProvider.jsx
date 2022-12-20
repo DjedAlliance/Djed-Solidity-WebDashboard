@@ -11,7 +11,8 @@ import {
   getCoinDetails,
   getSystemParams,
   getAccountDetails,
-  getCoinBudgets
+  getCoinBudgets,
+  scalingFactor
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
@@ -19,6 +20,7 @@ import {
   COIN_DETAILS_REQUEST_INTERVAL
 } from "../utils/constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { BigNumber } from "@ethersproject/bignumber";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
@@ -189,6 +191,32 @@ export const AppProvider = ({ children }) => {
     isWalletConnected ? COIN_DETAILS_REQUEST_INTERVAL : null
   );
 
+  const isRatioBelowMax = ({ scPrice, reserveBc }) => {
+    const scDecimals = BigNumber.from(decimals.scDecimals);
+    const totalScSupply = BigNumber.from(coinsDetails?.unscaledNumberSc);
+    const reserveRatioMax = BigNumber.from(systemParams?.reserveRatioMaxUnscaled);
+    const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
+    const thresholdSupplySC = BigNumber.from(systemParams.thresholdSupplySC);
+    return (
+      reserveBc
+        .mul(BigNumber.from(scalingFactor))
+        .mul(scDecimalScalingFactor)
+        .lt(totalScSupply.mul(scPrice).mul(reserveRatioMax)) ||
+      totalScSupply.lte(thresholdSupplySC)
+    );
+  };
+
+  const isRatioAboveMin = ({ scPrice, totalScSupply, reserveBc }) => {
+    const scDecimals = BigNumber.from(decimals.scDecimals);
+    const reserveRatioMin = BigNumber.from(systemParams?.reserveRatioMinUnscaled);
+    const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
+
+    return reserveBc
+      .mul(BigNumber.from(scalingFactor))
+      .mul(scDecimalScalingFactor)
+      .gt(totalScSupply.mul(scPrice).mul(reserveRatioMin));
+  };
+
   if (isLoading) {
     return <FullPageSpinner />;
   } else {
@@ -211,7 +239,9 @@ export const AppProvider = ({ children }) => {
           redirectToMetamask,
           accounts,
           setAccounts,
-          setStoredAccounts
+          setStoredAccounts,
+          isRatioBelowMax,
+          isRatioAboveMin
         }}
       >
         {children}
