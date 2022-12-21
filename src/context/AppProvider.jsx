@@ -20,7 +20,7 @@ import {
   COIN_DETAILS_REQUEST_INTERVAL
 } from "../utils/constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
-import { BigNumber } from "@ethersproject/bignumber";
+import { BigNumber } from "ethers";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);

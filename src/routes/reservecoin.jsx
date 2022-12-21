@@ -28,7 +28,7 @@ import {
   verifyTx,
   BC_DECIMALS
 } from "../utils/ethereum";
-import { BigNumber } from "@ethersproject/bignumber";
+import { BigNumber } from "ethers";
 
 export default function ReserveCoin() {
   const {

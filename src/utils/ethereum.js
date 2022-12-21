@@ -15,7 +15,7 @@ import {
   percentageScale
 } from "./helpers";
 import { TRANSACTION_VALIDITY } from "./constants";
-import { BigNumber } from "@ethersproject/bignumber";
+import { BigNumber } from "ethers";
 
 const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
 const DJED_ADDRESS = process.env.REACT_APP_DJED_ADDRESS;
