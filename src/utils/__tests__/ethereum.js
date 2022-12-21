@@ -50,7 +50,7 @@ it("Deduct fees from the BC amount", () => {
   //Amount of base coin: 10
   const amountBC = "10000000000000000000"; //10 * 10^18
   //Expected deductFeesResult
-  const expectedResult = "7875000000000048665";
+  const expectedResult = "9855000000000048665";
 
   expect(deductFees(amountBC, fee, treasuryFee)).toEqual(BigNumber.from(expectedResult));
 });
@@ -61,7 +61,7 @@ it("Calculate transaction fees", () => {
 
   expect(calculateTxFees(amountBC, fee, treasuryFee)).toEqual({
     f: BigNumber.from("100000000000000000"),
-    f_ui: BigNumber.from("2000000000000000000"),
+    f_ui: BigNumber.from("20000000000000000"),
     f_t: BigNumber.from("24999999999951335")
   });
 });
@@ -151,19 +151,19 @@ describe("Calculate SELL SC", () => {
 
   it("Sell 1 SC", () => {
     const amountSC = "1";
-    const expectedResult = "7875000000000048665";
+    const expectedResult = "9855000000000048665";
     testSellSC(amountSC, expectedResult);
   });
 
   it("Sell 1.12345 SC", () => {
     const amountSC = "1.12345";
-    const expectedResult = "8847168750000054673";
+    const expectedResult = "11071599750000054673";
     testSellSC(amountSC, expectedResult);
   });
 
   it("Sell 1000 SC", () => {
     const amountSC = "1000";
-    const expectedResult = "7875000000000048664529";
+    const expectedResult = "9855000000000048664529";
     testSellSC(amountSC, expectedResult);
   });
 });
@@ -229,19 +229,19 @@ describe("Calculate SELL RC", () => {
 
   it("Sell 1 RC", () => {
     const amountRC = "1";
-    const expectedResult = "1353629427641411392";
+    const expectedResult = "1693970540876964152";
     testSellRC(amountRC, expectedResult);
   });
 
   it("Sell 1.12345 RC", () => {
     const amountRC = "1.12345";
-    const expectedResult = "1520734980483743629";
+    const expectedResult = "1903091204148225378";
     testSellRC(amountRC, expectedResult);
   });
 
   it("Sell 1000 RC", () => {
     const amountRC = "1000";
-    const expectedResult = "1353629427641411390757";
+    const expectedResult = "1693970540876964151539";
     testSellRC(amountRC, expectedResult);
   });
 });
