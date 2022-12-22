@@ -7,7 +7,7 @@ import {
   convertToBC,
   SCALING_DECIMALS
 } from "../ethereum";
-import { decimalScaling, decimalUnscaling, percentageScale } from "../helpers";
+import { decimalUnscaling } from "../helpers";
 
 //Fetched from the contract SC price
 const scPrice = "10000000000000000000";
@@ -23,10 +23,8 @@ const fee = "10000000000000000000000";
 const treasuryFee = "2499999999995133547184";
 //Fixed feeUI
 const feeUI = "0.2";
-//Scaled fee expressed in % (e.g. 1)
-const percentageScaleFee = percentageScale(fee, SCALING_DECIMALS);
-//Scaled treasury fee expressed in % (e.g. 0.24)
-const percentageScaleTreasuryFee = percentageScale(treasuryFee, SCALING_DECIMALS);
+//Unscaled fee ui
+const feeUIUnscaled = decimalUnscaling((feeUI / 100).toString(), SCALING_DECIMALS);
 
 //TODO refactor append fees to receive unscaled amounts and BigNumber
 it("Append fees to the BC amount", () => {
@@ -41,9 +39,14 @@ it("Append fees to the BC amount", () => {
   //Expected appended fees result
   const expectedResult = "125";
 
-  expect(appendFees(amountBC, f_t, f, f_ui)).toEqual(
-    decimalUnscaling(expectedResult, BC_DECIMALS)
-  );
+  expect(
+    appendFees(
+      decimalUnscaling(amountBC, 18),
+      decimalUnscaling(f_t, SCALING_DECIMALS - 2),
+      decimalUnscaling(f, SCALING_DECIMALS - 2),
+      decimalUnscaling(f_ui, SCALING_DECIMALS - 2)
+    )
+  ).toEqual(decimalUnscaling(expectedResult, BC_DECIMALS));
 });
 
 it("Deduct fees from the BC amount", () => {
@@ -104,31 +107,24 @@ describe("Calculate BUY SC", () => {
       scDecimals
     ).toString();
 
-    expect(
-      appendFees(
-        decimalScaling(amountBC, BC_DECIMALS).replaceAll(",", ""),
-        percentageScaleTreasuryFee,
-        percentageScaleFee,
-        feeUI
-      )
-    ).toEqual(expectedResult);
+    expect(appendFees(amountBC, treasuryFee, fee, feeUIUnscaled)).toEqual(expectedResult);
   };
 
   it("Buy 1 SC", () => {
     const amountSC = "1";
-    const expectedResult = "10146103896103895000";
+    const expectedResult = "10147133434804617574";
     testBuySC(amountSC, expectedResult);
   });
 
   it("Buy 1.12345 SC", () => {
     const amountSC = "1.12345";
-    const expectedResult = "11398133116883116000";
+    const expectedResult = "11399797057331247613";
     testBuySC(amountSC, expectedResult);
   });
 
   it("Buy 1000 SC", () => {
     const amountSC = "1000";
-    const expectedResult = "10146103896103896000000";
+    const expectedResult = "10147133434804617574280";
     testBuySC(amountSC, expectedResult);
   });
 });
@@ -181,31 +177,24 @@ describe("Calculate BUY RC", () => {
       rcDecimals
     ).toString();
 
-    expect(
-      appendFees(
-        decimalScaling(amountBC, BC_DECIMALS).replaceAll(",", ""),
-        percentageScaleTreasuryFee,
-        percentageScaleFee,
-        feeUI
-      )
-    ).toEqual(expectedResult);
+    expect(appendFees(amountBC, treasuryFee, fee, feeUIUnscaled)).toEqual(expectedResult);
   };
 
   it("Buy 1 RC", () => {
     const amountRC = "1";
-    const expectedResult = "1743100649350649300";
+    const expectedResult = "1744185196641970594";
     testBuyRC(amountRC, expectedResult);
   });
 
   it("Buy 1.12345 RC", () => {
     const amountRC = "1.12345";
-    const expectedResult = "1959212662337662200";
+    const expectedResult = "1959504859167421864";
     testBuyRC(amountRC, expectedResult);
   });
 
   it("Buy 1000 RC", () => {
     const amountRC = "1000";
-    const expectedResult = "1744007711038961000000";
+    const expectedResult = "1744185196641970594627";
     testBuyRC(amountRC, expectedResult);
   });
 });
