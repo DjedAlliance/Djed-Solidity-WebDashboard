@@ -85,7 +85,7 @@ export const getCoinDetails = async (
   const [
     [scaledNumberSc, unscaledNumberSc],
     [scaledPriceSc, unscaledPriceSc],
-    scaledNumberRc,
+    [scaledNumberRc, unscaledNumberRc],
     [scaledReserveBc, unscaledReserveBc],
     scaledBuyPriceRc,
 
@@ -93,7 +93,7 @@ export const getCoinDetails = async (
   ] = await Promise.all([
     scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
     scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS),
-    scaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
+    scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
     scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
     scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
     scaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS)
@@ -102,11 +102,19 @@ export const getCoinDetails = async (
   let scaledSellPriceRc = emptyValue;
   let percentReserveRatio = emptyValue;
 
-  if (Number(scaledNumberSc) > 0) {
-    [scaledSellPriceRc, percentReserveRatio] = await Promise.all([
-      scaledPromise(web3Promise(djed, "rcTargetPrice", 0), BC_DECIMALS),
-      percentScaledPromise(web3Promise(djed, "ratio"), SCALING_DECIMALS)
-    ]);
+  //Check total stablecoin supply
+  if (!BigNumber.from(unscaledNumberRc).isZero()) {
+    scaledSellPriceRc = await scaledPromise(
+      web3Promise(djed, "rcTargetPrice", 0),
+      BC_DECIMALS
+    );
+  }
+  //Check total reservecoin supply
+  if (!BigNumber.from(unscaledNumberSc).isZero()) {
+    percentReserveRatio = await percentScaledPromise(
+      web3Promise(djed, "ratio"),
+      SCALING_DECIMALS
+    );
   }
   return {
     scaledNumberSc,
@@ -114,6 +122,7 @@ export const getCoinDetails = async (
     scaledPriceSc,
     unscaledPriceSc,
     scaledNumberRc,
+    unscaledNumberRc,
     scaledReserveBc,
     unscaledReserveBc,
     percentReserveRatio,
