@@ -274,6 +274,7 @@ export default function Stablecoin() {
               treasuryFee={systemParams?.treasuryFee}
               buyValidity={buyValidity}
               sellValidity={sellValidity}
+              isSellDisabled={Number(coinsDetails?.unscaledNumberSc) === 0}
             />
           </div>
           <div className="ConnectWallet">

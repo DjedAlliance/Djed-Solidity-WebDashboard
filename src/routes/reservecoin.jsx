@@ -297,6 +297,7 @@ export default function ReserveCoin() {
               treasuryFee={systemParams?.treasuryFee}
               buyValidity={buyValidity}
               sellValidity={sellValidity}
+              isSellDisabled={Number(coinsDetails?.scaledNumberRc) === 0}
             />
           </div>
           <div className="ConnectWallet">
