@@ -26,7 +26,8 @@ import {
   checkBuyableRc,
   checkSellableRc,
   verifyTx,
-  BC_DECIMALS
+  BC_DECIMALS,
+  calculateTxFees
 } from "../utils/ethereum";
 import { BigNumber } from "ethers";
 
@@ -134,11 +135,12 @@ export default function ReserveCoin() {
           parseFloat(data.amountScaled.replaceAll(",", ""))
         ).replaceAll(",", "");
 
+        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioAboveMinimum = isRatioAboveMin({
           totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
           scPrice: BigNumber.from(coinsDetails.unscaledPriceSc),
           reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).sub(
-            BigNumber.from(data.totalBCUnscaled)
+            BigNumber.from(data.totalUnscaled).sub(f)
           )
         });
 

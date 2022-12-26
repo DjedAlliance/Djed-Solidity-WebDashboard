@@ -138,13 +138,13 @@ export const getSystemParams = async (djed) => {
   const [
     reserveRatioMinUnscaled,
     reserveRatioMaxUnscaled,
-    fee,
+    feeUnscaled,
     treasuryFee,
     thresholdSupplySC
   ] = await Promise.all([
     web3Promise(djed, "reserveRatioMin"),
     web3Promise(djed, "reserveRatioMax"),
-    percentScaledPromise(web3Promise(djed, "fee"), SCALING_DECIMALS),
+    web3Promise(djed, "fee"),
     percentScaledPromise(web3Promise(djed, "treasuryFee"), SCALING_DECIMALS),
     web3Promise(djed, "thresholdSupplySC")
   ]);
@@ -154,7 +154,8 @@ export const getSystemParams = async (djed) => {
     reserveRatioMax: percentageScale(reserveRatioMaxUnscaled, SCALING_DECIMALS, true),
     reserveRatioMinUnscaled,
     reserveRatioMaxUnscaled,
-    fee,
+    fee: percentageScale(feeUnscaled, SCALING_DECIMALS, true),
+    feeUnscaled,
     treasuryFee,
     thresholdSupplySC
   };
