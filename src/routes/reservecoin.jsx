@@ -156,7 +156,7 @@ export default function ReserveCoin() {
         ) {
           setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
         } else if (!isRatioAboveMinimum) {
-          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
+          setSellValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
         } else {
           checkSellableRc(
             djedContract,

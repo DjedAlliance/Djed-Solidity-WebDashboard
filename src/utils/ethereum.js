@@ -100,11 +100,12 @@ export const getCoinDetails = async (
   ]);
   const emptyValue = decimalScaling("0".toString(10), BC_DECIMALS);
   let scaledSellPriceRc = emptyValue;
+  let unscaledSellPriceRc = emptyValue;
   let percentReserveRatio = emptyValue;
 
   //Check total stablecoin supply
   if (!BigNumber.from(unscaledNumberRc).isZero()) {
-    scaledSellPriceRc = await scaledPromise(
+    [scaledSellPriceRc, unscaledSellPriceRc] = await scaledUnscaledPromise(
       web3Promise(djed, "rcTargetPrice", 0),
       BC_DECIMALS
     );
@@ -128,6 +129,7 @@ export const getCoinDetails = async (
     percentReserveRatio,
     scaledBuyPriceRc,
     scaledSellPriceRc,
+    unscaledSellPriceRc,
     scaledScExchangeRate
   };
 };
@@ -484,4 +486,55 @@ export const checkBuyableSc = (djed, unscaledAmountSc, unscaledBudgetSc) => {
 
 export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) => {
   return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
+};
+
+/**
+ * Calculate if the transaction will reach the maximum reserve ratio
+ * @param scPrice - Unscaled stablecoin price
+ * @param reserveBc - Unscaled reserve of base coin with appended potential transaction amount.
+ * Example: If user wants to buy 1RC, the reserveBc param will be calculated as sum of current reserve of BC and desired RC amount converted in BC
+ * @param totalScSupply - Unscaled total stablecoin supply
+ * @param reserveRatioMax - Unscaled maximum reserve ratio
+ * @param scDecimalScalingFactor - If stablecoin has 6 decimals, scDecimalScalingFactor will be calculated as 10^6
+ * @param thresholdSupplySC - Unscaled threshold SC supply
+ * @returns
+ */
+export const calculateIsRatioBelowMax = ({
+  scPrice,
+  reserveBc,
+  totalScSupply,
+  reserveRatioMax,
+  scDecimalScalingFactor,
+  thresholdSupplySC
+}) => {
+  return (
+    reserveBc
+      .mul(BigNumber.from(scalingFactor))
+      .mul(scDecimalScalingFactor)
+      .lt(totalScSupply.mul(scPrice).mul(reserveRatioMax)) ||
+    totalScSupply.lte(thresholdSupplySC)
+  );
+};
+
+/**
+ * Calculate if the transaction will reach the minimum reserve ratio
+ * @param scPrice - Unscaled stablecoin price
+ * @param reserveBc - Unscaled reserve of base coin with calculated potential transaction amount.
+ * Example: If user wants to buy 1SC, the reserveBc param will be calculated as sum of current reserve of BC and desired SC amount converted in BC
+ * @param totalScSupply - Unscaled total stablecoin supply
+ * @param reserveRatioMin - Unscaled minimum reserve ratio
+ * @param scDecimalScalingFactor - If stablecoin has 6 decimals, scDecimalScalingFactor will be calculated as 10^6
+ * @returns
+ */
+export const calculateIsRatioAboveMin = ({
+  scPrice,
+  reserveBc,
+  totalScSupply,
+  reserveRatioMin,
+  scDecimalScalingFactor
+}) => {
+  return reserveBc
+    .mul(BigNumber.from(scalingFactor))
+    .mul(scDecimalScalingFactor)
+    .gt(totalScSupply.mul(scPrice).mul(reserveRatioMin));
 };

@@ -12,7 +12,8 @@ import {
   getSystemParams,
   getAccountDetails,
   getCoinBudgets,
-  scalingFactor
+  calculateIsRatioBelowMax,
+  calculateIsRatioAboveMin
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
@@ -197,13 +198,14 @@ export const AppProvider = ({ children }) => {
     const reserveRatioMax = BigNumber.from(systemParams?.reserveRatioMaxUnscaled);
     const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
     const thresholdSupplySC = BigNumber.from(systemParams.thresholdSupplySC);
-    return (
-      reserveBc
-        .mul(BigNumber.from(scalingFactor))
-        .mul(scDecimalScalingFactor)
-        .lt(totalScSupply.mul(scPrice).mul(reserveRatioMax)) ||
-      totalScSupply.lte(thresholdSupplySC)
-    );
+    return calculateIsRatioBelowMax({
+      scPrice,
+      reserveBc,
+      totalScSupply,
+      reserveRatioMax,
+      scDecimalScalingFactor,
+      thresholdSupplySC
+    });
   };
 
   const isRatioAboveMin = ({ scPrice, totalScSupply, reserveBc }) => {
@@ -211,10 +213,13 @@ export const AppProvider = ({ children }) => {
     const reserveRatioMin = BigNumber.from(systemParams?.reserveRatioMinUnscaled);
     const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
 
-    return reserveBc
-      .mul(BigNumber.from(scalingFactor))
-      .mul(scDecimalScalingFactor)
-      .gt(totalScSupply.mul(scPrice).mul(reserveRatioMin));
+    return calculateIsRatioAboveMin({
+      scPrice,
+      reserveBc,
+      totalScSupply,
+      reserveRatioMin,
+      scDecimalScalingFactor
+    });
   };
 
   if (isLoading) {
