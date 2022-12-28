@@ -10,7 +10,8 @@ const ReservesCard = ({
   equivalence,
   reserveRatio,
   reserveRatioMin,
-  reserveRatioMax
+  reserveRatioMax,
+  showCurrentReserveRatio
 }) => (
   <div className="ReservesCard">
     <CoinIndicator coinIcon={coinIcon} coinName={coinName} />
@@ -24,7 +25,9 @@ const ReservesCard = ({
       <div className="ReservesRatio">
         <NumberItem amount={reserveRatioMin} label="Minimum Reserve Ratio" />
         <NumberItem amount={reserveRatioMax} label="Maximum Reserve Ratio" />
-        <NumberItem amount={reserveRatio} label="Current Reserve Ratio" />
+        {showCurrentReserveRatio && (
+          <NumberItem amount={reserveRatio} label="Current Reserve Ratio" />
+        )}
       </div>
     </div>
   </div>
