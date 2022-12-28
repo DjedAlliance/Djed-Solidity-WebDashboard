@@ -223,12 +223,12 @@ export const verifyTx = (web3, hash) => {
  * @param {*} treasuryFee The treasury fee
  * @returns BC value with all fees calculated
  */
-export const calculateTxFees = (value, fee, treasuryFee) => {
+export const calculateTxFees = (value, fee, treasuryFee, feeUI) => {
   const f = BigNumber.from(value)
     .mul(BigNumber.from(fee))
     .div(BigNumber.from(scalingFactor));
   const f_ui = BigNumber.from(value)
-    .mul(BigNumber.from(FEE_UI_UNSCALED))
+    .mul(BigNumber.from(feeUI || FEE_UI_UNSCALED))
     .div(BigNumber.from(scalingFactor));
   const f_t = BigNumber.from(value)
     .mul(BigNumber.from(treasuryFee))

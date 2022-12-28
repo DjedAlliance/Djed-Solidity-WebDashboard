@@ -77,10 +77,11 @@ export default function ReserveCoin() {
           amountScaled
         );
 
+        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioBelowMaximum = isRatioBelowMax({
           scPrice: BigNumber.from(coinsDetails.unscaledPriceSc),
           reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
-            BigNumber.from(data.totalUnscaled)
+            BigNumber.from(data.totalUnscaled).add(f)
           )
         });
         const bcUsdEquivalent = calculateBcUsdEquivalent(

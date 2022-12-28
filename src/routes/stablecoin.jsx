@@ -24,7 +24,8 @@ import {
   checkBuyableSc,
   checkSellableSc,
   verifyTx,
-  BC_DECIMALS
+  BC_DECIMALS,
+  calculateTxFees
 } from "../utils/ethereum";
 import { BigNumber } from "ethers";
 
@@ -71,13 +72,15 @@ export default function Stablecoin() {
           decimals.scDecimals,
           amountScaled
         );
+
+        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioAboveMinimum = isRatioAboveMin({
           totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc).add(
             BigNumber.from(data.amountUnscaled)
           ),
           scPrice: BigNumber.from(data.priceUnscaled),
           reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
-            BigNumber.from(data.totalUnscaled)
+            BigNumber.from(data.totalUnscaled).add(f)
           )
         });
 
