@@ -40,12 +40,6 @@ const CoinCard = ({
           </p>
           {equivalence ? <p>≈ {equivalence}</p> : null}
         </div>
-        <div className="InfoItem">
-          <span>Current Ratio</span>
-          <p>
-            1 mADA = {invPriceScaled} {tokenName}
-          </p>
-        </div>
       </div>
     </div>
   );
