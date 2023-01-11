@@ -11,7 +11,9 @@ import {
   getCoinDetails,
   getSystemParams,
   getAccountDetails,
-  getCoinBudgets
+  getCoinBudgets,
+  calculateIsRatioBelowMax,
+  calculateIsRatioAboveMin
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
@@ -19,6 +21,7 @@ import {
   COIN_DETAILS_REQUEST_INTERVAL
 } from "../utils/constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { BigNumber } from "ethers";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
@@ -189,6 +192,36 @@ export const AppProvider = ({ children }) => {
     isWalletConnected ? COIN_DETAILS_REQUEST_INTERVAL : null
   );
 
+  const isRatioBelowMax = ({ scPrice, reserveBc }) => {
+    const scDecimals = BigNumber.from(decimals.scDecimals);
+    const totalScSupply = BigNumber.from(coinsDetails?.unscaledNumberSc);
+    const reserveRatioMax = BigNumber.from(systemParams?.reserveRatioMaxUnscaled);
+    const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
+    const thresholdSupplySC = BigNumber.from(systemParams.thresholdSupplySC);
+    return calculateIsRatioBelowMax({
+      scPrice,
+      reserveBc,
+      totalScSupply,
+      reserveRatioMax,
+      scDecimalScalingFactor,
+      thresholdSupplySC
+    });
+  };
+
+  const isRatioAboveMin = ({ scPrice, totalScSupply, reserveBc }) => {
+    const scDecimals = BigNumber.from(decimals.scDecimals);
+    const reserveRatioMin = BigNumber.from(systemParams?.reserveRatioMinUnscaled);
+    const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
+
+    return calculateIsRatioAboveMin({
+      scPrice,
+      reserveBc,
+      totalScSupply,
+      reserveRatioMin,
+      scDecimalScalingFactor
+    });
+  };
+
   if (isLoading) {
     return <FullPageSpinner />;
   } else {
@@ -211,7 +244,9 @@ export const AppProvider = ({ children }) => {
           redirectToMetamask,
           accounts,
           setAccounts,
-          setStoredAccounts
+          setStoredAccounts,
+          isRatioBelowMax,
+          isRatioAboveMin
         }}
       >
         {children}

@@ -106,6 +106,7 @@ export default function Protocol() {
               reserveRatio={coinsDetails?.percentReserveRatio}
               reserveRatioMin={systemParams?.reserveRatioMin}
               reserveRatioMax={systemParams?.reserveRatioMax}
+              showCurrentReserveRatio={Number(coinsDetails?.unscaledNumberSc) > 0}
             />
           </div>
         </div>

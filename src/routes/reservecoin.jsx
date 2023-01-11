@@ -14,6 +14,7 @@ import {
   calculateBcUsdEquivalent,
   calculateRcUsdEquivalent,
   getRcUsdEquivalent,
+  stringToBigNumber,
   validatePositiveNumber
 } from "../utils/helpers";
 import {
@@ -24,8 +25,11 @@ import {
   tradeDataPriceSellRc,
   checkBuyableRc,
   checkSellableRc,
-  verifyTx
+  verifyTx,
+  BC_DECIMALS,
+  calculateTxFees
 } from "../utils/ethereum";
+import { BigNumber } from "ethers";
 
 export default function ReserveCoin() {
   const {
@@ -38,7 +42,9 @@ export default function ReserveCoin() {
     accountDetails,
     coinBudgets,
     accounts,
-    systemParams
+    systemParams,
+    isRatioBelowMax,
+    isRatioAboveMin
   } = useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
@@ -71,6 +77,13 @@ export default function ReserveCoin() {
           amountScaled
         );
 
+        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
+        const isRatioBelowMaximum = isRatioBelowMax({
+          scPrice: BigNumber.from(coinsDetails.unscaledPriceSc),
+          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
+            BigNumber.from(data.totalUnscaled).add(f)
+          )
+        });
         const bcUsdEquivalent = calculateBcUsdEquivalent(
           coinsDetails,
           parseFloat(data.totalBCScaled.replaceAll(",", ""))
@@ -83,6 +96,14 @@ export default function ReserveCoin() {
           setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
         } else if (bcUsdEquivalent >= TRANSACTION_USD_LIMIT) {
           setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
+        } else if (
+          stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
+            stringToBigNumber(data.totalBCUnscaled, BC_DECIMALS)
+          )
+        ) {
+          setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
+        } else if (!isRatioBelowMaximum) {
+          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_HIGH);
         } else {
           checkBuyableRc(
             djedContract,
@@ -115,6 +136,15 @@ export default function ReserveCoin() {
           parseFloat(data.amountScaled.replaceAll(",", ""))
         ).replaceAll(",", "");
 
+        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
+        const isRatioAboveMinimum = isRatioAboveMin({
+          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
+          scPrice: BigNumber.from(coinsDetails.unscaledPriceSc),
+          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).sub(
+            BigNumber.from(data.totalUnscaled).sub(f)
+          )
+        });
+
         setTradeData(data);
         if (!isWalletConnected) {
           setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
@@ -122,6 +152,14 @@ export default function ReserveCoin() {
           setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
         } else if (rcUsdEquivalent >= TRANSACTION_USD_LIMIT) {
           setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
+        } else if (
+          stringToBigNumber(accountDetails.unscaledBalanceRc, decimals.rcDecimals).lt(
+            stringToBigNumber(data.amountUnscaled, decimals.rcDecimals)
+          )
+        ) {
+          setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
+        } else if (!isRatioAboveMinimum) {
+          setSellValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
         } else {
           checkSellableRc(
             djedContract,
@@ -262,6 +300,7 @@ export default function ReserveCoin() {
               treasuryFee={systemParams?.treasuryFee}
               buyValidity={buyValidity}
               sellValidity={sellValidity}
+              isSellDisabled={Number(coinsDetails?.scaledNumberRc) === 0}
             />
           </div>
           <div className="ConnectWallet">
