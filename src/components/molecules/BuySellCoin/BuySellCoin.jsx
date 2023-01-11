@@ -56,8 +56,8 @@ const BuySellCoin = ({
       <p className="FeeInfo">
         <InfoCircleOutlined />
         {isWalletConnected
-          ? `Your current balance is ${scaledBaseBalance} milktADA.`
-          : `Please connect your wallet to see your milktADA balance.`}
+          ? `Your current balance is ${scaledBaseBalance} mADA.`
+          : `Please connect your wallet to see your mADA balance.`}
       </p>
       {isWrongChain ? (
         <p className="Alert">
@@ -68,7 +68,7 @@ const BuySellCoin = ({
       <hr />
       <div className="AdditionalInfo">
         {/*<p>
-        {coinName} ≈ {priceAmount} milktADA
+        {coinName} ≈ {priceAmount} mADA
       </p>*/}
         <p>Fee = {fee}</p>
         <p>Treasury Fee = {treasuryFee}</p>
@@ -76,7 +76,7 @@ const BuySellCoin = ({
         {inputValue ? (
           <>
             <p>{`You will ${payOrReceive}  ~ ${inputValue} ${coinName}`}</p>
-            <p>{`You will ${payOrGet}  ~ ${totalAmount} milktADA`}</p>
+            <p>{`You will ${payOrGet}  ~ ${totalAmount} mADA`}</p>
             <p>{inputValid ? null : `Transaction is invalid: ${validity}.`}</p>
           </>
         ) : (

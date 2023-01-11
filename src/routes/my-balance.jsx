@@ -44,7 +44,7 @@ export default function MyBalance() {
             />
             <TotalBalance
               coinIcon="/coin-icon-three.png"
-              coinName="milktADA"
+              coinName="mADA"
               balanceAmount={accountDetails?.scaledBalanceBc}
               balanceEquivalent={bcConverted}
             />
