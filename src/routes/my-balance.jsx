@@ -27,8 +27,7 @@ export default function MyBalance() {
     <main style={{ padding: "1rem 0" }}>
       <div className="MyBalanceSection">
         <div className="Top">
-          <h1>My Balance</h1>
-          <p>Here you will find your Metrics</p>
+          <h1>Balance</h1>
           <div className="Content">
             <TotalBalance
               coinIcon="/coin-icon-one.png"

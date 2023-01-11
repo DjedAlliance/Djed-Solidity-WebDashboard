@@ -228,18 +228,44 @@ export default function Stablecoin() {
           <h1>Djed StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              Djed StableCoin is the USD-pegged stablecoin which is part of the Djed
-              protocol. Each Djed StableCoin is backed by 400-600% collateral of testnet
-              milkADA. As such, each Djed StableCoin is able to maintain this peg without
-              a centralized monetary policy based on the collateral requirements. This peg
-              is automatically maintained with price fluctuations up and until the price
-              of ADA dips so low that the collateral value decreases to under 100%.
+              The StableCoin in this Djed deployment is pegged to the USD, similarly to
+              various{" "}
+              <a
+                href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
+                target="_blank"
+              >
+                fixed exchange rate national currencies
+              </a>
+              , at a ratio of 1 to 1. One Djed Stablecoin is nominally worth 1 USD. The
+              peg is maintained through a reserve of mADA. The Djed protocol aims to
+              maintain a reserve ratio between 300% and 800%. This means that, when the
+              reserve ratio is in this range, every StableCoin is backed by an amount of
+              mADA worth at least 3 USD and is able to tolerate an instantaneous mADA
+              price crash of at least 66%.
             </p>
             <p>
-              The Djed protocol allows users who own Djed StableCoin to always sell their
-              tokens back to the protocol in order to withdraw an equivalent value of
-              testnet milkADA. As such, Djed StableCoin is aimed for users who want to
-              maintain stability of value in their assets.
+              Users are always allowed to sell back StableCoins to the protocol. The
+              protocol pays 1 USD worth of mADA per StableCoin if the reserve ratio is
+              above 100% or R/S per StableCoin otherwise, where R is the protocol's total
+              mADA reserve and S is the StableCoin supply.
+            </p>
+            <p>
+              Users are allowed to buy StableCoins from the protocol for a price of 1 USD
+              worth of mADA per StableCoin, whenever the reserve ratio is above 300%. When
+              the reserve ratio is below 300%, the purchase of StableCoins from the
+              protocol is disallowed, because it would reduce the reserve ratio further.
+            </p>
+            <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
+            <p>
+              StableCoins are implemented as a standard ERC-20 token contract and the
+              contract's address is{" "}
+              {/**TODO link to the token contract address in the Milkomeda blockchain explorer */}
+              <a
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
+                target="_blank"
+              >
+                ${process.env.REACT_APP_DJED_ADDRESS}
+              </a>
             </p>
           </div>
           <CoinCard

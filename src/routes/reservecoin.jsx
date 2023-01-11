@@ -250,18 +250,35 @@ export default function ReserveCoin() {
           <h1>Djed ReserveCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              Djed ReserveCoin is the second token of the Djed protocol which is aimed at
-              users who are looking to trade stability in value for potential upside gain.
-              Every Djed ReserveCoin bought from the protocol represents a portion of the
-              underlying testnet milkADA which is held in the Djed protocol reserves. As
-              such, if the price of ADA increases, then the outstanding liabilities to
-              cover all existing Djed StableCoin decreases, and thus the value of Djed
-              ReserveCoin increases.
+              A ReserveCoin represents a portion of the surplus of the underlying reserves
+              of mADA in the Djed protocol. As such, ReserveCoins have a leveraged
+              volatile price that increases when the price of mADA increases and decreases
+              when the price of mADA decreases. Furthermore, ReserveCoin holders
+              ultimately benefit from fees paid to the Djed protocol, since most fees are
+              accumulated into the reserve and hence contribute to the reserve surplus.
             </p>
             <p>
-              As such Djed ReserveCoin is the riskier of the two assets (compared to Djed
-              StableCoin), yet offers users who have a stronger risk tolerance to have
-              potential upside gain if the price of ADA increases.
+              Users are allowed to buy ReserveCoins, as long as the reserve ratio remains
+              below the maximum of 800%. This prevents excessive dilution of previous
+              ReserveCoin holders. This restriction only applies when the StableCoin
+              supply is above 1 million.
+            </p>
+            <p>
+              Users are allowed to sell ReserveCoins, as long as the reserve ratio remains
+              above the minimum of 300%. This aims to ensure that all StableCoins remain
+              sufficiently backed.
+            </p>
+            <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
+            <p>
+              ReserveCoins are implemented as a standard ERC-20 token contract and the
+              contract's address is{" "}
+              {/**TODO link to the token contract address in the Milkomeda blockchain explorer */}
+              <a
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
+                target="_blank"
+              >
+                ${process.env.REACT_APP_DJED_ADDRESS}
+              </a>
             </p>
           </div>
           <CoinCard
