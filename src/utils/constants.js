@@ -11,8 +11,8 @@ export const TRANSACTION_VALIDITY = {
   NEGATIVE_INPUT: "Amount cannot be negative",
   ZERO_INPUT: "Amount cannot be zero",
   INSUFFICIENT_BC: "Insufficient milktADA balance",
-  INSUFFICIENT_SC: "Insufficient StableDjed balance",
-  INSUFFICIENT_RC: "Insufficient ReserveDjed balance",
+  INSUFFICIENT_SC: "Insufficient Djed StableCoin balance",
+  INSUFFICIENT_RC: "Insufficient Djed ReserveCoin balance",
   RESERVE_RATIO_LOW: "Reserve ratio too low",
   RESERVE_RATIO_HIGH: "Reserve ratio too high",
   TRANSACTION_LIMIT_REACHED: "Transaction limit is reached"

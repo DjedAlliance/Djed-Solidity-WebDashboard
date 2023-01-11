@@ -30,10 +30,10 @@ export default function MainLayout() {
               <Link to="/">Protocol</Link>
             </Menu.Item>
             <Menu.Item key="/stabledjed">
-              <Link to="/stabledjed">StableDjed</Link>
+              <Link to="/stabledjed">Djed StableCoin</Link>
             </Menu.Item>
             <Menu.Item key="/reservedjed">
-              <Link to="/reservedjed">ReserveDjed</Link>
+              <Link to="/reservedjed">Djed ReserveCoin</Link>
             </Menu.Item>
             <Menu.Item key="/my-balance" disabled={!isWalletConnected}>
               <Link to="/my-balance">My Balance</Link>
@@ -82,10 +82,10 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
               <Link to="/">Protocol</Link>
             </Menu.Item>
             <Menu.Item key="/stabledjed">
-              <Link to="/stabledjed">StableDjed</Link>
+              <Link to="/stabledjed">Djed StableCoin</Link>
             </Menu.Item>
             <Menu.Item key="/reservedjed">
-              <Link to="/reservedjed">ReserveDjed</Link>
+              <Link to="/reservedjed">Djed ReserveCoin</Link>
             </Menu.Item>
             <Menu.Item key="/my-balance" disabled={!isWalletConnected}>
               <Link to="/my-balance">My Balance</Link>

@@ -225,29 +225,29 @@ export default function Stablecoin() {
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>StableDjed {/*<strong>Name</strong>*/}</h1>
+          <h1>Djed StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              StableDjed is the USD-pegged stablecoin which is part of the Djed protocol.
-              Each StableDjed is backed by 400-600% collateral of testnet milkADA. As
-              such, each StableDjed is able to maintain this peg without a centralized
-              monetary policy based on the collateral requirements. This peg is
-              automatically maintained with price fluctuations up and until the price of
-              ADA dips so low that the collateral value decreases to under 100%.
+              Djed StableCoin is the USD-pegged stablecoin which is part of the Djed
+              protocol. Each Djed StableCoin is backed by 400-600% collateral of testnet
+              milkADA. As such, each Djed StableCoin is able to maintain this peg without
+              a centralized monetary policy based on the collateral requirements. This peg
+              is automatically maintained with price fluctuations up and until the price
+              of ADA dips so low that the collateral value decreases to under 100%.
             </p>
             <p>
-              The Djed protocol allows users who own StableDjed to always sell their
+              The Djed protocol allows users who own Djed StableCoin to always sell their
               tokens back to the protocol in order to withdraw an equivalent value of
-              testnet milkADA. As such, StableDjed is aimed for users who want to maintain
-              stability of value in their assets.
+              testnet milkADA. As such, Djed StableCoin is aimed for users who want to
+              maintain stability of value in their assets.
             </p>
           </div>
           <CoinCard
             coinIcon="/coin-icon-one.png"
-            coinName="StableDjed"
+            coinName="Djed StableCoin"
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
-            tokenName="StableDjed"
+            tokenName="Djed StableCoin"
             equivalence={scConverted}
           />
         </div>
@@ -256,11 +256,11 @@ export default function Stablecoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            StableDjed
+            Djed StableCoin
           </h2>
           <div className="PurchaseContainer">
             <OperationSelector
-              coinName="StableDjed"
+              coinName="Djed StableCoin"
               selectionCallback={() => {
                 setBuyOrSell();
                 setValue(null);
@@ -298,7 +298,7 @@ export default function Stablecoin() {
                   disabled={buttonDisabled}
                   onClick={tradeFxn}
                   buyOrSell={buyOrSell}
-                  currencyName="StableDjed"
+                  currencyName="Djed StableCoin"
                 />
               </>
             ) : (

@@ -83,19 +83,19 @@ export default function Protocol() {
           <div className="CoinsContainer">
             <CoinCard
               coinIcon="/coin-icon-one.png"
-              coinName="StableDjed"
+              coinName="Djed StableCoin"
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
-              tokenName="StableDjed"
+              tokenName="Djed StableCoin"
               equivalence={scConverted}
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
-              coinName="ReserveDjed"
+              coinName="Djed ReserveCoin"
               priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
               sellPriceAmount={coinsDetails?.scaledSellPriceRc}
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
-              tokenName="ReserveDjed"
+              tokenName="Djed ReserveCoin"
               equivalence={rcConverted}
             />
             <ReservesCard

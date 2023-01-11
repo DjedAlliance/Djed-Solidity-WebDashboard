@@ -247,29 +247,30 @@ export default function ReserveCoin() {
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>ReserveDjed {/*<strong>Name</strong>*/}</h1>
+          <h1>Djed ReserveCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              ReserveDjed is the second token of the Djed protocol which is aimed at users
-              who are looking to trade stability in value for potential upside gain. Every
-              ReserveDjed bought from the protocol represents a portion of the underlying
-              testnet milkADA which is held in the Djed protocol reserves. As such, if the
-              price of ADA increases, then the outstanding liabilities to cover all
-              existing StableDjed decreases, and thus the value of ReserveDjed increases.
+              Djed ReserveCoin is the second token of the Djed protocol which is aimed at
+              users who are looking to trade stability in value for potential upside gain.
+              Every Djed ReserveCoin bought from the protocol represents a portion of the
+              underlying testnet milkADA which is held in the Djed protocol reserves. As
+              such, if the price of ADA increases, then the outstanding liabilities to
+              cover all existing Djed StableCoin decreases, and thus the value of Djed
+              ReserveCoin increases.
             </p>
             <p>
-              As such ReserveDjed is the riskier of the two assets (compared to
-              StableDjed), yet offers users who have a stronger risk tolerance to have
+              As such Djed ReserveCoin is the riskier of the two assets (compared to Djed
+              StableCoin), yet offers users who have a stronger risk tolerance to have
               potential upside gain if the price of ADA increases.
             </p>
           </div>
           <CoinCard
             coinIcon="/coin-icon-two.png"
-            coinName="ReserveDjed"
+            coinName="Djed ReserveCoin"
             priceAmount={coinsDetails?.scaledBuyPriceRc}
             sellPriceAmount={coinsDetails?.scaledSellPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
-            tokenName="ReserveDjed"
+            tokenName="Djed ReserveCoin"
             equivalence={rcConverted}
           />
         </div>
@@ -278,11 +279,11 @@ export default function ReserveCoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            ReserveDjed
+            Djed ReserveCoin
           </h2>
           <div className="PurchaseContainer">
             <OperationSelector
-              coinName="ReserveDjed"
+              coinName="Djed ReserveCoin"
               selectionCallback={() => {
                 setBuyOrSell();
                 setValue(null);
@@ -321,7 +322,7 @@ export default function ReserveCoin() {
                   disabled={buttonDisabled}
                   onClick={tradeFxn}
                   buyOrSell={buyOrSell}
-                  currencyName="ReserveDjed"
+                  currencyName="Djed ReserveCoin"
                 />
               </>
             ) : (
