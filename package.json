@@ -21,6 +21,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:milkomeda-c1-testnet": "npx -y env-cmd -f ./env/milkomeda-c1-testnet.env npm run build",
+    "build:milkomeda-c1": "npx -y env-cmd -f ./env/milkomeda-c1.env npm run build",
     "test": "react-scripts test",
     "lint": "prettier --check '**/*.{js,jsx}'",
     "eject": "react-scripts eject"
