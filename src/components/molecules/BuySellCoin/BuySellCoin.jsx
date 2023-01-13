@@ -85,7 +85,7 @@ const BuySellCoin = ({
         <hr />
         <p>
           Djed is an experiment in self-sovereign self-driving monetary policy. Understand
-          how the protocol works and use it carefully at your own risk
+          how the protocol works and use it carefully at your own risk.
         </p>
       </div>
     </div>
