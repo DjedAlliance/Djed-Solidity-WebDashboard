@@ -272,13 +272,13 @@ export default function ReserveCoin() {
             <p>
               ReserveCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}
-              {/**TODO link to the token contract address in the Milkomeda blockchain explorer */}
               <a
-                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_RESERVECOIN_ADDRESS}`}
                 target="_blank"
               >
-                ${process.env.REACT_APP_DJED_ADDRESS}
+                {process.env.REACT_APP_RESERVECOIN_ADDRESS}
               </a>
+              .
             </p>
           </div>
           <CoinCard
