@@ -59,7 +59,7 @@ export default function Protocol() {
               Milkomeda C1 is the EVM-compatible chain of the Cardano ecosystem. Its
               native currency is mADA, a bridged version of Cardano's ADA. This asset is
               used by the Djed protocol to back both <a href="/stabledjed">StableCoins</a>{" "}
-              and <a href="/reservedjed">ReserveCoins</a> and its needed to buy any of
+              and <a href="/reservedjed">ReserveCoins</a> and it is needed to buy any of
               these coins and to pay for transaction fees on Milkomeda C1.
             </p>
             <p>

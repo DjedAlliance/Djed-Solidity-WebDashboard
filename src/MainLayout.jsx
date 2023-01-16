@@ -38,12 +38,10 @@ export default function MainLayout() {
                 Audit
               </Link>
             </Menu.Item>
-            <Menu.Item>
+            <Menu.Item key="/whitepaper">
               <Link
                 to={{
-                  pathname:
-                    /**TODO update link when it becomes available */
-                    "//iohk.io/en/research/library/papers/djeda-formally-verified-crypto-backed-pegged-algorithmic-stablecoin/"
+                  pathname: "//eprint.iacr.org/2021/1069"
                 }}
                 target="_blank"
               >
@@ -122,9 +120,7 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
             <Menu.Item key="/whitepaper">
               <Link
                 to={{
-                  pathname:
-                    /**TODO update link when it becomes available */
-                    "https://iohk.io/en/research/library/papers/djeda-formally-verified-crypto-backed-pegged-algorithmic-stablecoin/"
+                  pathname: "//eprint.iacr.org/2021/1069"
                 }}
                 target="_blank"
               >
