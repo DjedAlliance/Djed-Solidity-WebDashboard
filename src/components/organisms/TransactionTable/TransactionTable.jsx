@@ -26,7 +26,7 @@ const columns = [
     key: "total",
     render: (text) => (
       <p className="Total">
-        {text} <span>milktADA</span>
+        {text} <span>mADA</span>
       </p>
     )
   },
@@ -77,7 +77,7 @@ const data = [
   {
     key: "3",
     transactionId: "7680adec8eabcabac676be9e83854ade0bd22mnb",
-    transaction: "milktADA",
+    transaction: "mADA",
     total: "+0.005456",
     date: "12/04/21 09:31:06 EST"
   }

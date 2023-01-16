@@ -27,24 +27,23 @@ export default function MyBalance() {
     <main style={{ padding: "1rem 0" }}>
       <div className="MyBalanceSection">
         <div className="Top">
-          <h1>My Balance</h1>
-          <p>Here you will find your Metrics</p>
+          <h1>Balance</h1>
           <div className="Content">
             <TotalBalance
               coinIcon="/coin-icon-one.png"
-              coinName="StableDjed"
+              coinName="Djed StableCoin"
               balanceAmount={accountDetails?.scaledBalanceSc}
               balanceEquivalent={scConverted}
             />
             <TotalBalance
               coinIcon="/coin-icon-two.png"
-              coinName="ReserveDjed"
+              coinName="Djed ReserveCoin"
               balanceAmount={accountDetails?.scaledBalanceRc}
               balanceEquivalent={rcConverted}
             />
             <TotalBalance
               coinIcon="/coin-icon-three.png"
-              coinName="milktADA"
+              coinName="mADA"
               balanceAmount={accountDetails?.scaledBalanceBc}
               balanceEquivalent={bcConverted}
             />

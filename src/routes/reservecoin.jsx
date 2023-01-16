@@ -247,29 +247,47 @@ export default function ReserveCoin() {
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>ReserveDjed {/*<strong>Name</strong>*/}</h1>
+          <h1>Djed ReserveCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              ReserveDjed is the second token of the Djed protocol which is aimed at users
-              who are looking to trade stability in value for potential upside gain. Every
-              ReserveDjed bought from the protocol represents a portion of the underlying
-              testnet milkADA which is held in the Djed protocol reserves. As such, if the
-              price of ADA increases, then the outstanding liabilities to cover all
-              existing StableDjed decreases, and thus the value of ReserveDjed increases.
+              A ReserveCoin represents a portion of the surplus of the underlying reserves
+              of mADA in the Djed protocol. As such, ReserveCoins have a leveraged
+              volatile price that increases when the price of mADA increases and decreases
+              when the price of mADA decreases. Furthermore, ReserveCoin holders
+              ultimately benefit from fees paid to the Djed protocol, since most fees are
+              accumulated into the reserve and hence contribute to the reserve surplus.
             </p>
             <p>
-              As such ReserveDjed is the riskier of the two assets (compared to
-              StableDjed), yet offers users who have a stronger risk tolerance to have
-              potential upside gain if the price of ADA increases.
+              Users are allowed to buy ReserveCoins, as long as the reserve ratio remains
+              below the maximum of 800%. This prevents excessive dilution of previous
+              ReserveCoin holders. This restriction only applies when the StableCoin
+              supply is above 1 million.
+            </p>
+            <p>
+              Users are allowed to sell ReserveCoins, as long as the reserve ratio remains
+              above the minimum of 300%. This aims to ensure that all StableCoins remain
+              sufficiently backed.
+            </p>
+            <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
+            <p>
+              ReserveCoins are implemented as a standard ERC-20 token contract and the
+              contract's address is{" "}
+              <a
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_RESERVECOIN_ADDRESS}`}
+                target="_blank"
+              >
+                {process.env.REACT_APP_RESERVECOIN_ADDRESS}
+              </a>
+              .
             </p>
           </div>
           <CoinCard
             coinIcon="/coin-icon-two.png"
-            coinName="ReserveDjed"
+            coinName="Djed ReserveCoin"
             priceAmount={coinsDetails?.scaledBuyPriceRc}
             sellPriceAmount={coinsDetails?.scaledSellPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
-            tokenName="ReserveDjed"
+            tokenName="Djed ReserveCoin"
             equivalence={rcConverted}
           />
         </div>
@@ -278,11 +296,11 @@ export default function ReserveCoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            ReserveDjed
+            Djed ReserveCoin
           </h2>
           <div className="PurchaseContainer">
             <OperationSelector
-              coinName="ReserveDjed"
+              coinName="Djed ReserveCoin"
               selectionCallback={() => {
                 setBuyOrSell();
                 setValue(null);
@@ -321,7 +339,7 @@ export default function ReserveCoin() {
                   disabled={buttonDisabled}
                   onClick={tradeFxn}
                   buyOrSell={buyOrSell}
-                  currencyName="ReserveDjed"
+                  currencyName="Djed ReserveCoin"
                 />
               </>
             ) : (

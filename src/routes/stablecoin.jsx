@@ -225,29 +225,55 @@ export default function Stablecoin() {
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>StableDjed {/*<strong>Name</strong>*/}</h1>
+          <h1>Djed StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              StableDjed is the USD-pegged stablecoin which is part of the Djed protocol.
-              Each StableDjed is backed by 400-600% collateral of testnet milkADA. As
-              such, each StableDjed is able to maintain this peg without a centralized
-              monetary policy based on the collateral requirements. This peg is
-              automatically maintained with price fluctuations up and until the price of
-              ADA dips so low that the collateral value decreases to under 100%.
+              The StableCoin in this Djed deployment is pegged to the USD, similarly to
+              various{" "}
+              <a
+                href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
+                target="_blank"
+              >
+                fixed exchange rate national currencies
+              </a>
+              , at a ratio of 1 to 1. One Djed Stablecoin is nominally worth 1 USD. The
+              peg is maintained through a reserve of mADA. The Djed protocol aims to
+              maintain a reserve ratio between 300% and 800%. This means that, when the
+              reserve ratio is in this range, every StableCoin is backed by an amount of
+              mADA worth at least 3 USD and is able to tolerate an instantaneous mADA
+              price crash of at least 66%.
             </p>
             <p>
-              The Djed protocol allows users who own StableDjed to always sell their
-              tokens back to the protocol in order to withdraw an equivalent value of
-              testnet milkADA. As such, StableDjed is aimed for users who want to maintain
-              stability of value in their assets.
+              Users are always allowed to sell back StableCoins to the protocol. The
+              protocol pays 1 USD worth of mADA per StableCoin if the reserve ratio is
+              above 100% or R/S per StableCoin otherwise, where R is the protocol's total
+              mADA reserve and S is the StableCoin supply.
+            </p>
+            <p>
+              Users are allowed to buy StableCoins from the protocol for a price of 1 USD
+              worth of mADA per StableCoin, whenever the reserve ratio is above 300%. When
+              the reserve ratio is below 300%, the purchase of StableCoins from the
+              protocol is disallowed, because it would reduce the reserve ratio further.
+            </p>
+            <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
+            <p>
+              StableCoins are implemented as a standard ERC-20 token contract and the
+              contract's address is{" "}
+              <a
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_STABLECOIN_ADDRESS}`}
+                target="_blank"
+              >
+                {process.env.REACT_APP_STABLECOIN_ADDRESS}
+              </a>
+              .
             </p>
           </div>
           <CoinCard
             coinIcon="/coin-icon-one.png"
-            coinName="StableDjed"
+            coinName="Djed StableCoin"
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
-            tokenName="StableDjed"
+            tokenName="Djed StableCoin"
             equivalence={scConverted}
           />
         </div>
@@ -256,11 +282,11 @@ export default function Stablecoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            StableDjed
+            Djed StableCoin
           </h2>
           <div className="PurchaseContainer">
             <OperationSelector
-              coinName="StableDjed"
+              coinName="Djed StableCoin"
               selectionCallback={() => {
                 setBuyOrSell();
                 setValue(null);
@@ -298,7 +324,7 @@ export default function Stablecoin() {
                   disabled={buttonDisabled}
                   onClick={tradeFxn}
                   buyOrSell={buyOrSell}
-                  currencyName="StableDjed"
+                  currencyName="Djed StableCoin"
                 />
               </>
             ) : (

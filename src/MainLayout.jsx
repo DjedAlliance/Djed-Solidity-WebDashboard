@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Layout, Menu, Dropdown } from "antd";
 import MetamaskStatusButton, {
   DisconnectButton
@@ -10,13 +10,15 @@ import { ReactComponent as Logo } from "./images/mdjed_testnet_white.svg";
 import "antd/dist/antd.css";
 import "./App.scss";
 import { useAppProvider } from "./context/AppProvider";
-import { CloseOutlined, MenuOutlined } from "@ant-design/icons";
+import { CloseOutlined, MenuOutlined, WalletOutlined } from "@ant-design/icons";
+import CustomButton from "./components/atoms/CustomButton/CustomButton";
 
 const { Header, Content } = Layout;
 
 export default function MainLayout() {
   const { isWalletConnected } = useAppProvider();
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -26,20 +28,46 @@ export default function MainLayout() {
             <Logo />
           </div>
           <Menu mode="horizontal" selectedKeys={[location.pathname]}>
+            <Menu.Item key="/audit">
+              <Link
+                to={{
+                  /**TODO link to the audit, when it becomes available */
+                  pathname: "#"
+                }}
+              >
+                Audit
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/whitepaper">
+              <Link
+                to={{
+                  pathname: "//eprint.iacr.org/2021/1069"
+                }}
+                target="_blank"
+              >
+                Whitepaper
+              </Link>
+            </Menu.Item>
             <Menu.Item key="/">
               <Link to="/">Protocol</Link>
             </Menu.Item>
             <Menu.Item key="/stabledjed">
-              <Link to="/stabledjed">StableDjed</Link>
+              <Link to="/stabledjed">StableCoin</Link>
             </Menu.Item>
             <Menu.Item key="/reservedjed">
-              <Link to="/reservedjed">ReserveDjed</Link>
-            </Menu.Item>
-            <Menu.Item key="/my-balance" disabled={!isWalletConnected}>
-              <Link to="/my-balance">My Balance</Link>
+              <Link to="/reservedjed">ReserveCoin</Link>
             </Menu.Item>
           </Menu>
           <div className="WalletConfig">
+            <CustomButton
+              text="Balance"
+              onClick={() => navigate("/my-balance")}
+              disabled={!isWalletConnected}
+              iconWallet={
+                isWalletConnected && <WalletOutlined style={{ color: "white" }} />
+              }
+              variant="tertiary"
+            />
             {isWalletConnected ? <DisconnectButton /> : null}
             <MetamaskStatusButton />
           </div>
@@ -78,17 +106,38 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
             selectedKeys={[location.pathname]}
             onClick={() => setMenuOpen(false)}
           >
+            <Menu.Item key="/audit">
+              <Link
+                to={{
+                  /**TODO link to the audit, when it becomes available */
+                  pathname: "#"
+                }}
+                target="_blank"
+              >
+                Audit
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/whitepaper">
+              <Link
+                to={{
+                  pathname: "//eprint.iacr.org/2021/1069"
+                }}
+                target="_blank"
+              >
+                Whitepaper
+              </Link>
+            </Menu.Item>
             <Menu.Item key="/">
               <Link to="/">Protocol</Link>
             </Menu.Item>
             <Menu.Item key="/stabledjed">
-              <Link to="/stabledjed">StableDjed</Link>
+              <Link to="/stabledjed">Djed StableCoin</Link>
             </Menu.Item>
             <Menu.Item key="/reservedjed">
-              <Link to="/reservedjed">ReserveDjed</Link>
+              <Link to="/reservedjed">Djed ReserveCoin</Link>
             </Menu.Item>
             <Menu.Item key="/my-balance" disabled={!isWalletConnected}>
-              <Link to="/my-balance">My Balance</Link>
+              <Link to="/my-balance">Balance</Link>
             </Menu.Item>
             <div className="WalletConfig">
               {isWalletConnected ? <DisconnectButton /> : null}

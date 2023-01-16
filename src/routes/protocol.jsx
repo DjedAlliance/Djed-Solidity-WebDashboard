@@ -31,71 +31,79 @@ export default function Protocol() {
       <div className="ProtocolSection">
         <div className="Left">
           <h1>
-            <strong>Milkomeda Djed</strong>
+            <strong>Djed on Milkomeda C1</strong>
           </h1>
           <div className="DescriptionContainer">
             <p>
-              Milkomeda Djed is an implementation of Minimal Djed on the Milkomeda C1
-              Testnet. Djed is a novel collateral-backed stablecoin protocol which has
-              garnered attention since the release of its{" "}
-              <a
-                href="https://iohk.io/en/research/library/papers/djeda-formally-verified-crypto-backed-pegged-algorithmic-stablecoin/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                whitepaper
+              Djed is a formally verified crypto-backed autonomous stablecoin protocol. It
+              has been researched since Q2 2020, its whitepaper has been released in
+              August 2021, and it has{" "}
+              <a href="https://github.com/DjedAlliance" target="_blank">
+                multiple implementations
               </a>{" "}
-              in August 2021.
+              and{" "}
+              <a href="http://djed.one" target="_blank">
+                deployments
+              </a>
+              . Here you can interact with a{" "}
+              <a
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
+                target="_blank"
+              >
+                deployment
+              </a>{" "}
+              {/**TODO link to a tag in github that we will create once the code is frozen for audit */}
+              that uses <a href="#">these smart contracts</a> on Milkomeda C1.
             </p>
             <p>
-              Milkomeda Djed is the very first publicly accessible implementation of Djed,
-              thereby providing users the perfect opportunity to get a new taste of the
-              latest and greatest in DeFi, however without any of the risk. All assets are
-              100% testnet assets, meaning that users can learn the risks and upsides of
-              the protocol in practice but with no real money on the line.
+              Milkomeda C1 is the EVM-compatible chain of the Cardano ecosystem. Its
+              native currency is mADA, a bridged version of Cardano's ADA. This asset is
+              used by the Djed protocol to back both <a href="/stabledjed">StableCoins</a>{" "}
+              and <a href="/reservedjed">ReserveCoins</a> and it is needed to buy any of
+              these coins and to pay for transaction fees on Milkomeda C1.
             </p>
             <p>
-              You can learn more about the Milkomeda Djed implementation{" "}
-              <a
-                href="https://medium.com/@milkomedafoundation/djed-stablecoin-live-on-milkomeda-c1-testnet-ff93710b0881"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                in this blog post
-              </a>{" "}
-              or{" "}
+              To learn more about how to obtain mADA or bridge your ADA from Cardano to
+              Milkomeda C1, follow{" "}
               <a
                 href="https://medium.com/@milkomedafoundation/getting-started-with-milkomeda-djed-on-c1-testnet-d335ebf65305"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                follow this guide
-              </a>{" "}
-              to get started testing the dApp immediately.
+                this guide
+              </a>
+            </p>
+            <p>
+              This deployment is immutable, unstoppable (for as long Milkomeda C1 exists),
+              fully autonomous and zero-governance. No one is able to change the deployed
+              code or the parameters of the deployment. No one is operating it. No one
+              controls your funds. Treat Djed as an experiment in self-sovereign
+              self-driving monetary policy. Understand how the protocol works and interact
+              carefully at your own risk.
             </p>
           </div>
           <MetamaskConnectButton />
         </div>
         <div className="Right">
           <h2 className="SubtTitle">
-            <strong>Protocol Coins</strong> Detail
+            <strong>Protocol</strong> Status
           </h2>
           <div className="CoinsContainer">
             <CoinCard
               coinIcon="/coin-icon-one.png"
-              coinName="StableDjed"
+              coinName="Djed StableCoin"
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
-              tokenName="StableDjed"
+              tokenName="Djed StableCoin"
               equivalence={scConverted}
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
-              coinName="ReserveDjed"
+              coinName="Djed ReserveCoin"
               priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
               sellPriceAmount={coinsDetails?.scaledSellPriceRc}
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
-              tokenName="ReserveDjed"
+              tokenName="Djed ReserveCoin"
               equivalence={rcConverted}
             />
             <ReservesCard
