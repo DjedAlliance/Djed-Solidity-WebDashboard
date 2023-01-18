@@ -5,8 +5,6 @@ import MetamaskStatusButton, {
   DisconnectButton
 } from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
 
-import { ReactComponent as Logo } from "./images/mdjed_testnet_white.svg";
-
 import "antd/dist/antd.css";
 import "./App.scss";
 import { useAppProvider } from "./context/AppProvider";
@@ -25,7 +23,7 @@ export default function MainLayout() {
       <Layout className="layout">
         <Header className="header-desktop">
           <div className="logo">
-            <Logo />
+            <img src="/Logo_symbol.png" />
           </div>
           <Menu mode="horizontal" selectedKeys={[location.pathname]}>
             <Menu.Item key="/audit">
@@ -94,7 +92,7 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
   return (
     <div className="header-mobile">
       <div className="logo">
-        <Logo />
+        <img src="/Logo_symbol.png" />
       </div>
       <Dropdown
         overlayClassName="menu-mobile-dropdown"
