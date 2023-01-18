@@ -4,7 +4,7 @@ $warning-color: #fec004;
 
 $black-1: #262932;
 $black-2: #2a2c3e;
-$black-3: #41455C;
+$black-3: #41455c;
 $white: #ffffff;
 
 $grey-1: #f4f4f6;
@@ -13,12 +13,21 @@ $grey-3: #b5b0b0;
 $grey-4: #bbbbbb;
 $grey-5: #5f606e;
 
+$gold-dark: #d07d2c;
+$gold-light: #f49422;
+
+a,
+a:focus,
+a:active {
+  color: #d07d2c;
+}
+
+a:hover {
+  color: #f49422;
+}
+
 $gradient-theme-1: linear-gradient(212.41deg, #12173a 1.12%, #0c0c0c 94.46%);
-$gradient-theme-2: linear-gradient(
-  70.09deg,
-  #00e29a 0%,
-  rgba(0, 226, 154, 0) 100%
-);
+$gradient-theme-2: linear-gradient(70.09deg, #00e29a 0%, rgba(0, 226, 154, 0) 100%);
 $gradient-theme-3: linear-gradient(
   91.41deg,
   rgba(255, 255, 255, 0.3) 0%,
