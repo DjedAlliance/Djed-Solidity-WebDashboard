@@ -9,6 +9,10 @@ body {
   align-items: center;
   margin-right: 2em;
   max-width: 180px;
+
+  img {
+    width: 50px;
+  }
 }
 
 .site-layout-content {
@@ -92,15 +96,18 @@ body {
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open::after,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected::after,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected::after {
-  border-bottom: 2px solid white;
+  border-bottom: 2px solid $gold-dark;
 }
 
 .ant-menu-horizontal > .ant-menu-item a {
   color: white;
 }
 
-.ant-menu-horizontal > .ant-menu-item a:hover {
-  color: white;
+.ant-menu-horizontal > .ant-menu-item a:hover,
+.ant-menu-horizontal > .ant-menu-item a:active,
+.ant-menu-horizontal > .ant-menu-item a:focus,
+.ant-menu-horizontal > .ant-menu-item-selected a {
+  color: $gold-dark;
 }
 
 .ant-menu-horizontal > .ant-menu-submenu > .ant-menu-submenu-title {

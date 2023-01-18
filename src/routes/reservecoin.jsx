@@ -94,7 +94,7 @@ export default function ReserveCoin() {
           setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (bcUsdEquivalent >= TRANSACTION_USD_LIMIT) {
+        } else if (bcUsdEquivalent > TRANSACTION_USD_LIMIT) {
           setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else if (
           stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
@@ -150,7 +150,7 @@ export default function ReserveCoin() {
           setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (rcUsdEquivalent >= TRANSACTION_USD_LIMIT) {
+        } else if (rcUsdEquivalent > TRANSACTION_USD_LIMIT) {
           setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else if (
           stringToBigNumber(accountDetails.unscaledBalanceRc, decimals.rcDecimals).lt(

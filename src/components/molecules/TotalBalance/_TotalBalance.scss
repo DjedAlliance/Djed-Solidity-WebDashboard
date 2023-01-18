@@ -35,7 +35,7 @@
     .Cointext {
       margin-left: 1em;
       .CoinTitle {
-        @include primary-text($body, $white, 400);
+        @include primary-text($body, $gold-dark, 600);
         margin: 0;
         margin-bottom: 6px;
       }

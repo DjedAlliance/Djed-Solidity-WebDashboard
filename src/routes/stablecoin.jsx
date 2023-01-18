@@ -89,7 +89,7 @@ export default function Stablecoin() {
           setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (amountScaled >= TRANSACTION_USD_LIMIT) {
+        } else if (amountScaled > TRANSACTION_USD_LIMIT) {
           setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else if (
           stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
@@ -133,7 +133,7 @@ export default function Stablecoin() {
           setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (amountScaled >= TRANSACTION_USD_LIMIT) {
+        } else if (amountScaled > TRANSACTION_USD_LIMIT) {
           setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else if (
           stringToBigNumber(accountDetails.unscaledBalanceSc, decimals.scDecimals).lt(
