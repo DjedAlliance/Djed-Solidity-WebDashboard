@@ -72,6 +72,7 @@ export default function Protocol() {
               >
                 this guide
               </a>
+              .
             </p>
             <p>
               This deployment is immutable, unstoppable (for as long Milkomeda C1 exists),
