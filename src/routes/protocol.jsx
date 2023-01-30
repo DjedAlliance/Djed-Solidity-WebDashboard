@@ -72,12 +72,13 @@ export default function Protocol() {
               >
                 this guide
               </a>
+              .
             </p>
             <p>
-              This deployment is immutable, unstoppable (for as long Milkomeda C1 exists),
-              fully autonomous and zero-governance. No one is able to change the deployed
-              code or the parameters of the deployment. No one is operating it. No one
-              controls your funds. Treat Djed as an experiment in self-sovereign
+              This deployment is immutable, unstoppable (for as long as Milkomeda C1
+              exists), fully autonomous and zero-governance. No one is able to change the
+              deployed code or the parameters of the deployment. No one is operating it.
+              No one controls your funds. Treat Djed as an experiment in self-sovereign
               self-driving monetary policy. Understand how the protocol works and interact
               carefully at your own risk.
             </p>
