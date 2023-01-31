@@ -259,13 +259,13 @@ export default function ReserveCoin() {
             </p>
             <p>
               Users are allowed to buy ReserveCoins, as long as the reserve ratio remains
-              below the maximum of 800%. This prevents excessive dilution of previous
+              below the maximum of {systemParams?.reserveRatioMax}. This prevents excessive dilution of previous
               ReserveCoin holders. This restriction only applies when the StableCoin
               supply is above 1 million.
             </p>
             <p>
               Users are allowed to sell ReserveCoins, as long as the reserve ratio remains
-              above the minimum of 300%. This aims to ensure that all StableCoins remain
+              above the minimum of {systemParams?.reserveRatioMin}. This aims to ensure that all StableCoins remain
               sufficiently backed.
             </p>
             <p>There is a limit of 10000 USD worth of mADA per transaction.</p>

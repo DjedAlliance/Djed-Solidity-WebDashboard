@@ -37,9 +37,9 @@ export default function Protocol() {
             <p>
               Djed is a formally verified crypto-backed autonomous stablecoin protocol. It
               has been researched since Q2 2020, its whitepaper has been released in
-              August 2021, and it has{" "}
+              August 2021, and it has multiple{" "}
               <a href="https://github.com/DjedAlliance" target="_blank">
-                multiple implementations
+                implementations
               </a>{" "}
               and{" "}
               <a href="http://djed.one" target="_blank">
@@ -75,12 +75,11 @@ export default function Protocol() {
               .
             </p>
             <p>
-              This deployment is immutable, unstoppable (for as long as Milkomeda C1
-              exists), fully autonomous and zero-governance. No one is able to change the
+              This deployment is immutable, unstoppable, fully autonomous and zero-governance. No one is able to change the
               deployed code or the parameters of the deployment. No one is operating it.
-              No one controls your funds. Treat Djed as an experiment in self-sovereign
-              self-driving monetary policy. Understand how the protocol works and interact
-              carefully at your own risk.
+              No one controls your funds. Treat the Djed protocol as a foreign non-territorial self-sovereign 
+              autonomous monetary authority whose currency follows 
+              an experimental self-driving monetary policy.
             </p>
           </div>
           <MetamaskConnectButton />
