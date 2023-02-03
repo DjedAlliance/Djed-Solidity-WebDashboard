@@ -44,7 +44,8 @@ export default function ReserveCoin() {
     accounts,
     systemParams,
     isRatioBelowMax,
-    isRatioAboveMin
+    isRatioAboveMin,
+    coinContracts
   } = useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
@@ -259,24 +260,24 @@ export default function ReserveCoin() {
             </p>
             <p>
               Users are allowed to buy ReserveCoins, as long as the reserve ratio remains
-              below the maximum of {systemParams?.reserveRatioMax}. This prevents excessive dilution of previous
-              ReserveCoin holders. This restriction only applies when the StableCoin
-              supply is above 1 million.
+              below the maximum of {systemParams?.reserveRatioMax}. This prevents
+              excessive dilution of previous ReserveCoin holders. This restriction only
+              applies when the StableCoin supply is above 1 million.
             </p>
             <p>
               Users are allowed to sell ReserveCoins, as long as the reserve ratio remains
-              above the minimum of {systemParams?.reserveRatioMin}. This aims to ensure that all StableCoins remain
-              sufficiently backed.
+              above the minimum of {systemParams?.reserveRatioMin}. This aims to ensure
+              that all StableCoins remain sufficiently backed.
             </p>
             <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
             <p>
               ReserveCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}
               <a
-                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_RESERVECOIN_ADDRESS}`}
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${coinContracts?.reserveCoin._address}`}
                 target="_blank"
               >
-                {process.env.REACT_APP_RESERVECOIN_ADDRESS}
+                {coinContracts?.reserveCoin._address}
               </a>
               .
             </p>
