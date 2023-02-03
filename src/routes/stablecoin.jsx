@@ -41,7 +41,8 @@ export default function Stablecoin() {
     coinBudgets,
     accounts,
     systemParams,
-    isRatioAboveMin
+    isRatioAboveMin,
+    coinContracts
   } = useAppProvider();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
@@ -238,10 +239,11 @@ export default function Stablecoin() {
               </a>
               , at a ratio of 1 to 1. One Djed Stablecoin is nominally worth 1 USD. The
               peg is maintained through a reserve of mADA. The Djed protocol aims to
-              maintain a reserve ratio between {systemParams?.reserveRatioMin} and {systemParams?.reserveRatioMax}. This means that, when the
-              reserve ratio is in this range, every StableCoin is backed by an amount of
-              mADA worth at least 4 USD and is able to tolerate an instantaneous mADA
-              price crash of at least 75%.
+              maintain a reserve ratio between {systemParams?.reserveRatioMin} and{" "}
+              {systemParams?.reserveRatioMax}. This means that, when the reserve ratio is
+              in this range, every StableCoin is backed by an amount of mADA worth at
+              least 4 USD and is able to tolerate an instantaneous mADA price crash of at
+              least 75%.
             </p>
             <p>
               Users are always allowed to sell back StableCoins to the protocol. The
@@ -251,8 +253,9 @@ export default function Stablecoin() {
             </p>
             <p>
               Users are allowed to buy StableCoins from the protocol for a price of 1 USD
-              worth of mADA per StableCoin, whenever the reserve ratio is above {systemParams?.reserveRatioMin}. When
-              the reserve ratio is below {systemParams?.reserveRatioMin}, the purchase of StableCoins from the
+              worth of mADA per StableCoin, whenever the reserve ratio is above{" "}
+              {systemParams?.reserveRatioMin}. When the reserve ratio is below{" "}
+              {systemParams?.reserveRatioMin}, the purchase of StableCoins from the
               protocol is disallowed, because it would reduce the reserve ratio further.
             </p>
             <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
@@ -260,10 +263,10 @@ export default function Stablecoin() {
               StableCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}
               <a
-                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_STABLECOIN_ADDRESS}`}
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${coinContracts?.stableCoin._address}`}
                 target="_blank"
               >
-                {process.env.REACT_APP_STABLECOIN_ADDRESS}
+                {coinContracts?.stableCoin._address}
               </a>
               .
             </p>
