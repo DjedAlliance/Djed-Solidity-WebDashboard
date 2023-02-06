@@ -51,6 +51,7 @@ export default function ReserveCoin() {
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [txError, setTxError] = useState(null);
   const [txStatus, setTxStatus] = useState("idle");
   const [buyValidity, setBuyValidity] = useState(
@@ -239,7 +240,8 @@ export default function ReserveCoin() {
     ? buyValidity === TRANSACTION_VALIDITY.OK
     : sellValidity === TRANSACTION_VALIDITY.OK;
 
-  const buttonDisabled = value === null || isWrongChain || !transactionValidated;
+  const buttonDisabled =
+    value === null || isWrongChain || !transactionValidated || !termsAccepted;
 
   const rcFloat = parseFloat(coinsDetails?.scaledNumberRc.replaceAll(",", ""));
   const rcConverted = getRcUsdEquivalent(coinsDetails, rcFloat);
@@ -322,6 +324,18 @@ export default function ReserveCoin() {
               isSellDisabled={Number(coinsDetails?.scaledNumberRc) === 0}
             />
           </div>
+          <input
+            type="checkbox"
+            name="accept-terms"
+            onChange={() => setTermsAccepted(!termsAccepted)}
+            checked={termsAccepted}
+          />
+          <label for="accept-terms" class="accept-terms">
+            I agree to the{" "}
+            <a href="/terms-of-service" target="_blank">
+              Terms of service
+            </a>
+          </label>
           <div className="ConnectWallet">
             <br />
             {isWalletConnected ? (

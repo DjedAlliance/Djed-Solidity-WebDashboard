@@ -47,6 +47,7 @@ export default function Stablecoin() {
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [txError, setTxError] = useState(null);
   const [txStatus, setTxStatus] = useState("idle");
   const [buyValidity, setBuyValidity] = useState(
@@ -217,7 +218,8 @@ export default function Stablecoin() {
     ? buyValidity === TRANSACTION_VALIDITY.OK
     : sellValidity === TRANSACTION_VALIDITY.OK;
 
-  const buttonDisabled = value === null || isWrongChain || !transactionValidated;
+  const buttonDisabled =
+    value === null || isWrongChain || !transactionValidated || !termsAccepted;
 
   const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
@@ -309,6 +311,18 @@ export default function Stablecoin() {
               isSellDisabled={Number(coinsDetails?.unscaledNumberSc) === 0}
             />
           </div>
+          <input
+            type="checkbox"
+            name="accept-terms"
+            onChange={() => setTermsAccepted(!termsAccepted)}
+            checked={termsAccepted}
+          />
+          <label for="accept-terms" class="accept-terms">
+            I agree to the{" "}
+            <a href="/terms-of-service" target="_blank">
+              Terms of service
+            </a>
+          </label>
           <div className="ConnectWallet">
             <br />
             {isWalletConnected ? (
