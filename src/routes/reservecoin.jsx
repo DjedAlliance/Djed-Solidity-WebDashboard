@@ -236,12 +236,18 @@ export default function ReserveCoin() {
     ? buyRc.bind(null, tradeData.totalBCUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
 
+  const onSubmit = (e) => {
+    if (termsAccepted) {
+      e.preventDefault();
+      tradeFxn();
+    }
+  };
+
   const transactionValidated = isBuyActive
     ? buyValidity === TRANSACTION_VALIDITY.OK
     : sellValidity === TRANSACTION_VALIDITY.OK;
 
-  const buttonDisabled =
-    value === null || isWrongChain || !transactionValidated || !termsAccepted;
+  const buttonDisabled = value === null || isWrongChain || !transactionValidated;
 
   const rcFloat = parseFloat(coinsDetails?.scaledNumberRc.replaceAll(",", ""));
   const rcConverted = getRcUsdEquivalent(coinsDetails, rcFloat);
@@ -301,46 +307,48 @@ export default function ReserveCoin() {
             </strong>{" "}
             Djed ReserveCoin
           </h2>
-          <div className="PurchaseContainer">
-            <OperationSelector
-              coinName="Djed ReserveCoin"
-              selectionCallback={() => {
-                setBuyOrSell();
-                setValue(null);
-                setBuyValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
-                setSellValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
-              }}
-              onChangeBuyInput={onChangeBuyInput}
-              onChangeSellInput={onChangeSellInput}
-              tradeData={tradeData}
-              inputValue={value}
-              inputValid={transactionValidated}
-              scaledCoinBalance={accountDetails?.scaledBalanceRc}
-              scaledBaseBalance={accountDetails?.scaledBalanceBc}
-              fee={systemParams?.fee}
-              treasuryFee={systemParams?.treasuryFee}
-              buyValidity={buyValidity}
-              sellValidity={sellValidity}
-              isSellDisabled={Number(coinsDetails?.scaledNumberRc) === 0}
+          <form>
+            <div className="PurchaseContainer">
+              <OperationSelector
+                coinName="Djed ReserveCoin"
+                selectionCallback={() => {
+                  setBuyOrSell();
+                  setValue(null);
+                  setBuyValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
+                  setSellValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
+                }}
+                onChangeBuyInput={onChangeBuyInput}
+                onChangeSellInput={onChangeSellInput}
+                tradeData={tradeData}
+                inputValue={value}
+                inputValid={transactionValidated}
+                scaledCoinBalance={accountDetails?.scaledBalanceRc}
+                scaledBaseBalance={accountDetails?.scaledBalanceBc}
+                fee={systemParams?.fee}
+                treasuryFee={systemParams?.treasuryFee}
+                buyValidity={buyValidity}
+                sellValidity={sellValidity}
+                isSellDisabled={Number(coinsDetails?.scaledNumberRc) === 0}
+              />
+            </div>
+            <input
+              type="checkbox"
+              name="accept-terms"
+              onChange={() => setTermsAccepted(!termsAccepted)}
+              checked={termsAccepted}
+              required
             />
-          </div>
-          <input
-            type="checkbox"
-            name="accept-terms"
-            onChange={() => setTermsAccepted(!termsAccepted)}
-            checked={termsAccepted}
-          />
-          <label for="accept-terms" class="accept-terms">
-            I agree to the{" "}
-            <a href="/terms-of-service" target="_blank">
-              Terms of service
-            </a>
-          </label>
-          <div className="ConnectWallet">
-            <br />
-            {isWalletConnected ? (
-              <>
-                {/*value != null ? (
+            <label for="accept-terms" class="accept-terms">
+              I agree to the{" "}
+              <a href="/terms-of-service" target="_blank">
+                Terms of service
+              </a>
+            </label>
+            <div className="ConnectWallet">
+              <br />
+              {isWalletConnected ? (
+                <>
+                  {/*value != null ? (
                   <p className="Disclaimer">
                     This transaction is expected to{" "}
                     {transactionValidated ? (
@@ -350,22 +358,23 @@ export default function ReserveCoin() {
                     )}
                   </p>
                     ) : null*/}
-                <BuySellButton
-                  disabled={buttonDisabled}
-                  onClick={tradeFxn}
-                  buyOrSell={buyOrSell}
-                  currencyName="Djed ReserveCoin"
-                />
-              </>
-            ) : (
-              <>
-                <p className="Disclaimer">
-                  In order to operate you need to connect your wallet
-                </p>
-                <MetamaskConnectButton />
-              </>
-            )}
-          </div>
+                  <BuySellButton
+                    disabled={buttonDisabled}
+                    onClick={onSubmit}
+                    buyOrSell={buyOrSell}
+                    currencyName="Djed ReserveCoin"
+                  />
+                </>
+              ) : (
+                <>
+                  <p className="Disclaimer">
+                    In order to operate you need to connect your wallet
+                  </p>
+                  <MetamaskConnectButton />
+                </>
+              )}
+            </div>
+          </form>
           {txStatusRejected && (
             <ModalTransaction
               transactionType="Failed Transaction"
