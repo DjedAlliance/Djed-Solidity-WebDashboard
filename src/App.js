@@ -4,7 +4,7 @@ import Stablecoin from "./routes/stablecoin";
 import Protocol from "./routes/protocol";
 import ReserveCoin from "./routes/reservecoin";
 import MyBalance from "./routes/my-balance";
-import TermsOfService from "./routes/terms-of-service";
+import TermsOfUse from "./routes/terms-of-use";
 import { AppProvider } from "./context/AppProvider";
 
 export default function App() {
@@ -17,7 +17,7 @@ export default function App() {
             <Route path="sc" element={<Stablecoin />} />
             <Route path="rc" element={<ReserveCoin />} />
             <Route path="my-balance" element={<MyBalance />} />
-            <Route path="terms-of-service" element={<TermsOfService />} />
+            <Route path="terms-of-use" element={<TermsOfUse />} />
             <Route
               path="*"
               element={

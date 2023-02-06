@@ -340,8 +340,8 @@ export default function ReserveCoin() {
             />
             <label for="accept-terms" class="accept-terms">
               I agree to the{" "}
-              <a href="/terms-of-service" target="_blank">
-                Terms of service
+              <a href="/terms-of-use" target="_blank">
+                Terms of Use
               </a>
             </label>
             <div className="ConnectWallet">

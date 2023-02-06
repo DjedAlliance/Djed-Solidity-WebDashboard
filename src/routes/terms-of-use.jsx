@@ -1,11 +1,11 @@
 import React from "react";
-import "./_TermsOfService.scss";
+import "./_TermsOfUse.scss";
 
 export default function TermsOfService() {
   return (
     <main>
       <div className="TermsSection">
-        <h1>Terms of service</h1>
+        <h1>Terms of Use</h1>
         <div className="Content">
           <div className="DescriptionContainer">
             <h3>1. Agreement to Terms</h3>
