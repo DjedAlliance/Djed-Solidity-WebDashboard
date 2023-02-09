@@ -512,7 +512,7 @@ export const calculateIsRatioBelowMax = ({
     reserveBc
       .mul(BigNumber.from(scalingFactor))
       .mul(scDecimalScalingFactor)
-      .lt(totalScSupply.mul(scPrice).mul(reserveRatioMax)) ||
+      .lte(totalScSupply.mul(scPrice).mul(reserveRatioMax)) ||
     totalScSupply.lte(thresholdSupplySC)
   );
 };
@@ -537,5 +537,5 @@ export const calculateIsRatioAboveMin = ({
   return reserveBc
     .mul(BigNumber.from(scalingFactor))
     .mul(scDecimalScalingFactor)
-    .gt(totalScSupply.mul(scPrice).mul(reserveRatioMin));
+    .gte(totalScSupply.mul(scPrice).mul(reserveRatioMin));
 };
