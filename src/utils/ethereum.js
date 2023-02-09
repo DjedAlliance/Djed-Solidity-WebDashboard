@@ -14,7 +14,7 @@ import {
   web3Promise,
   percentageScale
 } from "./helpers";
-import { TRANSACTION_VALIDITY } from "./constants";
+import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY } from "./constants";
 import { BigNumber } from "ethers";
 
 const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
@@ -539,3 +539,14 @@ export const calculateIsRatioAboveMin = ({
     .mul(scDecimalScalingFactor)
     .gt(totalScSupply.mul(scPrice).mul(reserveRatioMin));
 };
+
+/**
+ *
+ * @param {*} amountUSD
+ * @param {*} totalSCSupply
+ * @param {*} thresholdSCSupply
+ * @returns
+ */
+export const isTxLimitReached = (amountUSD, totalSCSupply, thresholdSCSupply) =>
+  amountUSD > TRANSACTION_USD_LIMIT ||
+  BigNumber.from(totalSCSupply).gte(BigNumber.from(thresholdSCSupply));

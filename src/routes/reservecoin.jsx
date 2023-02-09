@@ -9,7 +9,7 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
-import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY } from "../utils/constants";
+import { TRANSACTION_VALIDITY } from "../utils/constants";
 import {
   calculateBcUsdEquivalent,
   calculateRcUsdEquivalent,
@@ -27,7 +27,8 @@ import {
   checkSellableRc,
   verifyTx,
   BC_DECIMALS,
-  calculateTxFees
+  calculateTxFees,
+  isTxLimitReached
 } from "../utils/ethereum";
 import { BigNumber } from "ethers";
 
@@ -95,7 +96,13 @@ export default function ReserveCoin() {
           setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (bcUsdEquivalent > TRANSACTION_USD_LIMIT) {
+        } else if (
+          isTxLimitReached(
+            bcUsdEquivalent,
+            coinsDetails.unscaledNumberSc,
+            systemParams.thresholdSupplySC
+          )
+        ) {
           setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else if (
           stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
@@ -151,7 +158,13 @@ export default function ReserveCoin() {
           setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (rcUsdEquivalent > TRANSACTION_USD_LIMIT) {
+        } else if (
+          isTxLimitReached(
+            rcUsdEquivalent,
+            coinsDetails.unscaledNumberSc,
+            systemParams.thresholdSupplySC
+          )
+        ) {
           setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else if (
           stringToBigNumber(accountDetails.unscaledBalanceRc, decimals.rcDecimals).lt(
