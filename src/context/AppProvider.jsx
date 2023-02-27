@@ -22,6 +22,7 @@ import {
 } from "../utils/constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { BigNumber } from "ethers";
+import { web3Promise } from "../utils/helpers";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
@@ -54,7 +55,7 @@ export const AppProvider = ({ children }) => {
         const web3 = await getWeb3();
         const djed = getDjedContract(web3);
         const oracle = await getOracleAddress(djed).then((addr) =>
-          getOracleContract(web3, addr)
+          getOracleContract(web3, addr, djed._address)
         );
         const coinContracts = await getCoinContracts(djed, web3);
         const decimals = await getDecimals(
