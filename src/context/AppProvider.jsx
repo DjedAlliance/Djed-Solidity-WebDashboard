@@ -13,7 +13,8 @@ import {
   getAccountDetails,
   getCoinBudgets,
   calculateIsRatioBelowMax,
-  calculateIsRatioAboveMin
+  calculateIsRatioAboveMin,
+  acceptTermsOfService
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
@@ -53,9 +54,12 @@ export const AppProvider = ({ children }) => {
       try {
         const web3 = await getWeb3();
         const djed = getDjedContract(web3);
+        const FEAddress = process.env.REACT_APP_FE_ADDRESS;
+
         const oracle = await getOracleAddress(djed).then((addr) =>
-          getOracleContract(web3, addr)
+          getOracleContract(web3, addr, FEAddress)
         );
+        await acceptTermsOfService(web3, oracle, FEAddress);
         const coinContracts = await getCoinContracts(djed, web3);
         const decimals = await getDecimals(
           coinContracts.stableCoin,
