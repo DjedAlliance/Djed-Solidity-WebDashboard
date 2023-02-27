@@ -52,10 +52,8 @@ export const getOracleAddress = async (djedContract) => {
   return await web3Promise(djedContract, "oracle");
 };
 
-export const getOracleContract = (web3, oracleAddress, FEAddress) => {
-  const oracle = new web3.eth.Contract(oracleArtifact.abi, oracleAddress, {
-    from: FEAddress
-  });
+export const getOracleContract = (web3, oracleAddress) => {
+  const oracle = new web3.eth.Contract(oracleArtifact.abi, oracleAddress);
   return oracle;
 };
 
@@ -483,38 +481,6 @@ export const sellScTx = (djed, account, amount) => {
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
-export const acceptTermsTx = (oracleContract, account) => {
-  const data = oracleContract.methods.acceptTermsOfService().encodeABI();
-  return buildTx(account, oracleContract._address, 0, data);
-};
-
-export const acceptTermsOfService = async (web3, oracleContract, FEAddress) => {
-  try {
-    const isAccepted = await web3Promise(
-      oracleContract,
-      "acceptedTermsOfService",
-      FEAddress
-    );
-
-    if (!isAccepted) {
-      promiseTx([FEAddress], acceptTermsTx(oracleContract, FEAddress))
-        .then((hash) => {
-          verifyTx(web3, hash).then((res) => {
-            if (res) {
-              console.log("Accept terms success!");
-            } else {
-              console.log("Accept terms reverted!");
-            }
-          });
-        })
-        .catch((err) => {
-          console.error("Accept terms error:", err.message);
-        });
-    }
-  } catch (error) {
-    console.log("Accept terms error", error);
-  }
-};
 export const checkBuyableSc = (djed, unscaledAmountSc, unscaledBudgetSc) => {
   return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
 };
