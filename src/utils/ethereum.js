@@ -552,3 +552,44 @@ export const calculateIsRatioAboveMin = ({
 export const isTxLimitReached = (amountUSD, totalSCSupply, thresholdSCSupply) =>
   amountUSD > TRANSACTION_USD_LIMIT ||
   BigNumber.from(totalSCSupply).gte(BigNumber.from(thresholdSCSupply));
+
+/**
+ * This function should calculate the future stable coin price that we can expect after some transaction.
+ * @param {string} amountBC The unscaled amount of BC (e.g. for 1BC, value should be 1 * 10^BC_DECIMALS)
+ * @param {string} amountSC The unscaled amount of StableCoin (e.g. for 1SC, value should be 1 * 10^SC_DECIMALS)
+ * @param djedContract - Instance of Djed contract
+ * @param stableCoinContract - Instance of Stablecoin contract
+ * @param oracleContract - Instance of Oracle contract
+ * @param scDecimalScalingFactor - If stablecoin has 6 decimals, scDecimalScalingFactor will be calculated as 10^6
+ * @returns future stablecoin price
+ */
+export const calculateFutureScPrice = async ({
+  amountBC,
+  amountSC,
+  djedContract,
+  oracleContract,
+  stableCoinContract,
+  scDecimalScalingFactor
+}) => {
+  try {
+    const [scTargetPrice, scSupply, ratio] = await Promise.all([
+      web3Promise(oracleContract, "readData"),
+      web3Promise(stableCoinContract, "totalSupply"),
+      web3Promise(djedContract, "R", 0)
+    ]);
+
+    const futureScSupply = BigNumber.from(scSupply).add(BigNumber.from(amountSC));
+    const futureRatio = BigNumber.from(ratio).add(BigNumber.from(amountBC));
+    const futurePrice = futureRatio.mul(scDecimalScalingFactor).div(futureScSupply);
+
+    if (futureScSupply == 0) {
+      return scTargetPrice;
+    } else {
+      return BigNumber.from(scTargetPrice).lt(futurePrice)
+        ? scTargetPrice
+        : futurePrice.toString();
+    }
+  } catch (error) {
+    console.log("calculateFutureScPrice error ", error);
+  }
+};
