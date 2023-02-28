@@ -46,7 +46,8 @@ export default function ReserveCoin() {
     systemParams,
     isRatioBelowMax,
     isRatioAboveMin,
-    coinContracts
+    coinContracts,
+    getFutureScPrice
   } = useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
@@ -79,10 +80,14 @@ export default function ReserveCoin() {
           decimals.rcDecimals,
           amountScaled
         );
+        const futureSCPrice = await getFutureScPrice({
+          amountBC: data.totalUnscaled,
+          amountSC: 0
+        });
 
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioBelowMaximum = isRatioBelowMax({
-          scPrice: BigNumber.from(coinsDetails.unscaledPriceSc),
+          scPrice: BigNumber.from(futureSCPrice),
           reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
             BigNumber.from(data.totalUnscaled).add(f)
           )
@@ -144,11 +149,14 @@ export default function ReserveCoin() {
           coinsDetails,
           parseFloat(data.amountScaled.replaceAll(",", ""))
         ).replaceAll(",", "");
-
+        const futureSCPrice = await getFutureScPrice({
+          amountBC: data.totalUnscaled,
+          amountSC: 0
+        });
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioAboveMinimum = isRatioAboveMin({
           totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
-          scPrice: BigNumber.from(coinsDetails.unscaledPriceSc),
+          scPrice: BigNumber.from(futureSCPrice),
           reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).sub(
             BigNumber.from(data.totalUnscaled).sub(f)
           )
