@@ -52,9 +52,9 @@ export const getOracleAddress = async (djedContract) => {
   return await web3Promise(djedContract, "oracle");
 };
 
-export const getOracleContract = (web3, oracleAddress, FEAddress) => {
+export const getOracleContract = (web3, oracleAddress, msgSender) => {
   const oracle = new web3.eth.Contract(oracleArtifact.abi, oracleAddress, {
-    from: FEAddress
+    from: msgSender
   });
   return oracle;
 };
