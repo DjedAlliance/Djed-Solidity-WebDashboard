@@ -13,7 +13,8 @@ import {
   getAccountDetails,
   getCoinBudgets,
   calculateIsRatioBelowMax,
-  calculateIsRatioAboveMin
+  calculateIsRatioAboveMin,
+  calculateFutureScPrice
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
@@ -22,6 +23,7 @@ import {
 } from "../utils/constants";
 import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { BigNumber } from "ethers";
+import { web3Promise } from "../utils/helpers";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
@@ -54,7 +56,7 @@ export const AppProvider = ({ children }) => {
         const web3 = await getWeb3();
         const djed = getDjedContract(web3);
         const oracle = await getOracleAddress(djed).then((addr) =>
-          getOracleContract(web3, addr)
+          getOracleContract(web3, addr, djed._address)
         );
         const coinContracts = await getCoinContracts(djed, web3);
         const decimals = await getDecimals(
@@ -222,6 +224,22 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+  /**
+   * This function should prepare parameters for calculating future stableCoin price
+   * @param {string} amountBC The unscaled amount of BC (e.g. for 1BC, value should be 1 * 10^BC_DECIMALS)
+   * @param {string} amountSC The unscaled amount of StableCoin (e.g. for 1SC, value should be 1 * 10^SC_DECIMALS)
+   * @returns future stablecoin price as result of calculateFutureScPrice function
+   */
+  const getFutureScPrice = async ({ amountBC, amountSC }) =>
+    calculateFutureScPrice({
+      amountBC,
+      amountSC,
+      djedContract,
+      oracleContract,
+      stableCoinContract: coinContracts.stableCoin,
+      scDecimalScalingFactor: BigNumber.from(10).pow(decimals.scDecimals)
+    });
+
   if (isLoading) {
     return <FullPageSpinner />;
   } else {
@@ -246,7 +264,8 @@ export const AppProvider = ({ children }) => {
           setAccounts,
           setStoredAccounts,
           isRatioBelowMax,
-          isRatioAboveMin
+          isRatioAboveMin,
+          getFutureScPrice
         }}
       >
         {children}

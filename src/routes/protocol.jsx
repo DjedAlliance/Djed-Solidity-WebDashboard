@@ -58,9 +58,9 @@ export default function Protocol() {
             <p>
               Milkomeda C1 is the EVM-compatible chain of the Cardano ecosystem. Its
               native currency is mADA, a bridged version of Cardano's ADA. This asset is
-              used by the Djed protocol to back both <a href="/stabledjed">StableCoins</a>{" "}
-              and <a href="/reservedjed">ReserveCoins</a> and it is needed to buy any of
-              these coins and to pay for transaction fees on Milkomeda C1.
+              used by the Djed protocol to back both <a href="/sc">StableCoins</a> and{" "}
+              <a href="/rc">ReserveCoins</a> and it is needed to buy any of these coins
+              and to pay for transaction fees on Milkomeda C1.
             </p>
             <p>
               To learn more about how to obtain mADA or bridge your ADA from Cardano to
@@ -75,11 +75,12 @@ export default function Protocol() {
               .
             </p>
             <p>
-              This deployment is immutable, unstoppable, fully autonomous and zero-governance. No one is able to change the
-              deployed code or the parameters of the deployment. No one is operating it.
-              No one controls your funds. Treat the Djed protocol as a foreign non-territorial self-sovereign 
-              autonomous monetary authority whose currency follows 
-              an experimental self-driving monetary policy.
+              This deployment is immutable, unstoppable, fully autonomous and
+              zero-governance. No one is able to change the deployed code or the
+              parameters of the deployment. No one is operating it. No one controls your
+              funds. Treat the Djed protocol as a foreign non-territorial self-sovereign
+              autonomous monetary authority whose currency follows an experimental
+              self-driving monetary policy.
             </p>
           </div>
           <MetamaskConnectButton />

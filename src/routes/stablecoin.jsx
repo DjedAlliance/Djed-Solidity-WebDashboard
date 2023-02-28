@@ -43,7 +43,8 @@ export default function Stablecoin() {
     accounts,
     systemParams,
     isRatioAboveMin,
-    coinContracts
+    coinContracts,
+    getFutureScPrice
   } = useAppProvider();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
@@ -76,12 +77,16 @@ export default function Stablecoin() {
           amountScaled
         );
 
+        const futureSCPrice = await getFutureScPrice({
+          amountBC: data.totalUnscaled,
+          amountSC: data.amountUnscaled
+        });
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioAboveMinimum = isRatioAboveMin({
           totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc).add(
             BigNumber.from(data.amountUnscaled)
           ),
-          scPrice: BigNumber.from(data.priceUnscaled),
+          scPrice: BigNumber.from(futureSCPrice),
           reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
             BigNumber.from(data.totalUnscaled).add(f)
           )
