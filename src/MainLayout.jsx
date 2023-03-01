@@ -30,8 +30,9 @@ export default function MainLayout() {
               <Link
                 to={{
                   pathname:
-                    "https://github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed.pdf"
+                    "//github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed.pdf"
                 }}
+                target="_blank"
               >
                 Audit
               </Link>
@@ -54,6 +55,16 @@ export default function MainLayout() {
             </Menu.Item>
             <Menu.Item key="/rc">
               <Link to="/rc">ReserveCoin</Link>
+            </Menu.Item>
+            <Menu.Item key="/docs">
+              <Link
+                to={{
+                  pathname: "//docs.djed.one/alliance/the-djed-alliance"
+                }}
+                target="_blank"
+              >
+                Docs
+              </Link>
             </Menu.Item>
           </Menu>
           <div className="WalletConfig">
