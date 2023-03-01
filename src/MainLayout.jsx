@@ -29,8 +29,8 @@ export default function MainLayout() {
             <Menu.Item key="/audit">
               <Link
                 to={{
-                  /**TODO link to the audit, when it becomes available */
-                  pathname: "#"
+                  pathname:
+                    "https://github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed.pdf"
                 }}
               >
                 Audit
