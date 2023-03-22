@@ -52,8 +52,14 @@ export default function Protocol() {
               >
                 deployment
               </a>{" "}
-              {/**TODO link to a tag in github that we will create once the code is frozen for audit */}
-              that uses <a href="#">these smart contracts</a> on Milkomeda C1.
+              that uses{" "}
+              <a
+                href="https://github.com/DjedAlliance/Djed-Solidity/commits/Belus"
+                target="_blank"
+              >
+                these smart contracts
+              </a>{" "}
+              on Milkomeda C1.
             </p>
             <p>
               Milkomeda C1 is the EVM-compatible chain of the Cardano ecosystem. Its
