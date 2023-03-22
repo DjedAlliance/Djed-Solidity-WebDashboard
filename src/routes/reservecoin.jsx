@@ -94,7 +94,7 @@ export default function ReserveCoin() {
         });
         const bcUsdEquivalent = calculateBcUsdEquivalent(
           coinsDetails,
-          parseFloat(data.totalBCScaled.replaceAll(",", ""))
+          parseFloat(data.totalScaled.replaceAll(",", ""))
         ).replaceAll(",", "");
 
         setTradeData(data);
