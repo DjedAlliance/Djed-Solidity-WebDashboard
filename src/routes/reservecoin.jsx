@@ -363,7 +363,7 @@ export default function ReserveCoin() {
               I agree to the{" "}
               <a href="/terms-of-use" target="_blank">
                 Terms of Use
-              </a>
+              </a>.
             </label>
             <div className="ConnectWallet">
               <br />
@@ -389,7 +389,7 @@ export default function ReserveCoin() {
               ) : (
                 <>
                   <p className="Disclaimer">
-                    In order to operate you need to connect your wallet
+                    In order to interact, you need to connect your wallet.
                   </p>
                   <MetamaskConnectButton />
                 </>

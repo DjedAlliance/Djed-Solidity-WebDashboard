@@ -3,7 +3,7 @@ $secondary-color: #6e5cdc;
 $warning-color: #fec004;
 
 $black-1: #262932;
-$black-2: #2a2c3e;
+$black-2: #100901;
 $black-3: #41455c;
 $white: #ffffff;
 
@@ -28,13 +28,10 @@ a:hover {
 
 $gradient-theme-1: linear-gradient(212.41deg, #12173a 1.12%, #0c0c0c 94.46%);
 $gradient-theme-2: linear-gradient(70.09deg, #00e29a 0%, rgba(0, 226, 154, 0) 100%);
-$gradient-theme-3: linear-gradient(
-  91.41deg,
-  rgba(255, 255, 255, 0.3) 0%,
-  rgba(255, 255, 255, 0) 100%
-);
-
+$gradient-theme-3: linear-gradient(91.41deg, rgba(255, 255, 255, 0.3) 0%,rgba(255, 255, 255, 0) 100%);
 $gradient-theme-4: linear-gradient(70.09deg, #212121 0%, #1a192e 100%);
+$gradient-theme-6: linear-gradient(250.41deg, #98510a 1.12%,#000000 60.46%);
+$gradient-theme-5: linear-gradient(320.41deg, #fba856 0.12%,#000000 60.46%);
 
 $shadow: 0px 4px 4px 0px #00000040;
 

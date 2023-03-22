@@ -20,7 +20,7 @@ body {
 }
 
 .ant-layout {
-  background: $gradient-theme-1;
+  background: $gradient-theme-5;
   padding-top: 2em;
   height: 100vh;
   overflow-y: auto;
@@ -233,7 +233,7 @@ body {
     overflow: hidden;
     .ant-dropdown-menu {
       padding-top: 20px;
-      background: $gradient-theme-1;
+      background: $gradient-theme-5;
       border: 1px solid #5f606e;
       .ant-dropdown-menu-item {
         color: $white;

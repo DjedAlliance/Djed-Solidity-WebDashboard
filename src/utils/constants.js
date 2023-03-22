@@ -6,16 +6,16 @@ export const BUY_SELL_OPTIONS = {
 export const TRANSACTION_VALIDITY = {
   OK: "Transaction is valid.",
   WALLET_NOT_CONNECTED: "Wallet not connected",
-  WRONG_NETWORK: "Walled connected to the wrong network",
+  WRONG_NETWORK: "Wallet connected to the wrong network",
   NONNUMERIC_INPUT: "Amount has to be a number",
   NEGATIVE_INPUT: "Amount cannot be negative",
   ZERO_INPUT: "Amount cannot be zero",
-  INSUFFICIENT_BC: "Insufficient mADA balance",
+  INSUFFICIENT_BC: "Insufficient balance",
   INSUFFICIENT_SC: "Insufficient Djed StableCoin balance",
   INSUFFICIENT_RC: "Insufficient Djed ReserveCoin balance",
-  RESERVE_RATIO_LOW: "Reserve ratio too low",
-  RESERVE_RATIO_HIGH: "Reserve ratio too high",
-  TRANSACTION_LIMIT_REACHED: "Transaction limit is reached"
+  RESERVE_RATIO_LOW: "Reserve ratio would drop below the minimum",
+  RESERVE_RATIO_HIGH: "Reserve ratio would rise above the maximum",
+  TRANSACTION_LIMIT_REACHED: "Transaction limit reached"
 };
 
 export const COIN_DETAILS_REQUEST_INTERVAL = 4000;
