@@ -42,7 +42,7 @@ export default function Protocol() {
                 implementations
               </a>{" "}
               and{" "}
-              <a href="http://djed.one" target="_blank">
+              <a href="https://docs.djed.one/implementations-and-deployments/deployments" target="_blank">
                 deployments
               </a>
               . Here you can interact with a{" "}
@@ -64,7 +64,7 @@ export default function Protocol() {
             <p>
               Milkomeda C1 is the EVM-compatible chain of the Cardano ecosystem. Its
               native currency is mADA, a bridged version of Cardano's ADA. This asset is
-              used by the Djed protocol to back both <a href="/sc">StableCoins</a> and{" "}
+              used by the Djed protocol to back <a href="/sc">StableCoins</a> and{" "}
               <a href="/rc">ReserveCoins</a> and it is needed to buy any of these coins
               and to pay for transaction fees on Milkomeda C1.
             </p>
@@ -72,7 +72,7 @@ export default function Protocol() {
               To learn more about how to obtain mADA or bridge your ADA from Cardano to
               Milkomeda C1, follow{" "}
               <a
-                href="https://medium.com/@milkomedafoundation/getting-started-with-milkomeda-djed-on-c1-testnet-d335ebf65305"
+                href="https://dcspark.github.io/milkomeda-documentation/cardano/for-end-users/obtaining-milkada"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -84,8 +84,8 @@ export default function Protocol() {
               This deployment is immutable, unstoppable, fully autonomous and
               zero-governance. No one is able to change the deployed code or the
               parameters of the deployment. No one is operating it. No one controls your
-              funds. Treat the Djed protocol as a foreign non-territorial self-sovereign
-              autonomous monetary authority whose currency follows an experimental
+              funds. Treat it as a foreign non-territorial self-sovereign
+              autonomous monetary authority whose currency follows a
               self-driving monetary policy.
             </p>
           </div>

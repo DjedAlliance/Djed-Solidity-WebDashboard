@@ -192,7 +192,7 @@ export default function TermsOfService() {
               nodes. We will not be liable to you or any third party for any problems in
               the underlying blockchain, including without limitation: changes in
               blockchain transaction fees, discontinuance of the blockchain, forks in the
-              blockchain, blockchain congestion, frontrunning, 51% attacks.
+              blockchain, blockchain congestion, frontrunning and 51% attacks.
             </p>
             <p>
               Djed depends on oracles that provide price data to the blockchain. We do not

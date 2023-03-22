@@ -255,7 +255,7 @@ export default function Stablecoin() {
           <h1>Djed StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              The StableCoin in this Djed deployment is pegged to the USD, similarly to
+              The StableCoin of this Djed deployment is pegged to the USD, similarly to
               various{" "}
               <a
                 href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
@@ -272,17 +272,17 @@ export default function Stablecoin() {
               least 75%.
             </p>
             <p>
-              Users are always allowed to sell back StableCoins to the protocol. The
-              protocol pays 1 USD worth of mADA per StableCoin if the reserve ratio is
-              above 100% or R/S per StableCoin otherwise, where R is the protocol's total
+              You are always allowed to sell back StableCoins to Djed. 
+              Djed pays 1 USD worth of mADA per StableCoin if the reserve ratio is
+              above 100% or R/S per StableCoin otherwise, where R is Djed's total
               mADA reserve and S is the StableCoin supply.
             </p>
             <p>
-              Users are allowed to buy StableCoins from the protocol for a price of 1 USD
+              You are allowed to buy StableCoins from Djed for a price of 1 USD
               worth of mADA per StableCoin, whenever the reserve ratio is above{" "}
               {systemParams?.reserveRatioMin}. When the reserve ratio is below{" "}
-              {systemParams?.reserveRatioMin}, the purchase of StableCoins from the
-              protocol is disallowed, because it would reduce the reserve ratio further.
+              {systemParams?.reserveRatioMin}, the purchase of StableCoins from Djed
+              is disallowed, because it would reduce the reserve ratio further.
             </p>
             <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
             <p>

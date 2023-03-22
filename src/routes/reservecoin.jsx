@@ -288,13 +288,13 @@ export default function ReserveCoin() {
               accumulated into the reserve and hence contribute to the reserve surplus.
             </p>
             <p>
-              Users are allowed to buy ReserveCoins, as long as the reserve ratio remains
+              You are allowed to buy ReserveCoins, as long as the reserve ratio remains
               below the maximum of {systemParams?.reserveRatioMax}. This prevents
               excessive dilution of previous ReserveCoin holders. This restriction only
               applies when the StableCoin supply is above 1 million.
             </p>
             <p>
-              Users are allowed to sell ReserveCoins, as long as the reserve ratio remains
+              You are allowed to sell ReserveCoins, as long as the reserve ratio remains
               above the minimum of {systemParams?.reserveRatioMin}. This aims to ensure
               that all StableCoins remain sufficiently backed.
             </p>
