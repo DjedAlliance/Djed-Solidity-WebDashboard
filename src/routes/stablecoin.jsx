@@ -255,7 +255,8 @@ export default function Stablecoin() {
           <h1>Djed StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              The StableCoin of this Djed deployment is pegged to the USD, similarly to
+              The StableCoin of this Djed deployment is called <strong>Milkomeda-C1 Djed Dollar</strong>. 
+              It is pegged to the USD, similarly to
               various{" "}
               <a
                 href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
@@ -299,10 +300,10 @@ export default function Stablecoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-one.png"
-            coinName="Djed StableCoin"
+            coinName="Milkomeda-C1 Djed Dollar"
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
-            tokenName="Djed StableCoin"
+            tokenName="SC"
             equivalence={scConverted}
           />
         </div>
@@ -311,12 +312,12 @@ export default function Stablecoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            Djed StableCoin
+            Milkomeda-C1 Djed Dollar
           </h2>
           <form>
             <div className="PurchaseContainer">
               <OperationSelector
-                coinName="Djed StableCoin"
+                coinName="Milkomeda-C1 Djed Dollar"
                 selectionCallback={() => {
                   setBuyOrSell();
                   setValue(null);
@@ -367,7 +368,7 @@ export default function Stablecoin() {
                     disabled={buttonDisabled}
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
-                    currencyName="Djed StableCoin"
+                    currencyName="Milkomeda-C1 Djed Dollar"
                   />
                 </>
               ) : (

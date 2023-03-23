@@ -313,11 +313,11 @@ export default function ReserveCoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-two.png"
-            coinName="Djed ReserveCoin"
+            coinName="Milkomeda-C1 Djed ReserveCoin"
             priceAmount={coinsDetails?.scaledBuyPriceRc}
             sellPriceAmount={coinsDetails?.scaledSellPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
-            tokenName="Djed ReserveCoin"
+            tokenName="RC"
             equivalence={rcConverted}
           />
         </div>
@@ -326,12 +326,12 @@ export default function ReserveCoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            Djed ReserveCoin
+            Milkomeda-C1 Djed ReserveCoin
           </h2>
           <form>
             <div className="PurchaseContainer">
               <OperationSelector
-                coinName="Djed ReserveCoin"
+                coinName="Milkomeda-C1 Djed ReserveCoin"
                 selectionCallback={() => {
                   setBuyOrSell();
                   setValue(null);
@@ -383,7 +383,7 @@ export default function ReserveCoin() {
                     disabled={buttonDisabled}
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
-                    currencyName="Djed ReserveCoin"
+                    currencyName="Milkomeda-C1 Djed ReserveCoin"
                   />
                 </>
               ) : (

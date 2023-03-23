@@ -31,13 +31,13 @@ export default function MyBalance() {
           <div className="Content">
             <TotalBalance
               coinIcon="/coin-icon-one.png"
-              coinName="Djed StableCoin"
+              coinName="Milkomeda-C1 Djed Dollar"
               balanceAmount={accountDetails?.scaledBalanceSc}
               balanceEquivalent={scConverted}
             />
             <TotalBalance
               coinIcon="/coin-icon-two.png"
-              coinName="Djed ReserveCoin"
+              coinName="Milkomeda-C1 Djed ReserveCoin"
               balanceAmount={accountDetails?.scaledBalanceRc}
               balanceEquivalent={rcConverted}
             />
