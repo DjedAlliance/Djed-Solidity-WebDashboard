@@ -2,12 +2,12 @@
 
 .CustomModal {
   .ant-modal-content {
-    background: $gradient-theme-4;
+    background: $gradient-theme-modal;
     border-radius: 10px;
 
     .ant-modal-close-x {
       .anticon {
-        color: $grey-5;
+        color: $white;
       }
     }
   }
@@ -35,7 +35,7 @@
     }
   }
   .ant-modal-footer {
-    border-top: 1px solid $grey-5;
+    border-top: 1px solid $black-1;
     text-align: center;
 
     a {
