@@ -13,46 +13,46 @@
 </g>
 <g id="Group-3">
 <g id="Group-2">
-<circle id="Oval" cx="17.5084" cy="2.24457" r="2.24469" transform="rotate(-90 17.5084 2.24457)" fill="#FF6270"/>
+<circle id="Oval" cx="17.5084" cy="2.24457" r="2.24469" transform="rotate(-90 17.5084 2.24457)" fill="#d07d2c"/>
 <g id="Group 2170">
-<rect id="Rectangle-8" y="15.7393" width="9.10636" height="2.27659" rx="1.1383" transform="rotate(-45 0 15.7393)" fill="#FF6270"/>
-<rect id="Rectangle-8_2" x="1.60986" y="9.30029" width="9.10636" height="2.27659" rx="1.1383" transform="rotate(45 1.60986 9.30029)" fill="#FF6270"/>
+<rect id="Rectangle-8" y="15.7393" width="9.10636" height="2.27659" rx="1.1383" transform="rotate(-45 0 15.7393)" fill="#d07d2c"/>
+<rect id="Rectangle-8_2" x="1.60986" y="9.30029" width="9.10636" height="2.27659" rx="1.1383" transform="rotate(45 1.60986 9.30029)" fill="#d07d2c"/>
 </g>
 <g id="Group 2171">
-<rect id="Rectangle-8_3" x="77.2173" y="68.3901" width="9.10636" height="2.27659" rx="1.1383" transform="rotate(-45 77.2173 68.3901)" fill="#FF6270"/>
-<rect id="Rectangle-8_4" x="78.8271" y="61.9512" width="9.10636" height="2.27659" rx="1.1383" transform="rotate(45 78.8271 61.9512)" fill="#FF6270"/>
+<rect id="Rectangle-8_3" x="77.2173" y="68.3901" width="9.10636" height="2.27659" rx="1.1383" transform="rotate(-45 77.2173 68.3901)" fill="#d07d2c"/>
+<rect id="Rectangle-8_4" x="78.8271" y="61.9512" width="9.10636" height="2.27659" rx="1.1383" transform="rotate(45 78.8271 61.9512)" fill="#d07d2c"/>
 </g>
 </g>
 </g>
 </g>
 <defs>
 <linearGradient id="paint0_linear_84_943" x1="51.0166" y1="58.9954" x2="54.5169" y2="57.3046" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FF6270"/>
-<stop offset="1" stop-color="#FF6270" stop-opacity="0.3"/>
+<stop stop-color="#d07d2c"/>
+<stop offset="1" stop-color="#d07d2c" stop-opacity="0.3"/>
 </linearGradient>
 <linearGradient id="paint1_linear_84_943" x1="34.3789" y1="58.9954" x2="37.8792" y2="57.3046" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FF6270"/>
-<stop offset="1" stop-color="#FF6270" stop-opacity="0.3"/>
+<stop stop-color="#d07d2c"/>
+<stop offset="1" stop-color="#d07d2c" stop-opacity="0.3"/>
 </linearGradient>
 <linearGradient id="paint2_linear_84_943" x1="47.8472" y1="55.8266" x2="42.1854" y2="59.9289" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FF6270"/>
-<stop offset="1" stop-color="#FF6270" stop-opacity="0.3"/>
+<stop stop-color="#d07d2c"/>
+<stop offset="1" stop-color="#d07d2c" stop-opacity="0.3"/>
 </linearGradient>
 <linearGradient id="paint3_linear_84_943" x1="51.8086" y1="55.0347" x2="54.8238" y2="54.2154" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FF6270"/>
-<stop offset="1" stop-color="#FF6270" stop-opacity="0.3"/>
+<stop stop-color="#d07d2c"/>
+<stop offset="1" stop-color="#d07d2c" stop-opacity="0.3"/>
 </linearGradient>
 <linearGradient id="paint4_linear_84_943" x1="34.3789" y1="55.0347" x2="37.3941" y2="54.2154" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FF6270"/>
-<stop offset="1" stop-color="#FF6270" stop-opacity="0.3"/>
+<stop stop-color="#d07d2c"/>
+<stop offset="1" stop-color="#d07d2c" stop-opacity="0.3"/>
 </linearGradient>
 <linearGradient id="paint5_linear_84_943" x1="15.3652" y1="66.9184" x2="92.9163" y2="33.7506" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FF6270"/>
-<stop offset="1" stop-color="#FF6270" stop-opacity="0.3"/>
+<stop stop-color="#d07d2c"/>
+<stop offset="1" stop-color="#d07d2c" stop-opacity="0.3"/>
 </linearGradient>
 <linearGradient id="paint6_linear_84_943" x1="52.6011" y1="43.151" x2="65.9576" y2="38.3122" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FF6270"/>
-<stop offset="1" stop-color="#FF6270" stop-opacity="0.3"/>
+<stop stop-color="#d07d2c"/>
+<stop offset="1" stop-color="#d07d2c" stop-opacity="0.3"/>
 </linearGradient>
 </defs>
 </svg>
