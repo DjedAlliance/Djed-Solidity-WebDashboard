@@ -1,5 +1,3 @@
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { FullPageSpinner } from "../components/atoms/LoadingIcon/LoadingIcon";
 import {
@@ -30,7 +28,7 @@ import {
   metamaskConnector,
   supportedChain
 } from "../utils/web3/wagmi";
-import { useConnect, useAccount, useNetwork, useProvider, useSigner } from "wagmi";
+import { useConnect, useAccount, useNetwork, useSigner } from "wagmi";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);

@@ -12,7 +12,6 @@
 .wrapper-connect-btn {
 
   &> button {
-    border: none;
     @include buttonBase(0.5em 1.25em, 8px);
     @include primary-text($body, $white, 600);
     background: $black-2;
