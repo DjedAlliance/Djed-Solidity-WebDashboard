@@ -10,7 +10,7 @@ const MetamaskConnectButton = () => {
   const {
     isWalletInstalled,
     isWalletConnected,
-    accounts,
+    account,
     connectMetamask,
     redirectToMetamask
   } = useAppProvider();
@@ -21,7 +21,7 @@ const MetamaskConnectButton = () => {
       text={
         isWalletInstalled
           ? isWalletConnected
-            ? truncateAddress(accounts[0])
+            ? truncateAddress(account)
             : "Connect with Metamask"
           : "Install Metamask"
       }

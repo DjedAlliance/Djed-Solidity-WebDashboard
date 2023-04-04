@@ -1,21 +1,31 @@
 @import "../../../scss/general_styling";
 
 .custom-connect-card {
-  @include buttonBase(0.5em 1.25em, 8px);
-  cursor: unset;
-  height: 50px;
-  border: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  outline: none;
-  max-width: 200px;
-  margin: auto !important;
-  @include primary-text($body, $white, 600);
-  background: $black-3;
-  border: 2px solid $black-3;
-
   span {
     margin: 0 1em;
   }
+}
+
+.wrapper-connect-btn {
+
+  &> button {
+    border: none;
+    @include buttonBase(0.5em 1.25em, 8px);
+    @include primary-text($body, $white, 600);
+    background: $black-2;
+    outline: none;
+    cursor: pointer;
+
+    border: 2px solid $black-3;
+    height: 50px;
+    &:hover, &:focus {
+      background: $black-2;
+      border-color: inherit;
+      color: #fff
+    }
+  }
+
 }

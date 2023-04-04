@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Layout, Menu, Dropdown } from "antd";
-import MetamaskStatusButton, {
-  DisconnectButton
-} from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
+import WalletConnectButton from "./components/molecules/MetamaskStatusButton/WalletConnectButton";
 
 import "antd/dist/antd.css";
 import "./App.scss";
@@ -77,8 +75,8 @@ export default function MainLayout() {
               }
               variant="tertiary"
             />
-            {isWalletConnected ? <DisconnectButton /> : null}
-            <MetamaskStatusButton />
+
+            <WalletConnectButton />
           </div>
         </Header>
         <HeaderMobileMenu isWalletConnected={isWalletConnected} />
@@ -149,8 +147,7 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
               <Link to="/my-balance">Balance</Link>
             </Menu.Item>
             <div className="WalletConfig">
-              {isWalletConnected ? <DisconnectButton /> : null}
-              <MetamaskStatusButton />
+              <WalletConnectButton />
             </div>
           </Menu>
         }

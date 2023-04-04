@@ -213,6 +213,21 @@ body {
   color: $black-1;
 }
 
+
+.ant-popover-arrow-content, .ant-popover-arrow-content::before{
+  background: $black-2;
+}
+.ant-popover-inner-content {
+  background: $black-2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  button{
+    width: 100%;
+    justify-content:start;
+  }
+}
+
 @media only screen and (max-width: 425px) {
   .ant-layout-header,
   .ant-layout-content {

@@ -1,3 +1,5 @@
+import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { FullPageSpinner } from "../components/atoms/LoadingIcon/LoadingIcon";
 import {
@@ -21,18 +23,26 @@ import {
   ACCOUNT_DETAILS_REQUEST_INTERVAL,
   COIN_DETAILS_REQUEST_INTERVAL
 } from "../utils/constants";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
 import { BigNumber } from "ethers";
-import { web3Promise } from "../utils/helpers";
+
+import {
+  flintWalletConnector,
+  metamaskConnector,
+  supportedChain
+} from "../utils/web3/wagmi";
+import { useConnect, useAccount, useNetwork, useProvider, useSigner } from "wagmi";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
 export const AppProvider = ({ children }) => {
+  const { connect } = useConnect();
+  const { isConnected: isWalletConnected, address: account } = useAccount();
+  const { chain } = useNetwork();
+  const { data: signer } = useSigner();
+
   const [isLoading, setIsLoading] = useState(false);
   const [web3, setWeb3] = useState(null);
-  const [accounts, setAccounts] = useState([]);
-  const [storedAccounts, setStoredAccounts] = useLocalStorage("accounts", []);
   const [djedContract, setDjedContract] = useState(null);
   const [oracleContract, setOracleContract] = useState(null);
   const [coinContracts, setCoinContracts] = useState(null);
@@ -41,14 +51,13 @@ export const AppProvider = ({ children }) => {
   const [systemParams, setSystemParams] = useState(null);
   const [accountDetails, setAccountDetails] = useState(null);
   const [coinBudgets, setCoinBudgets] = useState(null);
-  const [isWrongChain, setIsWrongChain] = useState(false);
 
   useEffect(() => {
     const setUp = async () => {
       await setUpAccountSpecificValues();
     };
     setUp();
-  }, [accounts]);
+  }, [account]);
 
   useEffect(() => {
     const init = async () => {
@@ -78,58 +87,27 @@ export const AppProvider = ({ children }) => {
         setDecimals(decimals);
         setCoinsDetails(coinsDetails);
         setSystemParams(systemParams);
-        if (storedAccounts.length > 0) {
-          const newAccounts = await window.ethereum.request({
-            method: "eth_requestAccounts"
-          });
-          if (
-            storedAccounts.length !== newAccounts.length ||
-            storedAccounts[0] !== newAccounts[0]
-          ) {
-            setAccounts(accounts);
-            setStoredAccounts(accounts);
-          } else {
-            setAccounts(storedAccounts);
-          }
-        }
       } catch (e) {
         console.error(e);
       } finally {
         setIsLoading(false);
       }
-      //console.log("Accs:", accounts);
     };
     setIsLoading(true);
     init();
   }, []);
 
-  const isWalletInstalled = web3 && djedContract && oracleContract;
-  const isWalletConnected = isWalletInstalled && accounts.length > 0;
-
   const redirectToMetamask = () => {
     window.open("https://metamask.io/", "_blank");
   };
-
-  const handleChain = (chainId) => {
-    if (chainId !== CHAIN_ID) {
-      setIsWrongChain(true);
-      console.log("Wrong chain:", chainId, "rather than", CHAIN_ID);
-    } else {
-      setIsWrongChain(false);
-      console.log("Correct chain:", chainId);
-    }
+  const redirectToFlint = () => {
+    window.open("https://flint-wallet.com/", "_blank");
   };
 
   const setUpAccountSpecificValues = async () => {
-    if (accounts.length === 0) {
-      return;
-    }
-    window.ethereum
-      .request({ method: "eth_chainId" })
-      .then((chainId) => handleChain(parseInt(chainId)));
     const accountDetails = await getAccountDetails(
       web3,
-      accounts[0],
+      account,
       coinContracts.stableCoin,
       coinContracts.reserveCoin,
       decimals.scDecimals,
@@ -145,23 +123,24 @@ export const AppProvider = ({ children }) => {
     setCoinBudgets(coinBudgets);
   };
 
-  const connectMetamask = async () => {
-    try {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts"
-      });
-      setAccounts(accounts);
-      setStoredAccounts(accounts);
-    } catch (e) {
-      console.error(e);
-    }
+  const connectMetamask = () => {
+    connect({
+      connector: metamaskConnector,
+      chainId: supportedChain.id
+    });
+  };
+  const connectFlintWallet = () => {
+    // flint doesn't support switchNetwork at the time being
+    connect({
+      connector: flintWalletConnector
+    });
   };
 
   useInterval(
     async () => {
       const accountDetails = await getAccountDetails(
         web3,
-        accounts[0],
+        account,
         coinContracts.stableCoin,
         coinContracts.reserveCoin,
         decimals.scDecimals,
@@ -255,14 +234,18 @@ export const AppProvider = ({ children }) => {
           systemParams,
           accountDetails,
           coinBudgets,
-          isWalletInstalled,
+          isMetamaskWalletInstalled:
+            typeof window !== "undefined" ? window?.ethereum?.isMetaMask : false,
+          isFlintWalletInstalled:
+            typeof window !== "undefined" ? window?.evmproviders?.flint?.isFlint : false,
           isWalletConnected,
-          isWrongChain,
+          isWrongChain: isWalletConnected && chain?.id !== CHAIN_ID,
           connectMetamask,
+          connectFlintWallet,
           redirectToMetamask,
-          accounts,
-          setAccounts,
-          setStoredAccounts,
+          redirectToFlint,
+          account,
+          signer,
           isRatioBelowMax,
           isRatioAboveMin,
           getFutureScPrice
