@@ -40,7 +40,8 @@ export default function Stablecoin() {
     decimals,
     accountDetails,
     coinBudgets,
-    accounts,
+    account,
+    signer,
     systemParams,
     isRatioAboveMin,
     coinContracts,
@@ -185,8 +186,8 @@ export default function Stablecoin() {
   const buySc = (total) => {
     console.log("Attempting to buy SC for", total);
     setTxStatus("pending");
-    promiseTx(accounts, buyScTx(djedContract, accounts[0], total))
-      .then((hash) => {
+    promiseTx(isWalletConnected, buyScTx(djedContract, account, total), signer)
+      .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
           if (res) {
             console.log("Buy SC success!");
@@ -208,8 +209,8 @@ export default function Stablecoin() {
   const sellSc = (amount) => {
     console.log("Attempting to sell SC in amount", amount);
     setTxStatus("pending");
-    promiseTx(accounts, sellScTx(djedContract, accounts[0], amount))
-      .then((hash) => {
+    promiseTx(isWalletConnected, sellScTx(djedContract, account, amount), signer)
+      .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
           if (res) {
             console.log("Sell SC success!");
@@ -255,9 +256,9 @@ export default function Stablecoin() {
           <h1>Djed StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              The StableCoin of this Djed deployment is called <strong>Milkomeda-C1 Djed Dollar</strong>. 
-              It is pegged to the USD, similarly to
-              various{" "}
+              The StableCoin of this Djed deployment is called{" "}
+              <strong>Milkomeda-C1 Djed Dollar</strong>. It is pegged to the USD,
+              similarly to various{" "}
               <a
                 href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
                 target="_blank"
@@ -273,17 +274,17 @@ export default function Stablecoin() {
               least 75%.
             </p>
             <p>
-              You are always allowed to sell back StableCoins to Djed. 
-              Djed pays 1 USD worth of mADA per StableCoin if the reserve ratio is
-              above 100% or R/S per StableCoin otherwise, where R is Djed's total
-              mADA reserve and S is the StableCoin supply.
+              You are always allowed to sell back StableCoins to Djed. Djed pays 1 USD
+              worth of mADA per StableCoin if the reserve ratio is above 100% or R/S per
+              StableCoin otherwise, where R is Djed's total mADA reserve and S is the
+              StableCoin supply.
             </p>
             <p>
-              You are allowed to buy StableCoins from Djed for a price of 1 USD
-              worth of mADA per StableCoin, whenever the reserve ratio is above{" "}
+              You are allowed to buy StableCoins from Djed for a price of 1 USD worth of
+              mADA per StableCoin, whenever the reserve ratio is above{" "}
               {systemParams?.reserveRatioMin}. When the reserve ratio is below{" "}
-              {systemParams?.reserveRatioMin}, the purchase of StableCoins from Djed
-              is disallowed, because it would reduce the reserve ratio further.
+              {systemParams?.reserveRatioMin}, the purchase of StableCoins from Djed is
+              disallowed, because it would reduce the reserve ratio further.
             </p>
             <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
             <p>
@@ -348,7 +349,8 @@ export default function Stablecoin() {
               I agree to the{" "}
               <a href="/terms-of-use" target="_blank">
                 Terms of Use
-              </a>.
+              </a>
+              .
             </label>
             <div className="ConnectWallet">
               <br />

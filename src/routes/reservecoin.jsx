@@ -42,7 +42,8 @@ export default function ReserveCoin() {
     decimals,
     accountDetails,
     coinBudgets,
-    accounts,
+    account,
+    signer,
     systemParams,
     isRatioBelowMax,
     isRatioAboveMin,
@@ -210,8 +211,8 @@ export default function ReserveCoin() {
   const buyRc = (total) => {
     console.log("Attempting to buy RC for", total);
     setTxStatus("pending");
-    promiseTx(accounts, buyRcTx(djedContract, accounts[0], total))
-      .then((hash) => {
+    promiseTx(isWalletConnected, buyRcTx(djedContract, account, total), signer)
+      .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
           if (res) {
             console.log("Buy RC success!");
@@ -233,8 +234,8 @@ export default function ReserveCoin() {
   const sellRc = (amount) => {
     console.log("Attempting to sell RC in amount", amount);
     setTxStatus("pending");
-    promiseTx(accounts, sellRcTx(djedContract, accounts[0], amount))
-      .then((hash) => {
+    promiseTx(isWalletConnected, sellRcTx(djedContract, account, amount), signer)
+      .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
           if (res) {
             console.log("Sell RC success!");
@@ -363,7 +364,8 @@ export default function ReserveCoin() {
               I agree to the{" "}
               <a href="/terms-of-use" target="_blank">
                 Terms of Use
-              </a>.
+              </a>
+              .
             </label>
             <div className="ConnectWallet">
               <br />

@@ -200,14 +200,14 @@ export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDeci
   };
 };
 
-export const promiseTx = (accounts, tx) => {
-  if (accounts.length === 0) {
+export const promiseTx = (isWalletConnected, tx, signer) => {
+  if (!isWalletConnected) {
     return Promise.reject(new Error("Metamask not connected!"));
   }
-  return window.ethereum.request({
-    method: "eth_sendTransaction",
-    params: [tx]
-  });
+  if (!signer) {
+    return Promise.reject(new Error("Couldn't get Signer"));
+  }
+  return signer.sendTransaction(tx);
 };
 
 export const verifyTx = (web3, hash) => {
