@@ -24,15 +24,13 @@ const WalletConnectButton = () => {
   return (
     <div className="wrapper-connect-btn">
       {/*TODO: adapt UI on mobile*/}
-      {isWalletConnected ? (
-        <Popover content={<DisconnectButton />} trigger="click" placement={"bottomRight"}>
-          <Button>
-            <ConnectedWalletCard address={account} />
-          </Button>
-        </Popover>
-      ) : (
-        <Popover
-          content={
+
+      <Popover
+        getPopupContainer={(trigger) => trigger.parentElement}
+        content={
+          isWalletConnected ? (
+            <DisconnectButton />
+          ) : (
             <>
               <CustomButton
                 text={isMetamaskWalletInstalled ? "MetaMask Wallet" : "Install Metamask"}
@@ -47,13 +45,19 @@ const WalletConnectButton = () => {
                 variant="primary"
               />
             </>
-          }
-          trigger="click"
-          placement={"bottomRight"}
-        >
-          <Button>Connect your wallet</Button>
-        </Popover>
-      )}
+          )
+        }
+        trigger="click"
+        placement={"bottomRight"}
+      >
+        <Button>
+          {isWalletConnected ? (
+            <ConnectedWalletCard address={account} />
+          ) : (
+            "Connect your wallet"
+          )}
+        </Button>
+      </Popover>
     </div>
   );
 };

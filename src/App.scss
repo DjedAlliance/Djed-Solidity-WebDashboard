@@ -222,9 +222,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  button{
+  button {
     width: 100%;
     justify-content:start;
+    margin: 0 !important;
   }
 }
 

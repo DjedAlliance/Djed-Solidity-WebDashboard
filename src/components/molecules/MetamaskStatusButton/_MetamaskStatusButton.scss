@@ -10,6 +10,7 @@
 }
 
 .wrapper-connect-btn {
+  position:relative;
 
   &> button {
     @include buttonBase(0.5em 1.25em, 8px);
