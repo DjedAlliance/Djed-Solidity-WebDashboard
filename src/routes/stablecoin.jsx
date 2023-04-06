@@ -345,7 +345,7 @@ export default function Stablecoin() {
               checked={termsAccepted}
               required
             />
-            <label for="accept-terms" class="accept-terms">
+            <label htmlFor="accept-terms" className="accept-terms">
               I agree to the{" "}
               <a href="/terms-of-use" target="_blank">
                 Terms of Use
