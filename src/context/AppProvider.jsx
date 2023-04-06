@@ -49,8 +49,8 @@ export const AppProvider = ({ children }) => {
   const [systemParams, setSystemParams] = useState(null);
   const [accountDetails, setAccountDetails] = useState(null);
   const [coinBudgets, setCoinBudgets] = useState(null);
-
   useEffect(() => {
+    if (!account) return;
     const setUp = async () => {
       await setUpAccountSpecificValues();
     };
