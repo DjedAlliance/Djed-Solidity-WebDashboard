@@ -314,7 +314,7 @@ export default function ReserveCoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-two.png"
-            coinName="Milkomeda-C1 Djed ReserveCoin"
+            coinName={`${process.env.REACT_APP_BC} Djed ReserveCoin`}
             priceAmount={coinsDetails?.scaledBuyPriceRc}
             sellPriceAmount={coinsDetails?.scaledSellPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
@@ -327,12 +327,12 @@ export default function ReserveCoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            Milkomeda-C1 Djed ReserveCoin
+            {process.env.REACT_APP_BC} Djed ReserveCoin
           </h2>
           <form>
             <div className="PurchaseContainer">
               <OperationSelector
-                coinName="Milkomeda-C1 Djed ReserveCoin"
+                coinName={`${process.env.REACT_APP_BC} Djed ReserveCoin`}
                 selectionCallback={() => {
                   setBuyOrSell();
                   setValue(null);
@@ -385,7 +385,7 @@ export default function ReserveCoin() {
                     disabled={buttonDisabled}
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
-                    currencyName="Milkomeda-C1 Djed ReserveCoin"
+                    currencyName={`${process.env.REACT_APP_BC} Djed ReserveCoin`}
                   />
                 </>
               ) : (

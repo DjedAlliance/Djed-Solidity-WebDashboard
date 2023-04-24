@@ -31,7 +31,7 @@ export default function Protocol() {
       <div className="ProtocolSection">
         <div className="Left">
           <h1>
-            <strong>Djed on Milkomeda-C1</strong>
+            <strong>Djed on {process.env.REACT_APP_BC}</strong>
           </h1>
           <div className="DescriptionContainer">
             <p>
@@ -98,7 +98,7 @@ export default function Protocol() {
           <div className="CoinsContainer">
             <CoinCard
               coinIcon="/coin-icon-one.png"
-              coinName="M-C1 Djed Dollar"
+              coinName={`${process.env.REACT_APP_BC_SHORT} Djed Dollar`}
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
               tokenName="SC"
@@ -106,7 +106,7 @@ export default function Protocol() {
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
-              coinName="M-C1 Djed ReserveCoin"
+              coinName={`${process.env.REACT_APP_BC_SHORT} Djed ReserveCoin`}
               priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
               sellPriceAmount={coinsDetails?.scaledSellPriceRc}
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
