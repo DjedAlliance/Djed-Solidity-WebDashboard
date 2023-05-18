@@ -59,18 +59,18 @@ export default function Protocol() {
               >
                 these smart contracts
               </a>{" "}
-              on Milkomeda C1.
+              on {process.env.REACT_APP_BC}.
             </p>
             <p>
-              Milkomeda C1 is the EVM-compatible chain of the Cardano ecosystem. Its
+              {process.env.REACT_APP_BC} is the EVM-compatible chain of the Cardano ecosystem. Its
               native currency is mADA, a bridged version of Cardano's ADA. This asset is
               used by the Djed protocol to back <a href="/sc">StableCoins</a> and{" "}
               <a href="/rc">ReserveCoins</a> and it is needed to buy any of these coins
-              and to pay for transaction fees on Milkomeda C1.
+              and to pay for transaction fees on {process.env.REACT_APP_BC}.
             </p>
             <p>
               To learn more about how to obtain mADA or bridge your ADA from Cardano to
-              Milkomeda C1, follow{" "}
+              {process.env.REACT_APP_BC}, follow{" "}
               <a
                 href="https://dcspark.github.io/milkomeda-documentation/cardano/for-end-users/obtaining-milkada"
                 target="_blank"
