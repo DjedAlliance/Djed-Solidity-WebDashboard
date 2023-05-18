@@ -257,7 +257,7 @@ export default function Stablecoin() {
           <div className="DescriptionContainer">
             <p>
               The StableCoin of this Djed deployment is called{" "}
-              <strong>Milkomeda-C1 Djed Dollar</strong>. It is pegged to the USD,
+              <strong>{process.env.REACT_APP_BC} Djed Dollar</strong>. It is pegged to the USD,
               similarly to various{" "}
               <a
                 href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
@@ -301,7 +301,7 @@ export default function Stablecoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-one.png"
-            coinName="Milkomeda-C1 Djed Dollar"
+            coinName={`${process.env.REACT_APP_BC} Djed Dollar`}
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
             tokenName="SC"
@@ -313,12 +313,12 @@ export default function Stablecoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            Milkomeda-C1 Djed Dollar
+            {process.env.REACT_APP_BC} Djed Dollar
           </h2>
           <form>
             <div className="PurchaseContainer">
               <OperationSelector
-                coinName="Milkomeda-C1 Djed Dollar"
+                coinName={`${process.env.REACT_APP_BC} Djed Dollar`}
                 selectionCallback={() => {
                   setBuyOrSell();
                   setValue(null);
@@ -370,7 +370,7 @@ export default function Stablecoin() {
                     disabled={buttonDisabled}
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
-                    currencyName="Milkomeda-C1 Djed Dollar"
+                    currencyName={`${process.env.REACT_APP_BC} Djed Dollar`}
                   />
                 </>
               ) : (

@@ -31,7 +31,7 @@ export default function Protocol() {
       <div className="ProtocolSection">
         <div className="Left">
           <h1>
-            <strong>Djed on Milkomeda-C1</strong>
+            <strong>Djed on {process.env.REACT_APP_BC}</strong>
           </h1>
           <div className="DescriptionContainer">
             <p>
@@ -59,18 +59,18 @@ export default function Protocol() {
               >
                 these smart contracts
               </a>{" "}
-              on Milkomeda C1.
+              on {process.env.REACT_APP_BC}.
             </p>
             <p>
-              Milkomeda C1 is the EVM-compatible chain of the Cardano ecosystem. Its
+              {process.env.REACT_APP_BC} is the EVM-compatible chain of the Cardano ecosystem. Its
               native currency is mADA, a bridged version of Cardano's ADA. This asset is
               used by the Djed protocol to back <a href="/sc">StableCoins</a> and{" "}
               <a href="/rc">ReserveCoins</a> and it is needed to buy any of these coins
-              and to pay for transaction fees on Milkomeda C1.
+              and to pay for transaction fees on {process.env.REACT_APP_BC}.
             </p>
             <p>
               To learn more about how to obtain mADA or bridge your ADA from Cardano to
-              Milkomeda C1, follow{" "}
+              {process.env.REACT_APP_BC}, follow{" "}
               <a
                 href="https://dcspark.github.io/milkomeda-documentation/cardano/for-end-users/obtaining-milkada"
                 target="_blank"
@@ -98,7 +98,7 @@ export default function Protocol() {
           <div className="CoinsContainer">
             <CoinCard
               coinIcon="/coin-icon-one.png"
-              coinName="M-C1 Djed Dollar"
+              coinName={`${process.env.REACT_APP_BC_SHORT} Djed Dollar`}
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
               tokenName="SC"
@@ -106,7 +106,7 @@ export default function Protocol() {
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
-              coinName="M-C1 Djed ReserveCoin"
+              coinName={`${process.env.REACT_APP_BC_SHORT} Djed ReserveCoin`}
               priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
               sellPriceAmount={coinsDetails?.scaledSellPriceRc}
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
