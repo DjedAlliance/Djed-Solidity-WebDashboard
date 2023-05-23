@@ -27,19 +27,14 @@ import { BigNumber } from "ethers";
 
 import {
   flintWalletConnector,
+  flintWSCConnector,
   metamaskConnector,
   supportedChain
 } from "../utils/web3/wagmi";
 import { useConnect, useAccount, useNetwork, useSigner } from "wagmi";
-import {
-  MilkomedaNetworkName,
-  UserWallet
-} from "milkomeda-wsc";
-import { WSCLib } from "milkomeda-wsc";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
-let wscLib2; // InstanceType<typeof WSCLib>
 
 export const AppProvider = ({ children }) => {
   const { connect } = useConnect();
@@ -111,6 +106,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const setUpAccountSpecificValues = async () => {
+    console.log(coinContracts, "coinContracts");
     const accountDetails = await getAccountDetails(
       web3,
       account,
@@ -142,25 +138,9 @@ export const AppProvider = ({ children }) => {
     });
   };
   const connectWSC = async () => {
-    console.log("hey loading WSC Lib");
-    const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, UserWallet.Flint, {
-      oracleUrl: null,
-      blockfrostKey: "",
-      jsonRpcProviderUrl: null
+    connect({
+      connector: flintWSCConnector
     });
-
-    wscLib2 = await wscLib.inject();
-    console.log("hey loaded WSC Lib with wscLib2: ", wscLib2);
-    if (window.ethereum !== undefined) {
-      this.isConnected = true; // this doesn't work
-    
-      const address = await wscLib2.eth_getAccount();
-      console.log("address: ", address);
-      const originAddress = await wscLib2.origin_getAddress();
-      console.log("originAddress: ", originAddress);
-      this.address = originAddress;
-
-    }
   };
 
   useInterval(

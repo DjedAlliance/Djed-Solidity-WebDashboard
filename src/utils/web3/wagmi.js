@@ -2,20 +2,8 @@ import { supportedChains } from "./networks";
 import { configureChains, createClient, createStorage } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-import { InjectedConnector } from "wagmi/connectors/injected";
-
-export class FlintWalletConnector extends InjectedConnector {
-  constructor(config) {
-    super({
-      ...config,
-      options: {
-        name: "Flint",
-        getProvider: () =>
-          typeof window !== "undefined" ? window?.evmproviders?.flint : undefined
-      }
-    });
-  }
-}
+import { FlintWalletConnector } from "./connectors/flint";
+import { FlintWSCConnector } from "./connectors/flint-wsc";
 
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
@@ -38,6 +26,9 @@ export const metamaskConnector = new MetaMaskConnector({
 });
 
 export const flintWalletConnector = new FlintWalletConnector({
+  chains: [supportedChain]
+});
+export const flintWSCConnector = new FlintWSCConnector({
   chains: [supportedChain]
 });
 
