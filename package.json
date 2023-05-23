@@ -5,26 +5,25 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@metamask/detect-provider": "^1.2.0",
-    "@testing-library/jest-dom": "^5.16.2",
-    "@testing-library/react": "^12.1.4",
-    "@testing-library/user-event": "^13.5.0",
     "antd": "^4.19.2",
+    "assert": "^2.0.0",
     "ethers": "^5.7.2",
+    "milkomeda-wsc": "^0.1.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.2.2",
-    "react-scripts": "^4.0.3",
-    "sass": "^1.49.9",
+    "react-scripts": "^5.0.1",
+    "stream-browserify": "^3.0.0",
     "wagmi": "^0.12.8",
     "web-vitals": "^2.1.4",
     "web3": "^1.7.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "craco start",
+    "build": "craco build",
     "build:milkomeda-c1-testnet": "npx -y env-cmd -f ./env/milkomeda-c1-testnet.env npm run build",
     "build:milkomeda-c1": "npx -y env-cmd -f ./env/milkomeda-c1.env npm run build",
-    "test": "react-scripts test",
+    "test": "craco test",
     "lint": "prettier --check '**/*.{js,jsx}'",
     "eject": "react-scripts eject"
   },
@@ -41,8 +40,13 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.4",
+    "@testing-library/user-event": "^13.5.0",
     "eslint-plugin-react-hooks": "^4.5.0",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "sass": "^1.49.9"
   },
   "overrides": {
     "typescript": "3.2.1"

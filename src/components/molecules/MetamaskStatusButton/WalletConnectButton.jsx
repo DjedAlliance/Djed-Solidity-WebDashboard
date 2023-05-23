@@ -17,6 +17,7 @@ const WalletConnectButton = () => {
     account,
     connectMetamask,
     connectFlintWallet,
+    connectWSC,
     redirectToMetamask,
     redirectToFlint
   } = useAppProvider();
@@ -41,6 +42,12 @@ const WalletConnectButton = () => {
               <CustomButton
                 text={isFlintWalletInstalled ? "Flint Wallet" : "Install Flint"}
                 onClick={isFlintWalletInstalled ? connectFlintWallet : redirectToFlint}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+              <CustomButton
+                text={isFlintWalletInstalled ? "Flint WSC" : "Install Flint"}
+                onClick={isFlintWalletInstalled ? connectWSC : redirectToFlint}
                 iconWallet={<WalletOutlined />}
                 variant="primary"
               />
