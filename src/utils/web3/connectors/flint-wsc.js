@@ -83,7 +83,6 @@ export class FlintWSCConnector extends Connector {
       if (!wsc) throw new Error("Could not load WSC information");
       this.#provider = wsc;
     }
-    console.log(this?.#provider, "this.#provider");
     return this.#provider;
   }
 
