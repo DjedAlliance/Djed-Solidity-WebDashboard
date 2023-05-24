@@ -304,8 +304,9 @@ export default function ReserveCoin() {
               ReserveCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}
               <a
-                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${coinContracts?.reserveCoin._address}`}
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}address/${coinContracts?.reserveCoin._address}`}
                 target="_blank"
+                rel="noreferrer"
               >
                 {coinContracts?.reserveCoin._address}
               </a>
@@ -362,7 +363,7 @@ export default function ReserveCoin() {
             />
             <label htmlFor="accept-terms" className="accept-terms">
               I agree to the{" "}
-              <a href="/terms-of-use" target="_blank">
+              <a href="/terms-of-use" target="_blank" rel="noreferrer">
                 Terms of Use
               </a>
               .
