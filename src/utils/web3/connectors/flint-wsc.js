@@ -12,7 +12,7 @@ export class FlintWSCConnector extends Connector {
   name = "Flint WSC";
   #provider;
   #sdk;
-
+  #previousProvider;
   shimDisconnectKey = `${this.id}.shimDisconnect`;
 
   constructor({ chains, options: options_ }) {
@@ -21,6 +21,7 @@ export class FlintWSCConnector extends Connector {
       ...options_
     };
     super({ chains, options });
+    this.#previousProvider = window?.ethereum ?? {};
 
     this.#sdk = new WSCLib(MilkomedaNetworkName.C1Devnet, UserWallet.Flint, {
       oracleUrl: null,
@@ -55,8 +56,10 @@ export class FlintWSCConnector extends Connector {
 
   async disconnect() {
     const provider = await this.getProvider();
-    if (!provider?.removeListener) return;
+    // switch back to previous provider
+    window.ethereum = this.#previousProvider;
 
+    if (!provider?.removeListener) return;
     provider.removeListener("accountsChanged", this.onAccountsChanged);
     provider.removeListener("chainChanged", this.onChainChanged);
     provider.removeListener("disconnect", this.onDisconnect);
