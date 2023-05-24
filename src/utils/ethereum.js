@@ -550,7 +550,7 @@ export const calculateIsRatioAboveMin = ({
  * @returns
  */
 export const isTxLimitReached = (amountUSD, totalSCSupply, thresholdSCSupply) =>
-  amountUSD > TRANSACTION_USD_LIMIT ||
+  amountUSD > TRANSACTION_USD_LIMIT &&
   BigNumber.from(totalSCSupply).gte(BigNumber.from(thresholdSCSupply));
 
 /**
