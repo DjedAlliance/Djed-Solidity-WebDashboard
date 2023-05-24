@@ -211,6 +211,7 @@ export default function ReserveCoin() {
   const buyRc = (total) => {
     console.log("Attempting to buy RC for", total);
     setTxStatus("pending");
+    // TODO: pass to buyRcTx a parameter to enforce gasLimit if we are using WSC
     promiseTx(isWalletConnected, buyRcTx(djedContract, account, total), signer)
       .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
