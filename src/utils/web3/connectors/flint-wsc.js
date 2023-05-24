@@ -2,6 +2,7 @@ import { WSCLib } from "milkomeda-wsc";
 import { MilkomedaNetworkName, UserWallet } from "milkomeda-wsc";
 import { Connector, ConnectorNotFoundError } from "wagmi";
 import { normalizeChainId } from "@wagmi/core";
+import { getAddress } from "ethers/lib/utils";
 
 /**
  * Connector for [Flint WSC]
@@ -107,13 +108,19 @@ export class FlintWSCConnector extends Connector {
     }
   }
 
-  onAccountsChanged(_accounts) {
-    // TODO:
-  }
+  onAccountsChanged = (accounts) => {
+    if (accounts.length === 0) this.emit("disconnect");
+    else
+      this.emit("change", {
+        account: getAddress(accounts[0])
+      });
+  };
 
-  onChainChanged(_chainId) {
-    // TODO:
-  }
+  onChainChanged = (chainId) => {
+    const id = normalizeChainId(chainId);
+    const unsupported = this.isChainUnsupported(id);
+    this.emit("change", { chain: { id, unsupported } });
+  };
 
   onDisconnect() {
     this.emit("disconnect");
