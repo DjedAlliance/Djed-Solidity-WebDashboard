@@ -257,11 +257,12 @@ export default function Stablecoin() {
           <div className="DescriptionContainer">
             <p>
               The StableCoin of this Djed deployment is called{" "}
-              <strong>{process.env.REACT_APP_BC} Djed Dollar</strong>. It is pegged to the USD,
-              similarly to various{" "}
+              <strong>{process.env.REACT_APP_BC} Djed Dollar</strong>. It is pegged to the
+              USD, similarly to various{" "}
               <a
                 href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
                 target="_blank"
+                rel="noreferrer"
               >
                 fixed exchange rate national currencies
               </a>
@@ -291,8 +292,9 @@ export default function Stablecoin() {
               StableCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}
               <a
-                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${coinContracts?.stableCoin._address}`}
+                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}address/${coinContracts?.stableCoin._address}`}
                 target="_blank"
+                rel="noreferrer"
               >
                 {coinContracts?.stableCoin._address}
               </a>
@@ -347,7 +349,7 @@ export default function Stablecoin() {
             />
             <label htmlFor="accept-terms" className="accept-terms">
               I agree to the{" "}
-              <a href="/terms-of-use" target="_blank">
+              <a href="/terms-of-use" target="_blank" rel="noreferrer">
                 Terms of Use
               </a>
               .
