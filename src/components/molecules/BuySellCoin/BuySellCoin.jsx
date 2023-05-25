@@ -62,7 +62,7 @@ const BuySellCoin = ({
       {isWrongChain ? (
         <p className="Alert">
           <ExclamationCircleOutlined />
-          Please change your MetaMask Milkomeda network to Testnet and refresh the page.
+          Please change your MetaMask {process.env.REACT_APP_BC} network to Testnet and refresh the page.
         </p>
       ) : null}
       <hr />
