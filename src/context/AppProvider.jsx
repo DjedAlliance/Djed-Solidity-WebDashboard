@@ -31,14 +31,18 @@ import {
   metamaskConnector,
   supportedChain
 } from "../utils/web3/wagmi";
-import { useConnect, useAccount, useNetwork, useSigner } from "wagmi";
+import { useConnect, useAccount, useNetwork, useSigner, useProvider } from "wagmi";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
 export const AppProvider = ({ children }) => {
   const { connect } = useConnect();
-  const { isConnected: isWalletConnected, address: account } = useAccount();
+  const {
+    connector: activeConnector,
+    isConnected: isWalletConnected,
+    address: account
+  } = useAccount();
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
 
@@ -251,6 +255,7 @@ export const AppProvider = ({ children }) => {
           connectWSC,
           redirectToMetamask,
           redirectToFlint,
+          activeConnector,
           account,
           signer,
           isRatioBelowMax,

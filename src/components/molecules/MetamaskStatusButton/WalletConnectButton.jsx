@@ -19,9 +19,15 @@ const WalletConnectButton = () => {
     connectFlintWallet,
     connectWSC,
     redirectToMetamask,
-    redirectToFlint
+    redirectToFlint,
+    activeConnector
   } = useAppProvider();
 
+  const handleWrap = async () => {
+    const provider = await activeConnector.getProvider();
+    await provider.wrap();
+    await provider.unwrap();
+  };
   return (
     <div className="wrapper-connect-btn">
       {/*TODO: adapt UI on mobile*/}
@@ -30,7 +36,16 @@ const WalletConnectButton = () => {
         getPopupContainer={(trigger) => trigger.parentElement}
         content={
           isWalletConnected ? (
-            <DisconnectButton />
+            <>
+              {activeConnector?.id === "flint-wsc" && (
+                <div className="content">
+                  <p>What wrapped smart contract is</p>
+                  <button onClick={handleWrap}>Wrap</button>
+                  <button>Unwrap</button>
+                </div>
+              )}
+              <DisconnectButton />
+            </>
           ) : (
             <>
               <CustomButton
