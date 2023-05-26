@@ -89,7 +89,7 @@ const FlintWSCContent = () => {
     };
     init();
   }, [activeConnector, updateWalletData]);
-  console.log(originAddress, address);
+
   const isLoading = status === "pending" || status === "idle";
   const isError = status === "rejected";
   const isSuccess = status === "success";

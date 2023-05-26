@@ -110,6 +110,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const setUpAccountSpecificValues = async () => {
+    if (coinContracts == null) return;
     const accountDetails = await getAccountDetails(
       web3,
       account,
