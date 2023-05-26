@@ -18,7 +18,7 @@ export class CardanoWSCConnector extends Connector {
   #previousProvider;
   shimDisconnectKey = `${this.id}.shimDisconnect`;
 
-  constructor({ chains, options: options_, walletName }) {
+  constructor({ chains, options: options_ }) {
     const options = {
       shimDisconnect: false,
       id: options_.name + "-wsc",
