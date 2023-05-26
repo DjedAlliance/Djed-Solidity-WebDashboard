@@ -4,36 +4,31 @@ import { Connector, ConnectorNotFoundError } from "wagmi";
 import { normalizeChainId } from "@wagmi/core";
 import { getAddress } from "ethers/lib/utils";
 
+function capitalize(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 /**
  * Connector for [Cardano WSC]
  */
 export class CardanoWSCConnector extends Connector {
-  id = "cardano-wsc";
-  name;
-  walletName;
   #provider;
   #sdk;
   #previousProvider;
   shimDisconnectKey = `${this.id}.shimDisconnect`;
 
   constructor({ chains, options: options_, walletName }) {
-    console.log("CardanoWSCConnector constructor");
-    console.log("chains: ", chains);
-    console.log("options_: ", options_);
-    console.log("walletName: ", walletName);
-    
     const options = {
       shimDisconnect: false,
+      id: options_.name + "-wsc",
       ...options_
     };
     super({ chains, options });
-    this.#previousProvider = window?.ethereum ?? {};
-    this.name = walletName.charAt(0).toUpperCase() + walletName.slice(1) + " WSC";
-    this.walletName = walletName;
 
-    this.#sdk = new WSCLib(MilkomedaNetworkName.C1Devnet, walletName, {
+    this.#previousProvider = window?.ethereum;
+    this.#sdk = new WSCLib(MilkomedaNetworkName.C1Devnet, capitalize(options_.name), {
       oracleUrl: null,
-      blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb", 
+      blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
       jsonRpcProviderUrl: null
     });
   }

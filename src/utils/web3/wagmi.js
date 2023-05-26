@@ -30,12 +30,16 @@ export const flintWalletConnector = new FlintWalletConnector({
 });
 export const flintWSCConnector = new CardanoWSCConnector({
   chains: [supportedChain],
-  walletName: "flint"
+  options: {
+    name: "flint"
+  }
 });
 
 export const eternlWSCConnector = new CardanoWSCConnector({
   chains: [supportedChain],
-  walletName: "eternl"
+  options: {
+    name: "eternl"
+  }
 });
 
 export const client = createClient({
