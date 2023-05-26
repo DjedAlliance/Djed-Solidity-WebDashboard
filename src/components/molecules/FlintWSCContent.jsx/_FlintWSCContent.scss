@@ -22,12 +22,12 @@
   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
     border-bottom: 2px solid  #d07d2c;
   }
-.error {
-  text-align: center;
-  h2 {
-    margin-bottom: 10px
+  .error {
+    text-align: center;
+    h2 {
+      margin-bottom: 10px
+    }
   }
-}
   ul {
     display: flex;
     flex-direction: column;
@@ -106,6 +106,24 @@
 
     }
   }
-
-
+  .address{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items:center;
+    font-size: 1rem;
+    font-weight: 600;
+    & > span {
+      font-weight: 400;
+      word-break: break-all;
+    }
+  }
+  .external-link {
+    text-align: center;
+    display: block;
+    margin-bottom: 20px;
+    span {
+      margin-right: 6px;
+    }
+  }
 }
