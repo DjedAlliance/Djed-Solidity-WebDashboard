@@ -7,7 +7,8 @@ import { truncateAddress } from "../../../utils/address";
 import { useNavigate } from "react-router-dom";
 import "./_MetamaskStatusButton.scss";
 import { useDisconnect } from "wagmi";
-import { Button, Popover } from "antd";
+import { Button, Popover, Tabs } from "antd";
+import FlintWSCContent from "../FlintWSCContent.jsx/FlintWSCContent";
 
 const WalletConnectButton = () => {
   const {
@@ -23,11 +24,6 @@ const WalletConnectButton = () => {
     activeConnector
   } = useAppProvider();
 
-  const handleWrap = async () => {
-    const provider = await activeConnector.getProvider();
-    await provider.wrap();
-    await provider.unwrap();
-  };
   return (
     <div className="wrapper-connect-btn">
       {/*TODO: adapt UI on mobile*/}
@@ -37,13 +33,7 @@ const WalletConnectButton = () => {
         content={
           isWalletConnected ? (
             <>
-              {activeConnector?.id === "flint-wsc" && (
-                <div className="content">
-                  <p>What wrapped smart contract is</p>
-                  <button onClick={handleWrap}>Wrap</button>
-                  <button>Unwrap</button>
-                </div>
-              )}
+              {activeConnector?.id === "flint-wsc" && <FlintWSCContent />}
               <DisconnectButton />
             </>
           ) : (

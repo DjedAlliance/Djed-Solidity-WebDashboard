@@ -1,0 +1,71 @@
+@import "../../../scss/general_styling";
+
+.content {
+  color: white;
+  h2, p, .ant-tabs-content-holder {
+    color:white;
+  }
+  h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .ant-tabs {
+    min-width: 300px;
+    overflow: auto;
+  }
+   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
+   .ant-tabs-tab:hover {
+     color: #d07d2c;
+   }
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    border-bottom: 2px solid  #d07d2c;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    gap: 12px;
+    max-height: 500px;
+    overflow: auto;
+  }
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border: 1px solid #383534;
+    & > div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      &.actions {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        input {
+          border: none;
+          border: 1px solid #383534;
+          background:white;
+          width: 100%;
+          padding:10px;
+        }
+      }
+      &>span:first-child{
+        font-weight: bold
+      }
+    }
+  }
+  button {
+    border-radius: 30px;
+    color: #ffffff;
+    background: #d07d2c;
+    width: 100% !important;
+    padding: 10px;
+  }
+
+
+}
