@@ -99,6 +99,12 @@
     background: #d07d2c;
     width: 100% !important;
     padding: 7px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    &:hover {
+      background: #e38d33;
+
+    }
   }
 
 
