@@ -27,9 +27,9 @@ const FlintWSCContent = () => {
 
   // const [originAddress, setOriginAddress] = React.useState(null);
   const [pendingTxs, setPendingTxs] = React.useState([]);
-  const [address, setAddress] = React.useState(null);
+  // const [address, setAddress] = React.useState(null);
   const [destinationBalance, setDestinationBalance] = React.useState(null);
-  const [originBalance, setOriginBalance] = React.useState(null);
+  // const [originBalance, setOriginBalance] = React.useState(null);
   const [originTokens, setOriginTokens] = React.useState([]);
   const [tokens, setTokens] = React.useState([]);
 
@@ -51,8 +51,8 @@ const FlintWSCContent = () => {
     const destinationBalance = await provider?.eth_getBalance();
     setDestinationBalance(destinationBalance);
 
-    const originBalance = await provider?.origin_getNativeBalance();
-    setOriginBalance(originBalance);
+    // const originBalance = await provider?.origin_getNativeBalance();
+    // setOriginBalance(originBalance);
 
     const pendingTxs = await provider?.getPendingTransactions();
     setPendingTxs(pendingTxs ?? []);
@@ -71,13 +71,12 @@ const FlintWSCContent = () => {
       try {
         const provider = await activeConnector.getProvider();
         if (!provider) return;
-        const address = await provider.eth_getAccount();
-
-        await updateWalletData();
-        setProvider(provider);
-        setAddress(address);
         const tokenBalances = await provider.getTokenBalances();
         setTokens(tokenBalances ?? []);
+        await updateWalletData();
+        setProvider(provider);
+        // const address = await provider.eth_getAccount();
+        // setAddress(address);
         setStatus("success");
       } catch (error) {
         setStatus("rejected");
