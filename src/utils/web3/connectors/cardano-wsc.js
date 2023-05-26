@@ -12,6 +12,7 @@ function capitalize(string) {
  * Connector for [Cardano WSC]
  */
 export class CardanoWSCConnector extends Connector {
+  id;
   #provider;
   #sdk;
   #previousProvider;
@@ -24,7 +25,7 @@ export class CardanoWSCConnector extends Connector {
       ...options_
     };
     super({ chains, options });
-
+    this.id = options.id;
     this.#previousProvider = window?.ethereum;
     this.#sdk = new WSCLib(MilkomedaNetworkName.C1Devnet, capitalize(options_.name), {
       oracleUrl: null,

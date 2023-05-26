@@ -36,7 +36,7 @@ const WalletConnectButton = () => {
         content={
           isWalletConnected ? (
             <>
-              {activeConnector?.id === "flint-wsc" && <FlintWSCContent />}
+              {activeConnector?.id?.includes("wsc") && <FlintWSCContent />}
               <DisconnectButton />
             </>
           ) : (
@@ -59,7 +59,7 @@ const WalletConnectButton = () => {
                 iconWallet={<WalletOutlined />}
                 variant="primary"
               />
-                 <CustomButton
+              <CustomButton
                 text={isEternlWalletInstalled ? "Eternl WSC" : "Install Eternl"}
                 onClick={isEternlWalletInstalled ? connectToEternlWSC : redirectToEternl}
                 iconWallet={<WalletOutlined />}
