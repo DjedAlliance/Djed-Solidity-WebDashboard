@@ -2,6 +2,11 @@
 
 .content {
   color: white;
+  @media (max-width: 768px) {
+      display: none;
+  }
+
+
   h2, p, .ant-tabs-content-holder {
     color:white;
   }
@@ -119,12 +124,12 @@
       color: #bbbbc9;
     }
   }
-  .external-link {
-    text-align: center;
-    display: block;
-    margin-bottom: 20px;
-    span {
-      margin-right: 6px;
-    }
-  }
+}
+.external-link {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
 }

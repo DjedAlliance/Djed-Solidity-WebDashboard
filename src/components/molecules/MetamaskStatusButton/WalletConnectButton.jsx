@@ -7,8 +7,8 @@ import { truncateAddress } from "../../../utils/address";
 import { useNavigate } from "react-router-dom";
 import "./_MetamaskStatusButton.scss";
 import { useDisconnect } from "wagmi";
-import { Button, Popover, Tabs } from "antd";
-import FlintWSCContent from "../FlintWSCContent.jsx/FlintWSCContent";
+import { Button, Popover } from "antd";
+import FlintWSCContent, { WSCWalletLink } from "../FlintWSCContent.jsx/FlintWSCContent";
 
 const WalletConnectButton = () => {
   const {
@@ -37,6 +37,9 @@ const WalletConnectButton = () => {
           isWalletConnected ? (
             <>
               {activeConnector?.id?.includes("wsc") && <FlintWSCContent />}
+              <div className="only-mobile">
+                <WSCWalletLink />
+              </div>
               <DisconnectButton />
             </>
           ) : (
