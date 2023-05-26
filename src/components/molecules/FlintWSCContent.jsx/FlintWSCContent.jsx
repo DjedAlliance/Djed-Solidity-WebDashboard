@@ -1,7 +1,7 @@
 import React from "react";
 import { useAppProvider } from "../../../context/AppProvider";
 import "./_FlintWSCContent.scss";
-import { Tabs } from "antd";
+import { Skeleton, Tabs } from "antd";
 import BigNumber from "bignumber.js";
 
 import { MilkomedaConstants } from "milkomeda-wsc/build/MilkomedaConstants";
@@ -32,6 +32,8 @@ const FlintWSCContent = () => {
   const [originBalance, setOriginBalance] = React.useState(null);
   const [originTokens, setOriginTokens] = React.useState([]);
   const [tokens, setTokens] = React.useState([]);
+
+  const [status, setStatus] = React.useState("idle");
 
   const wrapWrapper = async (destination, assetId, amount) => {
     return provider?.wrap(destination, assetId, amount.toNumber());
@@ -64,34 +66,60 @@ const FlintWSCContent = () => {
   }, 5000);
 
   React.useEffect(() => {
-    const getTokens = async () => {
-      const tokenBalances = await provider?.getTokenBalances();
-      setTokens(tokenBalances ?? []);
-    };
-
-    getTokens();
-  }, [address, provider]);
-
-  React.useEffect(() => {
     const init = async () => {
-      const provider = await activeConnector.getProvider();
-      setProvider(provider);
-      console.log("provider", provider, provider?.eth_getBalance());
+      setStatus("pending");
+      try {
+        const provider = await activeConnector.getProvider();
+        if (!provider) return;
+        const address = await provider.eth_getAccount();
+
+        await updateWalletData();
+        setProvider(provider);
+        setAddress(address);
+        const tokenBalances = await provider.getTokenBalances();
+        setTokens(tokenBalances ?? []);
+        setStatus("success");
+      } catch (error) {
+        setStatus("rejected");
+        console.error(error);
+      }
     };
     init();
-  }, []);
+  }, [activeConnector, updateWalletData]);
+
+  const isLoading = status === "pending" || status === "idle";
+  const isError = status === "rejected";
+  const isSuccess = status === "success";
 
   return (
     <div className="content">
       <Tabs>
         <Tabs.TabPane tab="Cardano" key="cardano">
-          <CardanoAssets tokens={originTokens} wrap={wrapWrapper} />
+          <CardanoAssets
+            tokens={originTokens}
+            wrap={wrapWrapper}
+            isLoading={isLoading}
+            isSuccess={isSuccess}
+          />
         </Tabs.TabPane>
-        {pendingTxs?.length > 0 && (
-          <Tabs.TabPane tab="Pending" key="pending">
-            <h2>List of pending transactions between Cardano and Milkomeda</h2>
-            <ul>
-              {pendingTxs.map((tx, index) => {
+
+        <Tabs.TabPane tab="Pending" key="pending">
+          <h2>List of pending transactions between Cardano and Milkomeda</h2>
+          <ul>
+            {isLoading && (
+              <>
+                <Skeleton.Avatar active size="large" shape="square" />
+                <Skeleton.Avatar active size="large" shape="square" />
+                <Skeleton.Avatar active size="large" shape="square" />
+                <Skeleton.Avatar active size="large" shape="square" />
+              </>
+            )}
+            {isSuccess && pendingTxs?.length === 0 && (
+              <p className="not-found">No pending transaction found.</p>
+            )}
+            {isSuccess &&
+              pendingTxs?.length > 0 &&
+              pendingTxs.map((tx, index) => {
                 const localDateTime = new Date(tx.timestamp * 1000).toLocaleString();
                 const shortHash = `${tx.hash.slice(0, 10)}...${tx.hash.slice(-10)}`;
                 return (
@@ -115,9 +143,9 @@ const FlintWSCContent = () => {
                   </li>
                 );
               })}
-            </ul>
-          </Tabs.TabPane>
-        )}
+          </ul>
+        </Tabs.TabPane>
+
         <Tabs.TabPane tab="WSC Wallet" key="wsc-wallet">
           <WSCAssets
             destinationBalance={destinationBalance}
@@ -125,16 +153,24 @@ const FlintWSCContent = () => {
             tokens={tokens}
             moveAssetsToL1={moveAssetsToL1}
             unwrap={unwrapWrapper}
+            isLoading={isLoading}
+            isSuccess={isSuccess}
           />
         </Tabs.TabPane>
       </Tabs>
+      {isError && (
+        <div className="error">
+          <h2>Something went wrong</h2>
+          <p>Please try again later</p>
+        </div>
+      )}
     </div>
   );
 };
 
 export default FlintWSCContent;
 
-const CardanoAssets = ({ tokens = [], wrap }) => {
+const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess }) => {
   const [tokenAmounts, setTokenAmounts] = React.useState(new Map());
   const [amounts, setAmounts] = React.useState([]);
 
@@ -174,50 +210,67 @@ const CardanoAssets = ({ tokens = [], wrap }) => {
     <div>
       <h2>Assets in Your Cardano Wallet</h2>
       <ul>
-        {tokens.map((token, index) => (
-          <li key={index}>
-            <div>
-              <span>Token</span>
-              <span>{token.assetName}</span>
-            </div>
-            <div>
-              <span>Amount</span>
-              <span>{amounts[index]}</span>
-            </div>
+        {isLoading && (
+          <>
+            <Skeleton.Avatar active size="large" shape="square" />
+            <Skeleton.Avatar active size="large" shape="square" />
+            <Skeleton.Avatar active size="large" shape="square" />
+            <Skeleton.Avatar active size="large" shape="square" />
+          </>
+        )}
+        {isSuccess &&
+          tokens.map((token, index) => (
+            <li key={index}>
+              <div>
+                <span>Token</span>
+                <span>{token.assetName}</span>
+              </div>
+              <div>
+                <span>Amount</span>
+                <span>{amounts[index]}</span>
+              </div>
 
-            {token.bridgeAllowed && (
-              <>
-                <div className="actions">
-                  <span>Move Amount:</span>
-                  <input
-                    type="text"
-                    value={tokenAmounts.get(token.unit) || ""}
-                    onChange={(e) => updateTokenAmount(token.unit, e.target.value)}
-                    placeholder="Enter amount"
-                  />
-                  <button
-                    className="button-primary-small"
-                    onClick={() => moveToken(token)}
-                  >
-                    Move to L2
-                  </button>
-                  <button
-                    className="button-primary-small"
-                    onClick={() => setMaxAmount(token)}
-                  >
-                    All
-                  </button>
-                </div>
-              </>
-            )}
-          </li>
-        ))}
+              {token.bridgeAllowed && (
+                <>
+                  <div className="actions">
+                    <span>Move Amount:</span>
+                    <input
+                      type="text"
+                      value={tokenAmounts.get(token.unit) || ""}
+                      onChange={(e) => updateTokenAmount(token.unit, e.target.value)}
+                      placeholder="Enter amount"
+                    />
+                    <button
+                      className="button-primary-small"
+                      onClick={() => moveToken(token)}
+                    >
+                      Move to L2
+                    </button>
+                    <button
+                      className="button-primary-small"
+                      onClick={() => setMaxAmount(token)}
+                    >
+                      All
+                    </button>
+                  </div>
+                </>
+              )}
+            </li>
+          ))}
       </ul>
     </div>
   );
 };
 
-const WSCAssets = ({ destinationBalance, network, tokens, unwrap, moveAssetsToL1 }) => {
+const WSCAssets = ({
+  destinationBalance,
+  network,
+  tokens,
+  unwrap,
+  moveAssetsToL1,
+  isLoading,
+  isSuccess
+}) => {
   const normalizeAda = (amount) => {
     const maxDecimalPlaces = 6;
     const decimalIndex = amount.indexOf(".");
@@ -230,6 +283,14 @@ const WSCAssets = ({ destinationBalance, network, tokens, unwrap, moveAssetsToL1
     <div>
       <h2>Assets in Your Wrapped Smart Contract Wallet</h2>
       <ul>
+        {isLoading && (
+          <>
+            <Skeleton.Avatar active size="large" shape="square" />
+            <Skeleton.Avatar active size="large" shape="square" />
+            <Skeleton.Avatar active size="large" shape="square" />
+            <Skeleton.Avatar active size="large" shape="square" />
+          </>
+        )}
         {destinationBalance && (
           <li>
             <div>
