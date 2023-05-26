@@ -282,9 +282,9 @@ export default function ReserveCoin() {
           <div className="DescriptionContainer">
             <p>
               A ReserveCoin represents a portion of the surplus of the underlying reserves
-              of mADA in the Djed protocol. As such, ReserveCoins have a leveraged
-              volatile price that increases when the price of mADA increases and decreases
-              when the price of mADA decreases. Furthermore, ReserveCoin holders
+              of {process.env.REACT_APP_CHAIN_COIN} in the Djed protocol. As such, ReserveCoins have a leveraged
+              volatile price that increases when the price of {process.env.REACT_APP_CHAIN_COIN} increases and decreases
+              when the price of {process.env.REACT_APP_CHAIN_COIN} decreases. Furthermore, ReserveCoin holders
               ultimately benefit from fees paid to the Djed protocol, since most fees are
               accumulated into the reserve and hence contribute to the reserve surplus.
             </p>
@@ -299,7 +299,7 @@ export default function ReserveCoin() {
               above the minimum of {systemParams?.reserveRatioMin}. This aims to ensure
               that all StableCoins remain sufficiently backed.
             </p>
-            <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
+            <p>There is a limit of {process.env.REACT_APP_LIMIT_PER_TXN} USD worth of {process.env.REACT_APP_CHAIN_COIN} per transaction.</p>
             <p>
               ReserveCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}

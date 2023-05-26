@@ -43,7 +43,7 @@ export default function MyBalance() {
             />
             <TotalBalance
               coinIcon="/coin-icon-three.png"
-              coinName="mADA"
+              coinName={`${process.env.REACT_APP_CHAIN_COIN}`}
               balanceAmount={accountDetails?.scaledBalanceBc}
               balanceEquivalent={bcConverted}
             />
