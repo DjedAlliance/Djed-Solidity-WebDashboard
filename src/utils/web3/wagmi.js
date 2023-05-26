@@ -3,7 +3,7 @@ import { configureChains, createClient, createStorage } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { FlintWalletConnector } from "./connectors/flint";
-import { FlintWSCConnector } from "./connectors/flint-wsc";
+import { CardanoWSCConnector } from "./connectors/cardano-wsc";
 
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
@@ -28,8 +28,14 @@ export const metamaskConnector = new MetaMaskConnector({
 export const flintWalletConnector = new FlintWalletConnector({
   chains: [supportedChain]
 });
-export const flintWSCConnector = new FlintWSCConnector({
-  chains: [supportedChain]
+export const flintWSCConnector = new CardanoWSCConnector({
+  chains: [supportedChain],
+  walletName: "flint"
+});
+
+export const eternlWSCConnector = new CardanoWSCConnector({
+  chains: [supportedChain],
+  walletName: "eternl"
 });
 
 export const client = createClient({

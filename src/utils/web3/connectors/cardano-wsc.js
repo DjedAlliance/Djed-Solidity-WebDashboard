@@ -1,31 +1,39 @@
 import { WSCLib } from "milkomeda-wsc";
-import { MilkomedaNetworkName, UserWallet } from "milkomeda-wsc";
+import { MilkomedaNetworkName } from "milkomeda-wsc";
 import { Connector, ConnectorNotFoundError } from "wagmi";
 import { normalizeChainId } from "@wagmi/core";
 import { getAddress } from "ethers/lib/utils";
 
 /**
- * Connector for [Flint WSC]
+ * Connector for [Cardano WSC]
  */
-export class FlintWSCConnector extends Connector {
-  id = "flint-wsc";
-  name = "Flint WSC";
+export class CardanoWSCConnector extends Connector {
+  id = "cardano-wsc";
+  name;
+  walletName;
   #provider;
   #sdk;
   #previousProvider;
   shimDisconnectKey = `${this.id}.shimDisconnect`;
 
-  constructor({ chains, options: options_ }) {
+  constructor({ chains, options: options_, walletName }) {
+    console.log("CardanoWSCConnector constructor");
+    console.log("chains: ", chains);
+    console.log("options_: ", options_);
+    console.log("walletName: ", walletName);
+    
     const options = {
       shimDisconnect: false,
       ...options_
     };
     super({ chains, options });
     this.#previousProvider = window?.ethereum ?? {};
+    this.name = walletName.charAt(0).toUpperCase() + walletName.slice(1) + " WSC";
+    this.walletName = walletName;
 
-    this.#sdk = new WSCLib(MilkomedaNetworkName.C1Devnet, UserWallet.Flint, {
+    this.#sdk = new WSCLib(MilkomedaNetworkName.C1Devnet, walletName, {
       oracleUrl: null,
-      blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
+      blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb", 
       jsonRpcProviderUrl: null
     });
   }

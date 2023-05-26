@@ -13,14 +13,17 @@ import FlintWSCContent from "../FlintWSCContent.jsx/FlintWSCContent";
 const WalletConnectButton = () => {
   const {
     isFlintWalletInstalled,
+    isEternlWalletInstalled,
     isMetamaskWalletInstalled,
     isWalletConnected,
     account,
     connectMetamask,
     connectFlintWallet,
-    connectWSC,
+    connectToFlintWSC,
+    connectToEternlWSC,
     redirectToMetamask,
     redirectToFlint,
+    redirectToEternl,
     activeConnector
   } = useAppProvider();
 
@@ -52,7 +55,13 @@ const WalletConnectButton = () => {
               />
               <CustomButton
                 text={isFlintWalletInstalled ? "Flint WSC" : "Install Flint"}
-                onClick={isFlintWalletInstalled ? connectWSC : redirectToFlint}
+                onClick={isFlintWalletInstalled ? connectToFlintWSC : redirectToFlint}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+                 <CustomButton
+                text={isEternlWalletInstalled ? "Eternl WSC" : "Install Eternl"}
+                onClick={isEternlWalletInstalled ? connectToEternlWSC : redirectToEternl}
                 iconWallet={<WalletOutlined />}
                 variant="primary"
               />

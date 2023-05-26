@@ -28,6 +28,7 @@ import { BigNumber } from "ethers";
 import {
   flintWalletConnector,
   flintWSCConnector,
+  eternlWSCConnector,
   metamaskConnector,
   supportedChain
 } from "../utils/web3/wagmi";
@@ -108,6 +109,9 @@ export const AppProvider = ({ children }) => {
   const redirectToFlint = () => {
     window.open("https://flint-wallet.com/", "_blank");
   };
+  const redirectToEternl = () => {
+    window.open("https://eternl.io/", "_blank");
+  };
 
   const setUpAccountSpecificValues = async () => {
     if (coinContracts == null) return;
@@ -135,13 +139,18 @@ export const AppProvider = ({ children }) => {
       chainId: supportedChain.id
     });
   };
+  const connectToEternlWSC = () => {
+    connect({
+      connector: eternlWSCConnector,
+    });
+  };
   const connectFlintWallet = () => {
     // flint doesn't support switchNetwork at the time being
     connect({
       connector: flintWalletConnector
     });
   };
-  const connectWSC = async () => {
+  const connectToFlintWSC = async () => {
     connect({
       connector: flintWSCConnector
     });
@@ -149,6 +158,7 @@ export const AppProvider = ({ children }) => {
 
   useInterval(
     async () => {
+      if (coinContracts == null) return;
       const accountDetails = await getAccountDetails(
         web3,
         account,
@@ -171,6 +181,7 @@ export const AppProvider = ({ children }) => {
 
   useInterval(
     async () => {
+      if (coinContracts == null) return;
       const coinsDetails = await getCoinDetails(
         coinContracts.stableCoin,
         coinContracts.reserveCoin,
@@ -249,13 +260,17 @@ export const AppProvider = ({ children }) => {
             typeof window !== "undefined" ? window?.ethereum?.isMetaMask : false,
           isFlintWalletInstalled:
             typeof window !== "undefined" ? window?.evmproviders?.flint?.isFlint : false,
+          isEternlWalletInstalled:
+            typeof window !== "undefined" ? window?.cardano?.eternl : false,
           isWalletConnected,
           isWrongChain: isWalletConnected && chain?.id !== CHAIN_ID,
           connectMetamask,
           connectFlintWallet,
-          connectWSC,
+          connectToEternlWSC,
+          connectToFlintWSC,
           redirectToMetamask,
           redirectToFlint,
+          redirectToEternl,
           activeConnector,
           account,
           signer,
