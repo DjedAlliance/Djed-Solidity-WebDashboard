@@ -40,6 +40,10 @@ const FlintWSCContent = () => {
     return provider?.wrap(destination, assetId, amount.toNumber());
   };
 
+  const areTokensAllowed = async (assetIds) => {
+    return await provider?.areTokensAllowed(assetIds);
+  };
+
   const unwrapWrapper = async (destination, assetId, amount) => {
     return provider?.unwrap(destination, assetId, amount);
   };
@@ -157,6 +161,7 @@ const FlintWSCContent = () => {
             network={network}
             tokens={tokens}
             moveAssetsToL1={moveAssetsToL1}
+            areTokensAllowed={areTokensAllowed}
             unwrap={unwrapWrapper}
             isLoading={isLoading}
             isSuccess={isSuccess}
@@ -278,10 +283,18 @@ const WSCAssets = ({
   tokens,
   unwrap,
   moveAssetsToL1,
+  areTokensAllowed,
   isLoading,
   isSuccess,
   address
 }) => {
+  const [allowedTokensMap, setAllowedTokensMap] = React.useState({});
+
+  React.useEffect(() => {
+    const assetIds = tokens.map((token) => token.contractAddress);
+    areTokensAllowed(assetIds).then(setAllowedTokensMap);
+  }, [tokens, areTokensAllowed]);
+
   const normalizeAda = (amount) => {
     const maxDecimalPlaces = 6;
     const decimalIndex = amount.indexOf(".");
@@ -338,7 +351,7 @@ const WSCAssets = ({
                 const lovelace = new BigNumber(normalizedAda).multipliedBy(
                   new BigNumber(10).pow(6)
                 );
-                unwrap(undefined, "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648", lovelace);
+                unwrap(undefined, undefined, lovelace);
               }}
             >
               Move all to L1
@@ -379,17 +392,22 @@ const WSCAssets = ({
                     {shortAddress}
                   </a>
                 </div>
-                <button
-                  onClick={() =>
-                    moveAssetsToL1(
-                      token.contractAddress,
-                      token.name,
-                      new BigNumber(token.balance)
-                    )
-                  }
-                >
-                  Move all to L1
-                </button>
+                {allowedTokensMap[token.contractAddress] ? (
+                    <button
+                      style={{ backgroundColor: "blue", color: "white" }}
+                      onClick={() =>
+                        moveAssetsToL1(
+                          token.contractAddress,
+                          token.name,
+                          new BigNumber(token.balance),
+                        )
+                      }
+                    >
+                      Move all to L1
+                    </button>
+                  ) : (
+                    "Not Allowed in Bridge"
+                  )}
               </li>
             );
           })}
