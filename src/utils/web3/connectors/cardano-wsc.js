@@ -27,7 +27,7 @@ export class CardanoWSCConnector extends Connector {
     super({ chains, options });
     this.id = options.id;
     this.#previousProvider = window?.ethereum;
-    this.#sdk = new WSCLib(MilkomedaNetworkName.C1Devnet, capitalize(options_.name), {
+    this.#sdk = new WSCLib(MilkomedaNetworkName.C1Devnet, options_.name, {
       oracleUrl: null,
       blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
       jsonRpcProviderUrl: null
