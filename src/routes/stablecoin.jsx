@@ -267,27 +267,27 @@ export default function Stablecoin() {
                 fixed exchange rate national currencies
               </a>
               , at a ratio of 1 to 1. One Djed Stablecoin is nominally worth 1 USD. The
-              peg is maintained through a reserve of mADA. The Djed protocol aims to
+              peg is maintained through a reserve of {process.env.REACT_APP_CHAIN_COIN}. The Djed protocol aims to
               maintain a reserve ratio between {systemParams?.reserveRatioMin} and{" "}
               {systemParams?.reserveRatioMax}. This means that, when the reserve ratio is
-              in this range, every StableCoin is backed by an amount of mADA worth at
-              least 4 USD and is able to tolerate an instantaneous mADA price crash of at
+              in this range, every StableCoin is backed by an amount of {process.env.REACT_APP_CHAIN_COIN} worth at
+              least 4 USD and is able to tolerate an instantaneous {process.env.REACT_APP_CHAIN_COIN} price crash of at
               least 75%.
             </p>
             <p>
               You are always allowed to sell back StableCoins to Djed. Djed pays 1 USD
-              worth of mADA per StableCoin if the reserve ratio is above 100% or R/S per
-              StableCoin otherwise, where R is Djed's total mADA reserve and S is the
+              worth of {process.env.REACT_APP_CHAIN_COIN} per StableCoin if the reserve ratio is above 100% or R/S per
+              StableCoin otherwise, where R is Djed's total {process.env.REACT_APP_CHAIN_COIN} reserve and S is the
               StableCoin supply.
             </p>
             <p>
               You are allowed to buy StableCoins from Djed for a price of 1 USD worth of
-              mADA per StableCoin, whenever the reserve ratio is above{" "}
+              {process.env.REACT_APP_CHAIN_COIN} per StableCoin, whenever the reserve ratio is above{" "}
               {systemParams?.reserveRatioMin}. When the reserve ratio is below{" "}
               {systemParams?.reserveRatioMin}, the purchase of StableCoins from Djed is
               disallowed, because it would reduce the reserve ratio further.
             </p>
-            <p>There is a limit of 10000 USD worth of mADA per transaction.</p>
+            <p>There is a limit of {process.env.REACT_APP_LIMIT_PER_TXN} USD worth of {process.env.REACT_APP_CHAIN_COIN} per transaction.</p>
             <p>
               StableCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}
