@@ -97,7 +97,7 @@ const FlintWSCContent = () => {
   const isLoading = status === "pending" || status === "idle";
   const isError = status === "rejected";
   const isSuccess = status === "success";
-  console.log(pendingTxs, "pendingTxs");
+
   return (
     <div className="content">
       <Tabs>
