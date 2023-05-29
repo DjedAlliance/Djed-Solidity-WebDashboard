@@ -1,3 +1,5 @@
+// TODO: Hot reload doesn't automatically reload the page
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { FullPageSpinner } from "../components/atoms/LoadingIcon/LoadingIcon";
 import {
@@ -25,17 +27,23 @@ import { BigNumber } from "ethers";
 
 import {
   flintWalletConnector,
+  flintWSCConnector,
+  eternlWSCConnector,
   metamaskConnector,
   supportedChain
 } from "../utils/web3/wagmi";
-import { useConnect, useAccount, useNetwork, useSigner } from "wagmi";
+import { useConnect, useAccount, useNetwork, useSigner, useProvider } from "wagmi";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
 export const AppProvider = ({ children }) => {
   const { connect } = useConnect();
-  const { isConnected: isWalletConnected, address: account } = useAccount();
+  const {
+    connector: activeConnector,
+    isConnected: isWalletConnected,
+    address: account
+  } = useAccount();
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
 
@@ -101,8 +109,12 @@ export const AppProvider = ({ children }) => {
   const redirectToFlint = () => {
     window.open("https://flint-wallet.com/", "_blank");
   };
+  const redirectToEternl = () => {
+    window.open("https://eternl.io/", "_blank");
+  };
 
   const setUpAccountSpecificValues = async () => {
+    if (coinContracts == null) return;
     const accountDetails = await getAccountDetails(
       web3,
       account,
@@ -127,15 +139,26 @@ export const AppProvider = ({ children }) => {
       chainId: supportedChain.id
     });
   };
+  const connectToEternlWSC = () => {
+    connect({
+      connector: eternlWSCConnector,
+    });
+  };
   const connectFlintWallet = () => {
     // flint doesn't support switchNetwork at the time being
     connect({
       connector: flintWalletConnector
     });
   };
+  const connectToFlintWSC = async () => {
+    connect({
+      connector: flintWSCConnector
+    });
+  };
 
   useInterval(
     async () => {
+      if (coinContracts == null) return;
       const accountDetails = await getAccountDetails(
         web3,
         account,
@@ -158,6 +181,7 @@ export const AppProvider = ({ children }) => {
 
   useInterval(
     async () => {
+      if (coinContracts == null) return;
       const coinsDetails = await getCoinDetails(
         coinContracts.stableCoin,
         coinContracts.reserveCoin,
@@ -236,12 +260,18 @@ export const AppProvider = ({ children }) => {
             typeof window !== "undefined" ? window?.ethereum?.isMetaMask : false,
           isFlintWalletInstalled:
             typeof window !== "undefined" ? window?.evmproviders?.flint?.isFlint : false,
+          isEternlWalletInstalled:
+            typeof window !== "undefined" ? window?.cardano?.eternl : false,
           isWalletConnected,
           isWrongChain: isWalletConnected && chain?.id !== CHAIN_ID,
           connectMetamask,
           connectFlintWallet,
+          connectToEternlWSC,
+          connectToFlintWSC,
           redirectToMetamask,
           redirectToFlint,
+          redirectToEternl,
+          activeConnector,
           account,
           signer,
           isRatioBelowMax,

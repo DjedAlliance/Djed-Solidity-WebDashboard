@@ -1,0 +1,139 @@
+@import "../../../scss/general_styling";
+
+.content {
+  color: white;
+  @media (max-width: 768px) {
+      display: none;
+  }
+
+
+  h2, p, .ant-tabs-content-holder {
+    color:white;
+  }
+  h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .ant-tabs {
+    min-width: 300px;
+    overflow: auto;
+  }
+   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
+   .ant-tabs-tab:hover {
+     color: #d07d2c;
+   }
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    border-bottom: 2px solid  #d07d2c;
+  }
+  .error {
+    text-align: center;
+    h2 {
+      margin-bottom: 10px
+    }
+  }
+  ul {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    gap: 12px;
+    max-height: 500px;
+    overflow: auto;
+    & .not-found {
+      text-align: center;
+    }
+    & .ant-skeleton-avatar {
+      width: 100%;
+      height: 60px;
+      border-radius: 10px;
+    }
+    &::-webkit-scrollbar {
+      width: 10px; /* width of the scrollbar */
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 5px;
+    }
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555; /* color of the scrollbar handle on hover */
+    }
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background: #100901; /* color of the scrollbar track */
+    }
+    /* Track on hover */
+    &::-webkit-scrollbar-track:hover {
+      background: #ddd; /* color of the scrollbar track on hover */
+    }
+  }
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border: 1px solid #383534;
+
+    & .value{
+      word-break: break-all;
+    }
+
+    & > div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      &.actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        input {
+          border: 1px solid #383534;
+          background: white;
+          width: 100%;
+          padding:10px;
+          color: #100901;
+        }
+      }
+      &>span:first-child{
+        font-weight: bold
+      }
+    }
+  }
+  button {
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    background: #d07d2c;
+    width: 100% !important;
+    padding: 7px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    &:hover {
+      background: #e38d33;
+
+    }
+  }
+  .address{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items:center;
+    font-size: 1rem;
+    font-weight: 600;
+    & > span {
+      font-weight: 400;
+      word-break: break-all;
+      color: #bbbbc9;
+    }
+  }
+}
+.external-link {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}

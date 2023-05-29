@@ -29,3 +29,12 @@
   }
 
 }
+
+.only-mobile {
+  display: none;
+  @media (max-width: 768px) {
+    display: block;
+    padding: 20px 20px 12px;
+    text-align: center;
+  }
+}

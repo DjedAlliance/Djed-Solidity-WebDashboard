@@ -8,17 +8,23 @@ import { useNavigate } from "react-router-dom";
 import "./_MetamaskStatusButton.scss";
 import { useDisconnect } from "wagmi";
 import { Button, Popover } from "antd";
+import FlintWSCContent, { WSCWalletLink } from "../FlintWSCContent.jsx/FlintWSCContent";
 
 const WalletConnectButton = () => {
   const {
     isFlintWalletInstalled,
+    isEternlWalletInstalled,
     isMetamaskWalletInstalled,
     isWalletConnected,
     account,
     connectMetamask,
     connectFlintWallet,
+    connectToFlintWSC,
+    connectToEternlWSC,
     redirectToMetamask,
-    redirectToFlint
+    redirectToFlint,
+    redirectToEternl,
+    activeConnector
   } = useAppProvider();
 
   return (
@@ -29,7 +35,13 @@ const WalletConnectButton = () => {
         getPopupContainer={(trigger) => trigger.parentElement}
         content={
           isWalletConnected ? (
-            <DisconnectButton />
+            <>
+              {activeConnector?.id?.includes("wsc") && <FlintWSCContent />}
+              <div className="only-mobile">
+                <WSCWalletLink />
+              </div>
+              <DisconnectButton />
+            </>
           ) : (
             <>
               <CustomButton
@@ -41,6 +53,18 @@ const WalletConnectButton = () => {
               <CustomButton
                 text={isFlintWalletInstalled ? "Flint Wallet" : "Install Flint"}
                 onClick={isFlintWalletInstalled ? connectFlintWallet : redirectToFlint}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+              <CustomButton
+                text={isFlintWalletInstalled ? "Flint WSC" : "Install Flint"}
+                onClick={isFlintWalletInstalled ? connectToFlintWSC : redirectToFlint}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+              <CustomButton
+                text={isEternlWalletInstalled ? "Eternl WSC" : "Install Eternl"}
+                onClick={isEternlWalletInstalled ? connectToEternlWSC : redirectToEternl}
                 iconWallet={<WalletOutlined />}
                 variant="primary"
               />
