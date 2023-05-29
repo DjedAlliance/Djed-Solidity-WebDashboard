@@ -62,17 +62,15 @@ export default function Protocol() {
               on {process.env.REACT_APP_BC}.
             </p>
             <p>
-              {process.env.REACT_APP_BC} is the EVM-compatible chain of the Cardano ecosystem. Its
-              native currency is mADA, a bridged version of Cardano's ADA. This asset is
+              {process.env.REACT_APP_PROTOCOL_CHAIN_DESCRIPTION}. This asset is
               used by the Djed protocol to back <a href="/sc">StableCoins</a> and{" "}
               <a href="/rc">ReserveCoins</a> and it is needed to buy any of these coins
               and to pay for transaction fees on {process.env.REACT_APP_BC}.
             </p>
             <p>
-              To learn more about how to obtain mADA or bridge your ADA from Cardano to
-              {process.env.REACT_APP_BC}, follow{" "}
+              To learn more about how to obtain {process.env.REACT_APP_PROTOCOL_OBTAIN_NATIVE}, follow{" "}
               <a
-                href="https://dcspark.github.io/milkomeda-documentation/cardano/for-end-users/obtaining-milkada"
+                href={process.env.REACT_APP_OBTAIN_NATIVE_GUIDE}
                 target="_blank"
                 rel="noopener noreferrer"
               >
