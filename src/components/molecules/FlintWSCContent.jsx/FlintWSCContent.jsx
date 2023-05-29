@@ -97,7 +97,7 @@ const FlintWSCContent = () => {
   const isLoading = status === "pending" || status === "idle";
   const isError = status === "rejected";
   const isSuccess = status === "success";
-
+  console.log(pendingTxs, "pendingTxs");
   return (
     <div className="content">
       <Tabs>
@@ -134,13 +134,18 @@ const FlintWSCContent = () => {
                   <li key={index}>
                     <div>
                       <span>Hash:</span>
-                      <a href={tx.explorer} target="_blank" rel="noreferrer">
+                      <a
+                        href={tx.explorer}
+                        className="value"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         {shortHash}
                       </a>
                     </div>
                     <div>
                       <span>Timestamp:</span>
-                      <span>{localDateTime}</span>
+                      <span className="value">{localDateTime}</span>
                     </div>
                     <div>
                       <span>Type:</span>
@@ -238,11 +243,11 @@ const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess, address }) => 
             <li key={index}>
               <div>
                 <span>Token</span>
-                <span>{token.assetName}</span>
+                <span className="value">{token.assetName}</span>
               </div>
               <div>
                 <span>Amount</span>
-                <span>{amounts[index]}</span>
+                <span className="value">{amounts[index]}</span>
               </div>
 
               {token.bridgeAllowed && (
@@ -329,7 +334,7 @@ const WSCAssets = ({
             </div>
             <div>
               <span>Amount:</span>
-              {destinationBalance}
+              <span className="value">{destinationBalance}</span>
             </div>
             <div>
               <span>Contract Address</span>
@@ -378,7 +383,7 @@ const WSCAssets = ({
                 </div>
                 <div>
                   <span>Amount:</span>
-                  {adjustedBalance.toString()}
+                  <span className="value">{adjustedBalance.toString()}</span>
                 </div>
                 <div>
                   <span>Contract Address</span>
@@ -393,21 +398,21 @@ const WSCAssets = ({
                   </a>
                 </div>
                 {allowedTokensMap[token.contractAddress] ? (
-                    <button
-                      style={{ backgroundColor: "blue", color: "white" }}
-                      onClick={() =>
-                        moveAssetsToL1(
-                          token.contractAddress,
-                          token.name,
-                          new BigNumber(token.balance),
-                        )
-                      }
-                    >
-                      Move all to L1
-                    </button>
-                  ) : (
-                    "Not Allowed in Bridge"
-                  )}
+                  <button
+                    style={{ backgroundColor: "blue", color: "white" }}
+                    onClick={() =>
+                      moveAssetsToL1(
+                        token.contractAddress,
+                        token.name,
+                        new BigNumber(token.balance)
+                      )
+                    }
+                  >
+                    Move all to L1
+                  </button>
+                ) : (
+                  "Not Allowed in Bridge"
+                )}
               </li>
             );
           })}
