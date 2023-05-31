@@ -21,7 +21,7 @@ export default function MainLayout() {
       <Layout className="layout">
         <Header className="header-desktop">
           <div className="logo">
-            <img src="/Logo_symbol.png" />
+            <img src="/Logo_symbol.png" alt="Logo" />
           </div>
           <Menu mode="horizontal" selectedKeys={[location.pathname]}>
             <Menu.Item key="/audit">
@@ -101,7 +101,7 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
   return (
     <div className="header-mobile">
       <div className="logo">
-        <img src="/Logo_symbol.png" />
+        <img src="/Logo_symbol.png" alt="Logo" />
       </div>
       <Dropdown
         overlayClassName="menu-mobile-dropdown"

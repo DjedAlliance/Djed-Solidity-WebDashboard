@@ -13,7 +13,7 @@ const CoinCard = ({
   equivalence
 }) => {
   const invPrice = 1e6 / parseFloat(priceAmount?.replaceAll(",", ""));
-  const invPriceScaled = decimalScaling(invPrice.toFixed(0).toString(10), 6);
+  // const invPriceScaled = decimalScaling(invPrice.toFixed(0).toString(10), 6);
 
   return (
     <div className="CoinCard">

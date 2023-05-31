@@ -55,7 +55,7 @@ export const AppProvider = ({ children }) => {
       await setUpAccountSpecificValues();
     };
     setUp();
-  }, [account]);
+  }, [account, setUpAccountSpecificValues]);
 
   useEffect(() => {
     const init = async () => {

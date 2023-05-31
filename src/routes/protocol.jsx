@@ -38,13 +38,14 @@ export default function Protocol() {
               Djed is a formally verified crypto-backed autonomous stablecoin protocol. It
               has been researched since Q2 2020, its whitepaper has been released in
               August 2021, and it has multiple{" "}
-              <a href="https://github.com/DjedAlliance" target="_blank">
+              <a href="https://github.com/DjedAlliance" target="_blank" rel="noreferrer">
                 implementations
               </a>{" "}
               and{" "}
               <a
                 href="https://docs.djed.one/implementations-and-deployments/deployments"
                 target="_blank"
+                rel="noreferrer"
               >
                 deployments
               </a>
@@ -52,6 +53,7 @@ export default function Protocol() {
               <a
                 href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
                 target="_blank"
+                rel="noreferrer"
               >
                 deployment
               </a>{" "}
@@ -59,6 +61,7 @@ export default function Protocol() {
               <a
                 href="https://github.com/DjedAlliance/Djed-Solidity/commits/Belus"
                 target="_blank"
+                rel="noreferrer"
               >
                 these smart contracts
               </a>{" "}
