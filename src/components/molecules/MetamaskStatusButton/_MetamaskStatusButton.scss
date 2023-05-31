@@ -10,9 +10,9 @@
 }
 
 .wrapper-connect-btn {
-  position:relative;
+  position: relative;
 
-  &> button {
+  & > button {
     @include buttonBase(0.5em 1.25em, 8px);
     @include primary-text($body, $white, 600);
     background: $black-2;
@@ -21,11 +21,11 @@
 
     border: 2px solid $black-3;
     height: 50px;
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background: $black-2;
       border-color: inherit;
-      color: #fff
+      color: #fff;
     }
   }
-
 }

@@ -8,13 +8,12 @@ import TermsOfUse from "./routes/terms-of-use";
 import { AppProvider } from "./context/AppProvider";
 import { client } from "./utils/web3/wagmi";
 import { WagmiConfig } from "wagmi";
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export default function App() {
-
   useEffect(() => {
     document.title = `Djed on ${process.env.REACT_APP_BC}`;
-  },[])
+  }, []);
 
   return (
     <BrowserRouter>
