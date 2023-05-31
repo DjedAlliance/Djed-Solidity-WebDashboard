@@ -42,7 +42,10 @@ export default function Protocol() {
                 implementations
               </a>{" "}
               and{" "}
-              <a href="https://docs.djed.one/implementations-and-deployments/deployments" target="_blank">
+              <a
+                href="https://docs.djed.one/implementations-and-deployments/deployments"
+                target="_blank"
+              >
                 deployments
               </a>
               . Here you can interact with a{" "}
@@ -62,13 +65,14 @@ export default function Protocol() {
               on {process.env.REACT_APP_BC}.
             </p>
             <p>
-              {process.env.REACT_APP_PROTOCOL_CHAIN_DESCRIPTION}. This asset is
-              used by the Djed protocol to back <a href="/sc">StableCoins</a> and{" "}
+              {process.env.REACT_APP_PROTOCOL_CHAIN_DESCRIPTION}. This asset is used by
+              the Djed protocol to back <a href="/sc">StableCoins</a> and{" "}
               <a href="/rc">ReserveCoins</a> and it is needed to buy any of these coins
               and to pay for transaction fees on {process.env.REACT_APP_BC}.
             </p>
             <p>
-              To learn more about how to obtain {process.env.REACT_APP_PROTOCOL_OBTAIN_NATIVE}, follow{" "}
+              To learn more about how to obtain{" "}
+              {process.env.REACT_APP_PROTOCOL_OBTAIN_NATIVE}, follow{" "}
               <a
                 href={process.env.REACT_APP_OBTAIN_NATIVE_GUIDE}
                 target="_blank"
@@ -82,9 +86,8 @@ export default function Protocol() {
               This deployment is immutable, unstoppable, fully autonomous and
               zero-governance. No one is able to change the deployed code or the
               parameters of the deployment. No one is operating it. No one controls your
-              funds. Treat it as a foreign non-territorial self-sovereign
-              autonomous monetary authority whose currency follows a
-              self-driving monetary policy.
+              funds. Treat it as a foreign non-territorial self-sovereign autonomous
+              monetary authority whose currency follows a self-driving monetary policy.
             </p>
           </div>
           <MetamaskConnectButton />

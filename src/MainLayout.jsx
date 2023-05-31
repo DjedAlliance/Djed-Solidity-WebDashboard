@@ -116,7 +116,8 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
             <Menu.Item key="/audit">
               <Link
                 to={{
-                  pathname: "//github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed-2.pdf"
+                  pathname:
+                    "//github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed-2.pdf"
                 }}
                 target="_blank"
               >
