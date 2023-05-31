@@ -2,7 +2,14 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-We handle environment variables in `.env` files with default values in `env` folder, i.e. `src/env` contains `local.env` and `production.env` that contain default values for specified environments. If the repo is freshly cloned, you can copy `local.env` file to the root folder as `.env`.
+
+## Pre-requisites
+
+We handle environment variables in `.env` files with default values in [env/](./env/) folder, i.e. [env/](./env/) contains `*.env` files for specific environments. If the repo is freshly cloned, you can copy one of those files to the root folder as `.env`, `cp ./env/milkomeda-c1-testnet.env .env` is good enough for most cases.
+
+We use [nvm](https://github.com/nvm-sh/nvm) to handle the Node version, if you don't use `nvm`, the Node version can take from the [.nvmrc](./.nvmrc) file.
+
+Run `npm install` to download the project dependencies.
 
 ## Available Scripts
 
@@ -20,6 +27,10 @@ You may also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run format`
+
+Formats the code to comply with the `prettier` style.
 
 ### `npm run build`
 
