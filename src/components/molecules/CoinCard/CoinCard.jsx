@@ -1,7 +1,7 @@
 import React from "react";
 import CoinIndicator from "../../atoms/CoinIndictor/CoinIndicator";
 import "./_CoinCard.scss";
-import { decimalScaling } from "../../../utils/helpers";
+// import { decimalScaling } from "../../../utils/helpers";
 
 const CoinCard = ({
   coinIcon,
@@ -12,7 +12,7 @@ const CoinCard = ({
   tokenName,
   equivalence
 }) => {
-  const invPrice = 1e6 / parseFloat(priceAmount?.replaceAll(",", ""));
+  // const invPrice = 1e6 / parseFloat(priceAmount?.replaceAll(",", ""));
   // const invPriceScaled = decimalScaling(invPrice.toFixed(0).toString(10), 6);
 
   return (

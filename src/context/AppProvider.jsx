@@ -55,7 +55,9 @@ export const AppProvider = ({ children }) => {
       await setUpAccountSpecificValues();
     };
     setUp();
-  }, [account, setUpAccountSpecificValues]);
+    // TODO: React Hook useEffect has a missing dependency: 'setUpAccountSpecificValues'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+    // eslint-disable-next-line
+  }, [account]);
 
   useEffect(() => {
     const init = async () => {
