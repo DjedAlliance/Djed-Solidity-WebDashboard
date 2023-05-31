@@ -6,10 +6,9 @@ module.exports = {
             const wasmExtensionRegExp = /\.wasm$/;
             webpackConfig.resolve.extensions.push('.wasm');
             webpackConfig.experiments = {
-                asyncWebAssembly: false,
-                lazyCompilation: true,
-                syncWebAssembly: true,
+                asyncWebAssembly: true,
                 topLevelAwait: true,
+                layers: true,
             };
             webpackConfig.resolve.fallback = {
                 buffer: require.resolve('buffer/'),
