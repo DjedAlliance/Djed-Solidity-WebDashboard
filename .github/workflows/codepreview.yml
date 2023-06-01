@@ -31,41 +31,43 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Prepare build (main)
-        if: ${{ (github.head_ref || github.ref_name) == 'main' }}
-        run: npm run build:milkomeda-c1-testnet
+      # - name: Install dependencies
+      #   run: npm ci
 
       - name: Prepare build (pr)
         if: ${{ (github.head_ref || github.ref_name) != 'main' }}
-        run: npm run build:milkomeda-c1
+        # run: npm run build:milkomeda-c1-testnet
+        run: echo "we are on a pr"
 
-      - name: Create SSH key
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$CODEPREVIEW_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "StrictHostKeyChecking=no" > ~/.ssh/config
-        shell: bash
-        env:
-          CODEPREVIEW_PRIVATE_KEY: ${{secrets.CODEPREVIEW_PRIVATE_KEY}}
+      - name: Prepare build (main)
+        if: ${{ (github.head_ref || github.ref_name) == 'main' }}
+        # run: npm run build:milkomeda-c1
+        run: echo "we are on main"
 
-      - name: Create codepreview scripts
-        run: |
-          rm -rf ./infra
-          curl -u "github:$CODEPREVIEW_TOKEN" -O https://djed.codepreview.io/djed.zip
-          unzip djed.zip -d .
-          chmod +x ./infra/scripts/*.sh
-        shell: bash
-        env:
-          CODEPREVIEW_TOKEN: ${{secrets.CODEPREVIEW_TOKEN}}
+      # - name: Create SSH key
+      #   run: |
+      #     mkdir -p ~/.ssh/
+      #     echo "$CODEPREVIEW_PRIVATE_KEY" > ~/.ssh/id_rsa
+      #     chmod 600 ~/.ssh/id_rsa
+      #     echo "StrictHostKeyChecking=no" > ~/.ssh/config
+      #   shell: bash
+      #   env:
+      #     CODEPREVIEW_PRIVATE_KEY: ${{secrets.CODEPREVIEW_PRIVATE_KEY}}
 
-      - name: Create preview env
-        run: cd infra && ./scripts/deploy-preview.sh
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          PR_NUMBER: ${{ github.event.number }}
+      # - name: Create codepreview scripts
+      #   run: |
+      #     rm -rf ./infra
+      #     curl -u "github:$CODEPREVIEW_TOKEN" -O https://djed.codepreview.io/djed.zip
+      #     unzip djed.zip -d .
+      #     chmod +x ./infra/scripts/*.sh
+      #   shell: bash
+      #   env:
+      #     CODEPREVIEW_TOKEN: ${{secrets.CODEPREVIEW_TOKEN}}
 
+      # - name: Create preview env
+      #   run: cd infra && ./scripts/deploy-preview.sh
+      #   env:
+      #     GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      #     PR_NUMBER: ${{ github.event.number }}
