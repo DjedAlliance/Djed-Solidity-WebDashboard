@@ -42,7 +42,7 @@ jobs:
         run: echo "we are on a pr"
 
       - name: Prepare build (main)
-        if: ${{ (github.head_ref || github.ref_name) == 'main' }}
+        if: ${{ (github.head_ref || github.ref_name) == 'codepreview' }}
         # run: npm run build:milkomeda-c1
         run: echo "we are on main"
 
