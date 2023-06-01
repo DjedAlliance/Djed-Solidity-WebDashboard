@@ -32,8 +32,16 @@ jobs:
         with:
           node-version: 16
 
-      - name: Compile frontend
-        run: npm install && npm run build:milkomeda-c1-testnet
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare build (main)
+        if: ${{ (github.head_ref || github.ref_name) == 'main' }}
+        run: npm run build:milkomeda-c1-testnet
+
+      - name: Prepare build (pr)
+        if: ${{ (github.head_ref || github.ref_name) != 'main' }}
+        run: npm run build:milkomeda-c1
 
       - name: Create SSH key
         run: |
