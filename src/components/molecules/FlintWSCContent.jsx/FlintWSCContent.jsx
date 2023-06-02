@@ -172,6 +172,16 @@ const FlintWSCContent = () => {
             isSuccess={isSuccess}
           />
         </Tabs.TabPane>
+        <Tabs.TabPane tab="About" key="about">
+          <p>
+            Smart contracts are revolutionary pieces of blockchain technology that have
+            completely transformed the way agreements and transactions are conducted.
+            These self-executing contracts contain the terms of the agreement directly in
+            the code, eliminating the need for intermediaries or third parties. They are
+            designed to automatically enforce the terms of the agreement, ensuring trust,
+            transparency, and efficiency in various industries.
+          </p>
+        </Tabs.TabPane>
       </Tabs>
       {isError && (
         <div className="error">
