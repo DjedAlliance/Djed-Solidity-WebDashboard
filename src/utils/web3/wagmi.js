@@ -3,8 +3,7 @@ import { configureChains, createClient, createStorage } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { FlintWalletConnector } from "./connectors/flint";
-import { CardanoWSCConnector } from "./connectors/cardano-wsc";
-
+import { CardanoWSCConnector } from "@dcspark/cardano-wsc-wagmi/dist";
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
 export const supportedChain =
@@ -29,16 +28,20 @@ export const flintWalletConnector = new FlintWalletConnector({
   chains: [supportedChain]
 });
 export const flintWSCConnector = new CardanoWSCConnector({
-  chains: [supportedChain],
   options: {
-    name: "flint"
+    name: "flint",
+    oracleUrl: null,
+    blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
+    jsonRpcProviderUrl: null
   }
 });
 
 export const eternlWSCConnector = new CardanoWSCConnector({
-  chains: [supportedChain],
   options: {
-    name: "eternl"
+    name: "etrnal",
+    oracleUrl: null,
+    blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
+    jsonRpcProviderUrl: null
   }
 });
 

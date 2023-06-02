@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@dcspark/cardano-wsc-wagmi": "github:dcSpark/cardano-wsc-wagmi",
     "@metamask/detect-provider": "^1.2.0",
     "antd": "^4.19.2",
     "assert": "^2.0.0",
