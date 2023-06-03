@@ -2,9 +2,9 @@ name: Create preview environment
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, milkomeda-c1-testnet ]
   push:
-    branches: [ main ]
+    branches: [ main, milkomeda-c1-testnet ]
 
 concurrency:
   # The preview script can't handle concurrent deploys
