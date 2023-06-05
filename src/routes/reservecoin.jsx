@@ -278,7 +278,7 @@ export default function ReserveCoin() {
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>Djed ReserveCoin {/*<strong>Name</strong>*/}</h1>
+          <h1>ReserveCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
               A ReserveCoin represents a portion of the surplus of the underlying reserves
@@ -320,11 +320,11 @@ export default function ReserveCoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-two.png"
-            coinName={`${process.env.REACT_APP_BC} Djed ReserveCoin`}
+            coinName={`${process.env.REACT_APP_RC_NAME}`}
             priceAmount={coinsDetails?.scaledBuyPriceRc}
             sellPriceAmount={coinsDetails?.scaledSellPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
-            tokenName="RC"
+            tokenName={`${process.env.REACT_APP_RC_SYMBOL}`}
             equivalence={rcConverted}
           />
         </div>
@@ -333,12 +333,12 @@ export default function ReserveCoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            {process.env.REACT_APP_BC} Djed ReserveCoin
+            {process.env.REACT_APP_RC_NAME}
           </h2>
           <form>
             <div className="PurchaseContainer">
               <OperationSelector
-                coinName={`${process.env.REACT_APP_BC} Djed ReserveCoin`}
+                coinName={`${process.env.REACT_APP_RC_SYMBOL}`}
                 selectionCallback={() => {
                   setBuyOrSell();
                   setValue(null);
@@ -391,7 +391,7 @@ export default function ReserveCoin() {
                     disabled={buttonDisabled}
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
-                    currencyName={`${process.env.REACT_APP_BC} Djed ReserveCoin`}
+                    currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
                   />
                 </>
               ) : (

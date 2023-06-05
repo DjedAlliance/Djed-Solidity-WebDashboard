@@ -102,19 +102,19 @@ export default function Protocol() {
           <div className="CoinsContainer">
             <CoinCard
               coinIcon="/coin-icon-one.png"
-              coinName={`${process.env.REACT_APP_BC_SHORT} Djed Dollar`}
+              coinName={`${process.env.REACT_APP_SC_NAME}`}
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
-              tokenName="SC"
+              tokenName={`${process.env.REACT_APP_SC_SYMBOL}`}
               equivalence={scConverted}
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
-              coinName={`${process.env.REACT_APP_BC_SHORT} Djed ReserveCoin`}
+              coinName={`${process.env.REACT_APP_RC_NAME}`}
               priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
               sellPriceAmount={coinsDetails?.scaledSellPriceRc}
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
-              tokenName="RC"
+              tokenName={`${process.env.REACT_APP_RC_SYMBOL}`}
               equivalence={rcConverted}
             />
             <ReservesCard
