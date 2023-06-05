@@ -253,11 +253,11 @@ export default function Stablecoin() {
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>Djed StableCoin {/*<strong>Name</strong>*/}</h1>
+          <h1>StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
               The StableCoin of this Djed deployment is called{" "}
-              <strong>{process.env.REACT_APP_BC} Djed Dollar</strong>. It is pegged to the
+              <strong>{process.env.REACT_APP_SC_NAME}</strong>. It is pegged to the
               USD, similarly to various{" "}
               <a
                 href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
@@ -307,7 +307,7 @@ export default function Stablecoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-one.png"
-            coinName={`${process.env.REACT_APP_BC} Djed Dollar`}
+            coinName={`${process.env.REACT_APP_SC_NAME}`}
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
             tokenName="SC"
@@ -319,12 +319,12 @@ export default function Stablecoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            {process.env.REACT_APP_BC} Djed Dollar
+            {process.env.REACT_APP_SC_NAME}
           </h2>
           <form>
             <div className="PurchaseContainer">
               <OperationSelector
-                coinName={`${process.env.REACT_APP_BC} Djed Dollar`}
+                coinName={`${process.env.REACT_APP_SC_SYMBOL}`}
                 selectionCallback={() => {
                   setBuyOrSell();
                   setValue(null);
@@ -376,7 +376,7 @@ export default function Stablecoin() {
                     disabled={buttonDisabled}
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
-                    currencyName={`${process.env.REACT_APP_BC} Djed Dollar`}
+                    currencyName={`${process.env.REACT_APP_SC_NAME}`}
                   />
                 </>
               ) : (
