@@ -62,7 +62,8 @@ const BuySellCoin = ({
       {isWrongChain ? (
         <p className="Alert">
           <ExclamationCircleOutlined />
-          Your wallet is connected to the wrong blockchain network. Please connect it to {process.env.REACT_APP_BC} and refresh the page.
+          Your wallet is connected to the wrong blockchain network. Please connect it to{" "}
+          {process.env.REACT_APP_BC} and refresh the page.
         </p>
       ) : null}
       <hr />

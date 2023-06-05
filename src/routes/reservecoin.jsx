@@ -279,15 +279,17 @@ export default function ReserveCoin() {
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>Djed ReserveCoin {/*<strong>Name</strong>*/}</h1>
+          <h1>ReserveCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
               A ReserveCoin represents a portion of the surplus of the underlying reserves
-              of {process.env.REACT_APP_CHAIN_COIN} in the Djed protocol. As such, ReserveCoins have a leveraged
-              volatile price that increases when the price of {process.env.REACT_APP_CHAIN_COIN} increases and decreases
-              when the price of {process.env.REACT_APP_CHAIN_COIN} decreases. Furthermore, ReserveCoin holders
-              ultimately benefit from fees paid to the Djed protocol, since most fees are
-              accumulated into the reserve and hence contribute to the reserve surplus.
+              of {process.env.REACT_APP_CHAIN_COIN} in the Djed protocol. As such,
+              ReserveCoins have a leveraged volatile price that increases when the price
+              of {process.env.REACT_APP_CHAIN_COIN} increases and decreases when the price
+              of {process.env.REACT_APP_CHAIN_COIN} decreases. Furthermore, ReserveCoin
+              holders ultimately benefit from fees paid to the Djed protocol, since most
+              fees are accumulated into the reserve and hence contribute to the reserve
+              surplus.
             </p>
             <p>
               You are allowed to buy ReserveCoins, as long as the reserve ratio remains
@@ -300,7 +302,10 @@ export default function ReserveCoin() {
               above the minimum of {systemParams?.reserveRatioMin}. This aims to ensure
               that all StableCoins remain sufficiently backed.
             </p>
-            <p>There is a limit of {process.env.REACT_APP_LIMIT_PER_TXN} USD worth of {process.env.REACT_APP_CHAIN_COIN} per transaction.</p>
+            <p>
+              There is a limit of {process.env.REACT_APP_LIMIT_PER_TXN} USD worth of{" "}
+              {process.env.REACT_APP_CHAIN_COIN} per transaction.
+            </p>
             <p>
               ReserveCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}
@@ -316,11 +321,11 @@ export default function ReserveCoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-two.png"
-            coinName={`${process.env.REACT_APP_BC} Djed ReserveCoin`}
+            coinName={`${process.env.REACT_APP_RC_NAME}`}
             priceAmount={coinsDetails?.scaledBuyPriceRc}
             sellPriceAmount={coinsDetails?.scaledSellPriceRc}
             circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
-            tokenName="RC"
+            tokenName={`${process.env.REACT_APP_RC_SYMBOL}`}
             equivalence={rcConverted}
           />
         </div>
@@ -329,12 +334,12 @@ export default function ReserveCoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            {process.env.REACT_APP_BC} Djed ReserveCoin
+            {process.env.REACT_APP_RC_NAME}
           </h2>
           <form>
             <div className="PurchaseContainer">
               <OperationSelector
-                coinName={`${process.env.REACT_APP_BC} Djed ReserveCoin`}
+                coinName={`${process.env.REACT_APP_RC_SYMBOL}`}
                 selectionCallback={() => {
                   setBuyOrSell();
                   setValue(null);
@@ -387,7 +392,7 @@ export default function ReserveCoin() {
                     disabled={buttonDisabled}
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
-                    currencyName={`${process.env.REACT_APP_BC} Djed ReserveCoin`}
+                    currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
                   />
                 </>
               ) : (

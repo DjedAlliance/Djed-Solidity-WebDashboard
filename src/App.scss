@@ -213,8 +213,8 @@ body {
   color: $black-1;
 }
 
-
-.ant-popover-arrow-content, .ant-popover-arrow-content::before{
+.ant-popover-arrow-content,
+.ant-popover-arrow-content::before {
   background: $black-2;
 }
 .ant-popover-inner-content {
@@ -224,7 +224,7 @@ body {
   gap: 8px;
   button {
     width: 100%;
-    justify-content:start;
+    justify-content: start;
     margin: 0 !important;
   }
 }

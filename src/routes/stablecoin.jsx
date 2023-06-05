@@ -253,11 +253,11 @@ export default function Stablecoin() {
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>Djed StableCoin {/*<strong>Name</strong>*/}</h1>
+          <h1>StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
               The StableCoin of this Djed deployment is called{" "}
-              <strong>{process.env.REACT_APP_BC} Djed Dollar</strong>. It is pegged to the
+              <strong>{process.env.REACT_APP_SC_NAME}</strong>. It is pegged to the
               USD, similarly to various{" "}
               <a
                 href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
@@ -267,27 +267,31 @@ export default function Stablecoin() {
                 fixed exchange rate national currencies
               </a>
               , at a ratio of 1 to 1. One Djed Stablecoin is nominally worth 1 USD. The
-              peg is maintained through a reserve of {process.env.REACT_APP_CHAIN_COIN}. The Djed protocol aims to
-              maintain a reserve ratio between {systemParams?.reserveRatioMin} and{" "}
-              {systemParams?.reserveRatioMax}. This means that, when the reserve ratio is
-              in this range, every StableCoin is backed by an amount of {process.env.REACT_APP_CHAIN_COIN} worth at
-              least 4 USD and is able to tolerate an instantaneous {process.env.REACT_APP_CHAIN_COIN} price crash of at
-              least 75%.
+              peg is maintained through a reserve of {process.env.REACT_APP_CHAIN_COIN}.
+              The Djed protocol aims to maintain a reserve ratio between{" "}
+              {systemParams?.reserveRatioMin} and {systemParams?.reserveRatioMax}. This
+              means that, when the reserve ratio is in this range, every StableCoin is
+              backed by an amount of {process.env.REACT_APP_CHAIN_COIN} worth at least 4
+              USD and is able to tolerate an instantaneous{" "}
+              {process.env.REACT_APP_CHAIN_COIN} price crash of at least 75%.
             </p>
             <p>
               You are always allowed to sell back StableCoins to Djed. Djed pays 1 USD
-              worth of {process.env.REACT_APP_CHAIN_COIN} per StableCoin if the reserve ratio is above 100% or R/S per
-              StableCoin otherwise, where R is Djed's total {process.env.REACT_APP_CHAIN_COIN} reserve and S is the
-              StableCoin supply.
+              worth of {process.env.REACT_APP_CHAIN_COIN} per StableCoin if the reserve
+              ratio is above 100% or R/S per StableCoin otherwise, where R is Djed's total{" "}
+              {process.env.REACT_APP_CHAIN_COIN} reserve and S is the StableCoin supply.
             </p>
             <p>
               You are allowed to buy StableCoins from Djed for a price of 1 USD worth of
-              {process.env.REACT_APP_CHAIN_COIN} per StableCoin, whenever the reserve ratio is above{" "}
-              {systemParams?.reserveRatioMin}. When the reserve ratio is below{" "}
-              {systemParams?.reserveRatioMin}, the purchase of StableCoins from Djed is
-              disallowed, because it would reduce the reserve ratio further.
+              {process.env.REACT_APP_CHAIN_COIN} per StableCoin, whenever the reserve
+              ratio is above {systemParams?.reserveRatioMin}. When the reserve ratio is
+              below {systemParams?.reserveRatioMin}, the purchase of StableCoins from Djed
+              is disallowed, because it would reduce the reserve ratio further.
             </p>
-            <p>There is a limit of {process.env.REACT_APP_LIMIT_PER_TXN} USD worth of {process.env.REACT_APP_CHAIN_COIN} per transaction.</p>
+            <p>
+              There is a limit of {process.env.REACT_APP_LIMIT_PER_TXN} USD worth of{" "}
+              {process.env.REACT_APP_CHAIN_COIN} per transaction.
+            </p>
             <p>
               StableCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}
@@ -303,7 +307,7 @@ export default function Stablecoin() {
           </div>
           <CoinCard
             coinIcon="/coin-icon-one.png"
-            coinName={`${process.env.REACT_APP_BC} Djed Dollar`}
+            coinName={`${process.env.REACT_APP_SC_NAME}`}
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
             tokenName="SC"
@@ -315,12 +319,12 @@ export default function Stablecoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            {process.env.REACT_APP_BC} Djed Dollar
+            {process.env.REACT_APP_SC_NAME}
           </h2>
           <form>
             <div className="PurchaseContainer">
               <OperationSelector
-                coinName={`${process.env.REACT_APP_BC} Djed Dollar`}
+                coinName={`${process.env.REACT_APP_SC_SYMBOL}`}
                 selectionCallback={() => {
                   setBuyOrSell();
                   setValue(null);
@@ -372,7 +376,7 @@ export default function Stablecoin() {
                     disabled={buttonDisabled}
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
-                    currencyName={`${process.env.REACT_APP_BC} Djed Dollar`}
+                    currencyName={`${process.env.REACT_APP_SC_NAME}`}
                   />
                 </>
               ) : (
