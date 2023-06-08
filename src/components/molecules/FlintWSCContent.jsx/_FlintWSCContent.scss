@@ -2,10 +2,17 @@
 
 .content {
   color: white;
+
   @media (max-width: 768px) {
       display: none;
   }
 
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 10px;
+  }
 
   h2, p, .ant-tabs-content-holder {
     color:white;
