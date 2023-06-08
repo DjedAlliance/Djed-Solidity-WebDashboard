@@ -26,9 +26,39 @@ const Step = ({ title, active, isLast }) => {
     <>
       <div className="step">
         <div className={`step-icon ${active && "active"}`}>
-          {active && (
-            <svg fill="#d07d2c" strokeWidth="0" viewBox="0 0 16 16">
-              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
+          {active ? (
+            <svg
+              stroke="currentColor"
+              fill="currentColor"
+              strokeWidth="0"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+              height="1em"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          ) : (
+            <svg
+              stroke="#a0a0ac"
+              fill="#a0a0ac"
+              strokeWidth="0"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+              height="0.7em"
+              width="0.7em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"
+                clipRule="evenodd"
+              ></path>
             </svg>
           )}
         </div>
@@ -36,7 +66,7 @@ const Step = ({ title, active, isLast }) => {
       </div>
       {isLast ? null : (
         <svg
-          stroke="#a0a0ac"
+          stroke="#c7803a"
           fill="none"
           strokeWidth="2"
           viewBox="0 0 24 24"

@@ -164,11 +164,14 @@
   &-icon{
     width: 36px;
     height: 36px;
+    padding: 4px;
     background: #41455c;
     border-radius: 50%;
+    color: #41455c;
 
     &.active {
-      background: #fff;
+      background: #d07d2c;
+      color: #fff
     }
     svg {
       width: 100%;
