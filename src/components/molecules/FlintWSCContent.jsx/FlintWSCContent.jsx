@@ -20,6 +20,43 @@ const useInterval = (callback, delay) => {
     }
   }, [delay]);
 };
+
+const Step = ({ title, active, isLast }) => {
+  return (
+    <>
+      <div className="step">
+        <div className={`step-icon ${active && "active"}`}>
+          {active && (
+            <svg fill="#d07d2c" strokeWidth="0" viewBox="0 0 16 16">
+              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
+            </svg>
+          )}
+        </div>
+        <div className="step-label">{title}</div>
+      </div>
+      {isLast ? null : (
+        <svg
+          stroke="#a0a0ac"
+          fill="none"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          height="2em"
+          width="2em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M21 17l-18 0"></path>
+          <path d="M6 10l-3 -3l3 -3"></path>
+          <path d="M3 7l18 0"></path>
+          <path d="M18 20l3 -3l-3 -3"></path>
+        </svg>
+      )}
+    </>
+  );
+};
+
 const network = "Cardano C1 Devnet";
 const FlintWSCContent = () => {
   const { activeConnector } = useAppProvider();
@@ -101,31 +138,9 @@ const FlintWSCContent = () => {
   return (
     <div className="content">
       <div className="header">
-        <span>Cardano</span>
-        <svg
-          stroke="currentColor"
-          fill="currentColor"
-          stroke-width="0"
-          viewBox="0 0 512 512"
-          height="1em"
-          width="1em"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z"></path>
-        </svg>
-        <span>WSC</span>
-        <svg
-          stroke="currentColor"
-          fill="currentColor"
-          stroke-width="0"
-          viewBox="0 0 512 512"
-          height="1em"
-          width="1em"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z"></path>
-        </svg>
-        <span>Dapp</span>
+        {["Cardano", "WSC", "Dapp"].map((step, index, arr) => (
+          <Step title={step} active={index === 0} isLast={arr.length - 1 === index} />
+        ))}
       </div>
       <Tabs>
         <Tabs.TabPane tab="Cardano" key="cardano">

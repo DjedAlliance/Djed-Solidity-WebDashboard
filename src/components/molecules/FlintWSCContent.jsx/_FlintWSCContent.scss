@@ -10,8 +10,11 @@
   .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 20px 10px;
+    justify-content: center;
+    gap: 30px;
+    padding: 30px 10px;
+    border-bottom: 1px solid #383534;
+    margin-bottom:20px;
   }
 
   h2, p, .ant-tabs-content-holder {
@@ -143,4 +146,33 @@
   justify-content: center;
   gap: 8px;
   margin-bottom: 20px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 80px;
+
+
+  &-label{
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  &-icon{
+    width: 36px;
+    height: 36px;
+    background: #41455c;
+    border-radius: 50%;
+
+    &.active {
+      background: #fff;
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
