@@ -290,3 +290,14 @@ body {
     }
   }
 }
+.ant-message {
+  z-index: 1100;
+}
+.ant-message-info .anticon, .ant-message-loading .anticon {
+  color: #d07d2c;
+}
+.ant-message-notice-content{
+  background: #ffffff;
+  color: #100901;
+  font-weight: 600;
+}

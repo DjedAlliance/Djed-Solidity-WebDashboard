@@ -1,10 +1,11 @@
 import React from "react";
 import { useAppProvider } from "../../../context/AppProvider";
 import "./_FlintWSCContent.scss";
-import { Skeleton, Tabs } from "antd";
+import { Skeleton, Spin, Tabs, message } from "antd";
 import BigNumber from "bignumber.js";
 
 import { MilkomedaConstants } from "milkomeda-wsc/build/MilkomedaConstants";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const useInterval = (callback, delay) => {
   const savedCallback = React.useRef(undefined);
@@ -166,16 +167,17 @@ const FlintWSCContent = () => {
   };
 
   const updateWalletData = React.useCallback(async () => {
-    const destinationBalance = await provider?.eth_getBalance();
+    if (!provider) return;
+    const destinationBalance = await provider.eth_getBalance();
     setDestinationBalance(destinationBalance);
 
-    const originBalance = await provider?.origin_getNativeBalance();
+    const originBalance = await provider.origin_getNativeBalance();
     setOriginBalance(originBalance);
 
-    const pendingTxs = await provider?.getPendingTransactions();
+    const pendingTxs = await provider.getPendingTransactions();
     setPendingTxs(pendingTxs ?? []);
 
-    const originTokens = await provider?.origin_getTokenBalances();
+    const originTokens = await provider.origin_getTokenBalances();
     setOriginTokens(originTokens ?? []);
   }, [provider]);
 
@@ -358,9 +360,25 @@ const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess, address }) => 
   };
 
   const moveToken = async (token) => {
-    console.log("Moving token", token.unit, "with amount", tokenAmounts.get(token.unit));
-    await wrap(undefined, token.unit, new BigNumber(tokenAmounts.get(token.unit) || "0"));
-    updateTokenAmount(token.unit, "");
+    message.loading({ content: "Moving asset...", key: "moving-asset-L2" });
+    try {
+      await wrap(
+        undefined,
+        token.unit,
+        new BigNumber(tokenAmounts.get(token.unit) || "0")
+      );
+      updateTokenAmount(token.unit, "");
+      message.success({
+        content: "Asset moved successfully",
+        key: "moving-asset-L2"
+      });
+    } catch (err) {
+      console.error(err);
+      message.error({
+        content: `Something went wrong. ${err.message ? `Error: ${err.message}` : ""}`,
+        key: "moving-asset-L2"
+      });
+    }
   };
 
   const setMaxAmount = (token) => {
@@ -387,6 +405,7 @@ const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess, address }) => 
             <Skeleton.Avatar active size="large" shape="square" />
           </>
         )}
+
         {isSuccess &&
           tokens.map((token, index) => (
             <li key={index}>
@@ -398,7 +417,6 @@ const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess, address }) => 
                 <span>Amount</span>
                 <span className="value">{amounts[index]}</span>
               </div>
-
               {token.bridgeAllowed && (
                 <>
                   <div className="actions">
@@ -499,13 +517,27 @@ const WSCAssets = ({
             </div>
             <button
               className="button-primary-small"
-              onClick={() => {
-                const normalizedAda = normalizeAda(destinationBalance);
-                console.log("normalizedAda", normalizedAda);
-                const lovelace = new BigNumber(normalizedAda).multipliedBy(
-                  new BigNumber(10).pow(6)
-                );
-                unwrap(undefined, undefined, lovelace);
+              onClick={async () => {
+                try {
+                  message.loading({ content: "Moving asset...", key: "moving-asset-L1" });
+                  const normalizedAda = normalizeAda(destinationBalance);
+                  console.log("normalizedAda", normalizedAda);
+                  const lovelace = new BigNumber(normalizedAda).multipliedBy(
+                    new BigNumber(10).pow(6)
+                  );
+                  await unwrap(undefined, undefined, lovelace);
+                  message.success({
+                    content: "Asset moved successfully",
+                    key: "moving-asset-L1"
+                  });
+                } catch (err) {
+                  message.error({
+                    content: `Something went wrong. ${
+                      err.message ? `Error: ${err.message}` : ""
+                    }`,
+                    key: "moving-asset-L1"
+                  });
+                }
               }}
             >
               Move all to L1
@@ -549,13 +581,32 @@ const WSCAssets = ({
                 {allowedTokensMap[token.contractAddress] ? (
                   <button
                     className="button-primary-small"
-                    onClick={() =>
-                      moveAssetsToL1(
-                        token.contractAddress,
-                        token.name,
-                        new BigNumber(token.balance)
-                      )
-                    }
+                    onClick={async () => {
+                      try {
+                        message.loading({
+                          content: "Moving asset...",
+                          key: "moving-asset-L1"
+                        });
+
+                        await moveAssetsToL1(
+                          token.contractAddress,
+                          token.name,
+                          new BigNumber(token.balance)
+                        );
+
+                        message.success({
+                          content: "Asset moved successfully",
+                          key: "moving-asset-L1"
+                        });
+                      } catch (err) {
+                        message.error({
+                          content: `Something went wrong. ${
+                            err.message ? `Error: ${err.message}` : ""
+                          }`,
+                          key: "moving-asset-L1"
+                        });
+                      }
+                    }}
                   >
                     Move all to L1
                   </button>

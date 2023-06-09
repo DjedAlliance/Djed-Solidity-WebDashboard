@@ -17,6 +17,16 @@
     margin-bottom:20px;
   }
 
+  .spinner {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    svg {
+      color: #d07d2c;
+    }
+
+  }
   h2, p, .ant-tabs-content-holder {
     color:white;
   }
