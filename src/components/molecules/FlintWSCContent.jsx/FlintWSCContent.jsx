@@ -245,14 +245,7 @@ const FlintWSCContent = () => {
           />
         </Tabs.TabPane>
         <Tabs.TabPane tab="About" key="about">
-          <p>
-            Smart contracts are revolutionary pieces of blockchain technology that have
-            completely transformed the way agreements and transactions are conducted.
-            These self-executing contracts contain the terms of the agreement directly in
-            the code, eliminating the need for intermediaries or third parties. They are
-            designed to automatically enforce the terms of the agreement, ensuring trust,
-            transparency, and efficiency in various industries.
-          </p>
+          <WSCAbout />
         </Tabs.TabPane>
       </Tabs>
       {isError && (
@@ -481,7 +474,7 @@ const WSCAssets = ({
                 </div>
                 {allowedTokensMap[token.contractAddress] ? (
                   <button
-                    style={{ backgroundColor: "blue", color: "white" }}
+                    className="button-primary-small"
                     onClick={() =>
                       moveAssetsToL1(
                         token.contractAddress,
@@ -527,5 +520,41 @@ export const WSCWalletLink = () => {
         <line x1="10" y1="14" x2="21" y2="3"></line>
       </svg>
     </a>
+  );
+};
+
+export const WSCAbout = () => {
+  const title = "What are Wrapped Smart Contracts?";
+  const content =
+    "Wrapped Smart Contracts are a new concept aimed at facilitating interaction with smart contracts on sidechains or Layer 2 (L2) solutions without the need for users to directly migrate to these new ecosystems.<br/><br/> The Layer 1 (L1) blockchain acts as a robust coordination layer, allowing users to execute smart contracts on sidechains or L2 while remaining on the L1 blockchain. This provides a user-friendly experience, as users can interact with various systems without changing wallets or needing a deep understanding of the underlying processes.";
+  const secondTitle = "How it works";
+  const secondContent =
+    "Every single step requires user interaction in the form of a transaction.";
+  const bulletContent = [
+    "User Action: The user initiates an action on a dApp while on the main blockchain. This request is translated into specific parameters for a proxy smart contract.",
+    "Proxy Deployment and Execution: A proxy smart contract, reflecting the user's intent, is deployed on the sidechain. The proxy contract then interacts with the appropriate smart contract on the sidechain to execute the desired action.",
+    "Result Processing: The outcome from the sidechain smart contract execution is relayed back to the user on the main blockchain. The user's state is updated, and they see the results of their action on the dApp, all while staying on the main blockchain."
+  ];
+  const link = "http://example.com/my-article-link";
+  const secondLink = "http://example.com/my-article-link";
+
+  return (
+    <div>
+      <h2>{title}</h2>
+      <p dangerouslySetInnerHTML={{ __html: content }} />
+      <div style={{ textAlign: "right" }}>
+        <a href={link}>Read more</a>
+      </div>
+      <h2>{secondTitle}</h2>
+      <p dangerouslySetInnerHTML={{ __html: secondContent }} />
+      <ul>
+        {bulletContent.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+      <div style={{ textAlign: "right" }}>
+        <a href={secondLink}>Read more</a>
+      </div>
+    </div>
   );
 };
