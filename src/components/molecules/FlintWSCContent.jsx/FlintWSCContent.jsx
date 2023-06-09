@@ -97,17 +97,21 @@ const statusIcon = {
   [CONNECTION_STATUS.success]: <SuccessIcon />,
   [CONNECTION_STATUS.ready]: <ReadyIcon />
 };
-const Step = ({ title, status, isLast }) => {
+const Step = ({ title, status, caption, isLast }) => {
   return (
     <>
       <div className="step">
         <div className={`step-icon ${CONNECTION_STATUS[status]}`}>
           {statusIcon[status]}
         </div>
-        <div className="step-label">{title}</div>
+        <div>
+          <div className="step-label">{title}</div>
+          {caption ? <div className="step-caption">{caption}</div> : null}
+        </div>
       </div>
       {isLast ? null : (
         <svg
+          className="connection-item"
           stroke="#c7803a"
           fill="none"
           strokeWidth="2"
@@ -222,6 +226,7 @@ const FlintWSCContent = () => {
       },
       {
         label: "Dapp",
+        caption: "(Ready to Go)",
         status: isOriginBalanceNotZero && isDestinationBalanceNotZero ? "ready" : "idle"
       }
     ];
@@ -234,6 +239,7 @@ const FlintWSCContent = () => {
           return (
             <Step
               title={item.label}
+              caption={item.caption}
               status={item.status}
               isLast={arr.length - 1 === index}
             />

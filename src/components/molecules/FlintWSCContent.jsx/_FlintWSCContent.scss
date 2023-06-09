@@ -9,7 +9,7 @@
 
   .header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     gap: 30px;
     padding: 30px 10px;
@@ -148,6 +148,10 @@
   margin-bottom: 20px;
 }
 
+.connection-item {
+  margin-top: 20px;
+}
+
 .step {
   display: flex;
   align-items: center;
@@ -160,6 +164,12 @@
   &-label{
     font-size: 1rem;
     font-weight: 600;
+    text-align: center;
+  }
+  &-caption{
+    font-size: 0.75rem;
+    text-align: center;
+    white-space: nowrap;
   }
   &-icon{
     width: 32px;
@@ -186,5 +196,7 @@
       width: 100%;
       height: 100%;
     }
+
+
   }
 }
