@@ -2,11 +2,31 @@
 
 .content {
   color: white;
+
   @media (max-width: 768px) {
       display: none;
   }
 
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 30px;
+    padding: 30px 10px;
+    border-bottom: 1px solid #383534;
+    margin-bottom:20px;
+  }
 
+  .spinner {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    svg {
+      color: #d07d2c;
+    }
+
+  }
   h2, p, .ant-tabs-content-holder {
     color:white;
   }
@@ -136,4 +156,57 @@
   justify-content: center;
   gap: 8px;
   margin-bottom: 20px;
+}
+
+.connection-item {
+  margin-top: 20px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 80px;
+
+
+  &-label{
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  &-caption{
+    font-size: 0.75rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+  &-icon{
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    background: #41455c;
+    border-radius: 50%;
+    color: #41455c;
+
+    &.success {
+      background: #d07d2c;
+      color: #fff
+    }
+    &.ready {
+      background: #d07d2c;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      outline: 2px solid #d07d2c;
+      outline-offset: 3px;
+
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+
+  }
 }

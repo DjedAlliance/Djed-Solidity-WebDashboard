@@ -1,10 +1,11 @@
 import React from "react";
 import { useAppProvider } from "../../../context/AppProvider";
 import "./_FlintWSCContent.scss";
-import { Skeleton, Tabs } from "antd";
+import { Skeleton, Spin, Tabs, message } from "antd";
 import BigNumber from "bignumber.js";
 
 import { MilkomedaConstants } from "milkomeda-wsc/build/MilkomedaConstants";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const useInterval = (callback, delay) => {
   const savedCallback = React.useRef(undefined);
@@ -20,6 +21,119 @@ const useInterval = (callback, delay) => {
     }
   }, [delay]);
 };
+
+function SuccessIcon(props) {
+  return (
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+        clipRule="evenodd"
+      ></path>
+    </svg>
+  );
+}
+function IdleIcon(props) {
+  return (
+    <svg
+      stroke="#a0a0ac"
+      fill="#a0a0ac"
+      strokeWidth="0"
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      height="0.7em"
+      width="0.7em"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"
+        clipRule="evenodd"
+      ></path>
+    </svg>
+  );
+}
+
+function ReadyIcon() {
+  return (
+    <svg
+      stroke="currentColor"
+      fill="none"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M8 13v-8.5a1.5 1.5 0 0 1 3 0v7.5"></path>
+      <path d="M11 11.5v-2a1.5 1.5 0 0 1 3 0v2.5"></path>
+      <path d="M14 10.5a1.5 1.5 0 0 1 3 0v1.5"></path>
+      <path d="M17 11.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7l-.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47"></path>
+      <path d="M5 3l-1 -1"></path>
+      <path d="M4 7h-1"></path>
+      <path d="M14 3l1 -1"></path>
+      <path d="M15 6h1"></path>
+    </svg>
+  );
+}
+const CONNECTION_STATUS = {
+  idle: "idle",
+  success: "success",
+  ready: "ready"
+};
+const statusIcon = {
+  [CONNECTION_STATUS.idle]: <IdleIcon />,
+  [CONNECTION_STATUS.success]: <SuccessIcon />,
+  [CONNECTION_STATUS.ready]: <ReadyIcon />
+};
+const Step = ({ title, status, caption, isLast }) => {
+  return (
+    <>
+      <div className="step">
+        <div className={`step-icon ${CONNECTION_STATUS[status]}`}>
+          {statusIcon[status]}
+        </div>
+        <div>
+          <div className="step-label">{title}</div>
+          {caption ? <div className="step-caption">{caption}</div> : null}
+        </div>
+      </div>
+      {isLast ? null : (
+        <svg
+          className="connection-item"
+          stroke="#c7803a"
+          fill="none"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          height="2em"
+          width="2em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M21 17l-18 0"></path>
+          <path d="M6 10l-3 -3l3 -3"></path>
+          <path d="M3 7l18 0"></path>
+          <path d="M18 20l3 -3l-3 -3"></path>
+        </svg>
+      )}
+    </>
+  );
+};
+
 const network = "Cardano C1 Devnet";
 const FlintWSCContent = () => {
   const { activeConnector } = useAppProvider();
@@ -53,16 +167,17 @@ const FlintWSCContent = () => {
   };
 
   const updateWalletData = React.useCallback(async () => {
-    const destinationBalance = await provider?.eth_getBalance();
+    if (!provider) return;
+    const destinationBalance = await provider.eth_getBalance();
     setDestinationBalance(destinationBalance);
 
-    const originBalance = await provider?.origin_getNativeBalance();
+    const originBalance = await provider.origin_getNativeBalance();
     setOriginBalance(originBalance);
 
-    const pendingTxs = await provider?.getPendingTransactions();
+    const pendingTxs = await provider.getPendingTransactions();
     setPendingTxs(pendingTxs ?? []);
 
-    const originTokens = await provider?.origin_getTokenBalances();
+    const originTokens = await provider.origin_getTokenBalances();
     setOriginTokens(originTokens ?? []);
   }, [provider]);
 
@@ -98,8 +213,41 @@ const FlintWSCContent = () => {
   const isError = status === "rejected";
   const isSuccess = status === "success";
 
+  const connectionStatus = React.useMemo(() => {
+    const isOriginBalanceNotZero = originBalance != null && originBalance !== 0;
+    const isDestinationBalanceNotZero =
+      destinationBalance != null && destinationBalance !== 0;
+    return [
+      {
+        label: "Cardano",
+        status: isOriginBalanceNotZero ? "success" : "idle"
+      },
+      {
+        label: "WSC",
+        status: isDestinationBalanceNotZero ? "success" : "idle"
+      },
+      {
+        label: "Dapp",
+        caption: "(Ready to Go)",
+        status: isOriginBalanceNotZero && isDestinationBalanceNotZero ? "ready" : "idle"
+      }
+    ];
+  }, [originBalance, destinationBalance]);
+
   return (
     <div className="content">
+      <div className="header">
+        {connectionStatus.map((item, index, arr) => {
+          return (
+            <Step
+              title={item.label}
+              caption={item.caption}
+              status={item.status}
+              isLast={arr.length - 1 === index}
+            />
+          );
+        })}
+      </div>
       <Tabs>
         <Tabs.TabPane tab="Cardano" key="cardano">
           <CardanoAssets
@@ -172,6 +320,9 @@ const FlintWSCContent = () => {
             isSuccess={isSuccess}
           />
         </Tabs.TabPane>
+        <Tabs.TabPane tab="About" key="about">
+          <WSCAbout />
+        </Tabs.TabPane>
       </Tabs>
       {isError && (
         <div className="error">
@@ -209,9 +360,25 @@ const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess, address }) => 
   };
 
   const moveToken = async (token) => {
-    console.log("Moving token", token.unit, "with amount", tokenAmounts.get(token.unit));
-    await wrap(undefined, token.unit, new BigNumber(tokenAmounts.get(token.unit) || "0"));
-    updateTokenAmount(token.unit, "");
+    message.loading({ content: "Moving asset...", key: "moving-asset-L2" });
+    try {
+      await wrap(
+        undefined,
+        token.unit,
+        new BigNumber(tokenAmounts.get(token.unit) || "0")
+      );
+      updateTokenAmount(token.unit, "");
+      message.success({
+        content: "Asset moved successfully",
+        key: "moving-asset-L2"
+      });
+    } catch (err) {
+      console.error(err);
+      message.error({
+        content: `Something went wrong. ${err.message ? `Error: ${err.message}` : ""}`,
+        key: "moving-asset-L2"
+      });
+    }
   };
 
   const setMaxAmount = (token) => {
@@ -238,6 +405,7 @@ const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess, address }) => 
             <Skeleton.Avatar active size="large" shape="square" />
           </>
         )}
+
         {isSuccess &&
           tokens.map((token, index) => (
             <li key={index}>
@@ -249,7 +417,6 @@ const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess, address }) => 
                 <span>Amount</span>
                 <span className="value">{amounts[index]}</span>
               </div>
-
               {token.bridgeAllowed && (
                 <>
                   <div className="actions">
@@ -350,13 +517,27 @@ const WSCAssets = ({
             </div>
             <button
               className="button-primary-small"
-              onClick={() => {
-                const normalizedAda = normalizeAda(destinationBalance);
-                console.log("normalizedAda", normalizedAda);
-                const lovelace = new BigNumber(normalizedAda).multipliedBy(
-                  new BigNumber(10).pow(6)
-                );
-                unwrap(undefined, undefined, lovelace);
+              onClick={async () => {
+                try {
+                  message.loading({ content: "Moving asset...", key: "moving-asset-L1" });
+                  const normalizedAda = normalizeAda(destinationBalance);
+                  console.log("normalizedAda", normalizedAda);
+                  const lovelace = new BigNumber(normalizedAda).multipliedBy(
+                    new BigNumber(10).pow(6)
+                  );
+                  await unwrap(undefined, undefined, lovelace);
+                  message.success({
+                    content: "Asset moved successfully",
+                    key: "moving-asset-L1"
+                  });
+                } catch (err) {
+                  message.error({
+                    content: `Something went wrong. ${
+                      err.message ? `Error: ${err.message}` : ""
+                    }`,
+                    key: "moving-asset-L1"
+                  });
+                }
               }}
             >
               Move all to L1
@@ -399,14 +580,33 @@ const WSCAssets = ({
                 </div>
                 {allowedTokensMap[token.contractAddress] ? (
                   <button
-                    style={{ backgroundColor: "blue", color: "white" }}
-                    onClick={() =>
-                      moveAssetsToL1(
-                        token.contractAddress,
-                        token.name,
-                        new BigNumber(token.balance)
-                      )
-                    }
+                    className="button-primary-small"
+                    onClick={async () => {
+                      try {
+                        message.loading({
+                          content: "Moving asset...",
+                          key: "moving-asset-L1"
+                        });
+
+                        await moveAssetsToL1(
+                          token.contractAddress,
+                          token.name,
+                          new BigNumber(token.balance)
+                        );
+
+                        message.success({
+                          content: "Asset moved successfully",
+                          key: "moving-asset-L1"
+                        });
+                      } catch (err) {
+                        message.error({
+                          content: `Something went wrong. ${
+                            err.message ? `Error: ${err.message}` : ""
+                          }`,
+                          key: "moving-asset-L1"
+                        });
+                      }
+                    }}
                   >
                     Move all to L1
                   </button>
@@ -445,5 +645,41 @@ export const WSCWalletLink = () => {
         <line x1="10" y1="14" x2="21" y2="3"></line>
       </svg>
     </a>
+  );
+};
+
+export const WSCAbout = () => {
+  const title = "What are Wrapped Smart Contracts?";
+  const content =
+    "Wrapped Smart Contracts are a new concept aimed at facilitating interaction with smart contracts on sidechains or Layer 2 (L2) solutions without the need for users to directly migrate to these new ecosystems.<br/><br/> The Layer 1 (L1) blockchain acts as a robust coordination layer, allowing users to execute smart contracts on sidechains or L2 while remaining on the L1 blockchain. This provides a user-friendly experience, as users can interact with various systems without changing wallets or needing a deep understanding of the underlying processes.";
+  const secondTitle = "How it works";
+  const secondContent =
+    "Every single step requires user interaction in the form of a transaction.";
+  const bulletContent = [
+    "User Action: The user initiates an action on a dApp while on the main blockchain. This request is translated into specific parameters for a proxy smart contract.",
+    "Proxy Deployment and Execution: A proxy smart contract, reflecting the user's intent, is deployed on the sidechain. The proxy contract then interacts with the appropriate smart contract on the sidechain to execute the desired action.",
+    "Result Processing: The outcome from the sidechain smart contract execution is relayed back to the user on the main blockchain. The user's state is updated, and they see the results of their action on the dApp, all while staying on the main blockchain."
+  ];
+  const link = "http://example.com/my-article-link";
+  const secondLink = "http://example.com/my-article-link";
+
+  return (
+    <div>
+      <h2>{title}</h2>
+      <p dangerouslySetInnerHTML={{ __html: content }} />
+      <div style={{ textAlign: "right" }}>
+        <a href={link}>Read more</a>
+      </div>
+      <h2>{secondTitle}</h2>
+      <p dangerouslySetInnerHTML={{ __html: secondContent }} />
+      <ul>
+        {bulletContent.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+      <div style={{ textAlign: "right" }}>
+        <a href={secondLink}>Read more</a>
+      </div>
+    </div>
   );
 };
