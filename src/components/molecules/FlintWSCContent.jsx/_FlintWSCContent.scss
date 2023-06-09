@@ -162,16 +162,25 @@
     font-weight: 600;
   }
   &-icon{
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     padding: 4px;
     background: #41455c;
     border-radius: 50%;
     color: #41455c;
 
-    &.active {
+    &.success {
       background: #d07d2c;
       color: #fff
+    }
+    &.ready {
+      background: #d07d2c;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      outline: 2px solid #d07d2c;
+      outline-offset: 3px;
+
     }
     svg {
       width: 100%;

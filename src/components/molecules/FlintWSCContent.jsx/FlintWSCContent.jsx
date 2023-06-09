@@ -21,46 +21,88 @@ const useInterval = (callback, delay) => {
   }, [delay]);
 };
 
-const Step = ({ title, active, isLast }) => {
+function SuccessIcon(props) {
+  return (
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+        clipRule="evenodd"
+      ></path>
+    </svg>
+  );
+}
+function IdleIcon(props) {
+  return (
+    <svg
+      stroke="#a0a0ac"
+      fill="#a0a0ac"
+      strokeWidth="0"
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      height="0.7em"
+      width="0.7em"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"
+        clipRule="evenodd"
+      ></path>
+    </svg>
+  );
+}
+
+function ReadyIcon() {
+  return (
+    <svg
+      stroke="currentColor"
+      fill="none"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M8 13v-8.5a1.5 1.5 0 0 1 3 0v7.5"></path>
+      <path d="M11 11.5v-2a1.5 1.5 0 0 1 3 0v2.5"></path>
+      <path d="M14 10.5a1.5 1.5 0 0 1 3 0v1.5"></path>
+      <path d="M17 11.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7l-.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47"></path>
+      <path d="M5 3l-1 -1"></path>
+      <path d="M4 7h-1"></path>
+      <path d="M14 3l1 -1"></path>
+      <path d="M15 6h1"></path>
+    </svg>
+  );
+}
+const CONNECTION_STATUS = {
+  idle: "idle",
+  success: "success",
+  ready: "ready"
+};
+const statusIcon = {
+  [CONNECTION_STATUS.idle]: <IdleIcon />,
+  [CONNECTION_STATUS.success]: <SuccessIcon />,
+  [CONNECTION_STATUS.ready]: <ReadyIcon />
+};
+const Step = ({ title, status, isLast }) => {
   return (
     <>
       <div className="step">
-        <div className={`step-icon ${active && "active"}`}>
-          {active ? (
-            <svg
-              stroke="currentColor"
-              fill="currentColor"
-              strokeWidth="0"
-              viewBox="0 0 20 20"
-              aria-hidden="true"
-              height="1em"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-          ) : (
-            <svg
-              stroke="#a0a0ac"
-              fill="#a0a0ac"
-              strokeWidth="0"
-              viewBox="0 0 20 20"
-              aria-hidden="true"
-              height="0.7em"
-              width="0.7em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-          )}
+        <div className={`step-icon ${CONNECTION_STATUS[status]}`}>
+          {statusIcon[status]}
         </div>
         <div className="step-label">{title}</div>
       </div>
@@ -165,19 +207,37 @@ const FlintWSCContent = () => {
   const isError = status === "rejected";
   const isSuccess = status === "success";
 
+  const connectionStatus = React.useMemo(() => {
+    const isOriginBalanceNotZero = originBalance != null && originBalance !== 0;
+    const isDestinationBalanceNotZero =
+      destinationBalance != null && destinationBalance !== 0;
+    return [
+      {
+        label: "Cardano",
+        status: isOriginBalanceNotZero ? "success" : "idle"
+      },
+      {
+        label: "WSC",
+        status: isDestinationBalanceNotZero ? "success" : "idle"
+      },
+      {
+        label: "Dapp",
+        status: isOriginBalanceNotZero && isDestinationBalanceNotZero ? "ready" : "idle"
+      }
+    ];
+  }, [originBalance, destinationBalance]);
+
   return (
     <div className="content">
       <div className="header">
-        {["Cardano", "WSC", "Dapp"].map((step, index, arr) => {
-          let active;
-          if (step === "Cardano") {
-            active = originBalance !== 0;
-          } else if (step === "WSC") {
-            active = destinationBalance !== 0;
-          } else {
-            active = index === 0;
-          }
-          return <Step title={step} active={active} isLast={arr.length - 1 === index} />;
+        {connectionStatus.map((item, index, arr) => {
+          return (
+            <Step
+              title={item.label}
+              status={item.status}
+              isLast={arr.length - 1 === index}
+            />
+          );
         })}
       </div>
       <Tabs>
