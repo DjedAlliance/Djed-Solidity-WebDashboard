@@ -168,9 +168,17 @@ const FlintWSCContent = () => {
   return (
     <div className="content">
       <div className="header">
-        {["Cardano", "WSC", "Dapp"].map((step, index, arr) => (
-          <Step title={step} active={index === 0} isLast={arr.length - 1 === index} />
-        ))}
+        {["Cardano", "WSC", "Dapp"].map((step, index, arr) => {
+          let active;
+          if (step === "Cardano") {
+            active = originBalance !== 0;
+          } else if (step === "WSC") {
+            active = destinationBalance !== 0;
+          } else {
+            active = index === 0;
+          }
+          return <Step title={step} active={active} isLast={arr.length - 1 === index} />;
+        })}
       </div>
       <Tabs>
         <Tabs.TabPane tab="Cardano" key="cardano">
