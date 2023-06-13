@@ -139,7 +139,6 @@ const FlintWSCContent = () => {
   const { activeConnector } = useAppProvider();
   const [provider, setProvider] = React.useState(null);
 
-  // const [originAddress, setOriginAddress] = React.useState(null);
   const [pendingTxs, setPendingTxs] = React.useState([]);
   const [address, setAddress] = React.useState(null);
   const [destinationBalance, setDestinationBalance] = React.useState(null);
@@ -179,6 +178,9 @@ const FlintWSCContent = () => {
 
     const originTokens = await provider.origin_getTokenBalances();
     setOriginTokens(originTokens ?? []);
+
+    const tokenBalances = await provider.getTokenBalances();
+    setTokens(tokenBalances ?? []); 
   }, [provider]);
 
   useInterval(() => {
@@ -249,6 +251,9 @@ const FlintWSCContent = () => {
         })}
       </div>
       <Tabs>
+        <Tabs.TabPane tab="About" key="about">
+          <WSCAbout />
+        </Tabs.TabPane>
         <Tabs.TabPane tab="Cardano" key="cardano">
           <CardanoAssets
             tokens={originTokens}
@@ -319,9 +324,6 @@ const FlintWSCContent = () => {
             isLoading={isLoading}
             isSuccess={isSuccess}
           />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="About" key="about">
-          <WSCAbout />
         </Tabs.TabPane>
       </Tabs>
       {isError && (
