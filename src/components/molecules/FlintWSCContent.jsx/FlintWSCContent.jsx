@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useAppProvider } from "../../../context/AppProvider";
 import "./_FlintWSCContent.scss";
 import { Skeleton, Spin, Tabs, message } from "antd";
