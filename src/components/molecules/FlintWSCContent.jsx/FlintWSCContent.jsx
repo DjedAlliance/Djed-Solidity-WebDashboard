@@ -171,7 +171,7 @@ const FlintWSCContent = () => {
         }
         if (response === TxPendingStatus.WaitingBridgeConfirmation) {
           message.loading({
-            content: `Waiting Bridge confirmation for your ${currentSentTxs[txHash]} asset...`,
+            content: `Waiting Bridge confirmation for your ${currentSentTxs[txHash]} asset (~3m)...`,
             key: txHash,
             duration: 0
           });
@@ -195,7 +195,7 @@ const FlintWSCContent = () => {
         }
       }
     },
-    currentSentTxs.hash !== "" ? 4000 : null
+    Object.keys(currentSentTxs).length === 0 ? 4000 : null
   );
 
   const areTokensAllowed = async (assetIds) => {
