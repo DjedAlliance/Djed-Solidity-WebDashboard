@@ -371,6 +371,8 @@ const FlintWSCContent = () => {
             unwrap={unwrapWrapper}
             isLoading={isLoading}
             isSuccess={isSuccess}
+            currentSentTxs={currentSentTxs}
+            setCurrentSentTxs={setCurrentSentTxs}
           />
         </Tabs.TabPane>
       </Tabs>
@@ -527,7 +529,9 @@ const WSCAssets = ({
   areTokensAllowed,
   isLoading,
   isSuccess,
-  address
+  address,
+  currentSentTxs,
+  setCurrentSentTxs
 }) => {
   const [allowedTokensMap, setAllowedTokensMap] = React.useState({});
 
@@ -589,7 +593,7 @@ const WSCAssets = ({
               onClick={async () => {
                 try {
                   message.loading({
-                    content: "Moving asset...",
+                    content: `Starting ADA asset moving...`,
                     key: "moving-asset-L1",
                     duration: 0
                   });
@@ -598,10 +602,15 @@ const WSCAssets = ({
                   const lovelace = new BigNumber(normalizedAda).multipliedBy(
                     new BigNumber(10).pow(6)
                   );
-                  await unwrap(undefined, undefined, lovelace);
-                  message.success({
-                    content: "Asset moved successfully",
-                    key: "moving-asset-L1"
+                  const txHash = await unwrap(undefined, undefined, lovelace);
+                  const transactions = { ...currentSentTxs };
+                  transactions[txHash] = "ADA"; // token name
+                  setCurrentSentTxs(transactions);
+                  message.destroy("moving-asset-L1");
+                  message.loading({
+                    content: `Moving your ADA asset...`,
+                    key: txHash,
+                    duration: 0
                   });
                 } catch (err) {
                   message.error({
@@ -657,26 +666,31 @@ const WSCAssets = ({
                     onClick={async () => {
                       try {
                         message.loading({
-                          content: "Moving asset...",
-                          key: "moving-asset-L1"
+                          content: `Starting ${token.assetName} asset moving...`,
+                          key: "moving-asset-L1-asset",
+                          duration: 0
                         });
-
-                        await moveAssetsToL1(
+                        const txHash = await moveAssetsToL1(
                           token.contractAddress,
                           token.name,
                           new BigNumber(token.balance)
                         );
+                        const transactions = { ...currentSentTxs };
+                        transactions[txHash] = token.name; // token name
+                        setCurrentSentTxs(transactions);
+                        message.destroy("moving-asset-L1-asset");
 
-                        message.success({
-                          content: "Asset moved successfully",
-                          key: "moving-asset-L1"
+                        message.loading({
+                          content: `Moving your ${token.name} asset...`,
+                          key: txHash,
+                          duration: 0
                         });
                       } catch (err) {
                         message.error({
                           content: `Something went wrong. ${
                             err.message ? `Error: ${err.message}` : ""
                           }`,
-                          key: "moving-asset-L1"
+                          key: "moving-asset-L1-asset"
                         });
                       }
                     }}
