@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppProvider } from "../../../context/AppProvider";
 import "./_FlintWSCContent.scss";
 import { Skeleton, Spin, Tabs, message } from "antd";
 import BigNumber from "bignumber.js";
 
 import { MilkomedaConstants } from "milkomeda-wsc/build/MilkomedaConstants";
-import { LoadingOutlined } from "@ant-design/icons";
+
+import { TxPendingStatus } from "milkomeda-wsc/build/WSCLibTypes";
 
 const useInterval = (callback, delay) => {
   const savedCallback = React.useRef(undefined);
@@ -146,12 +147,56 @@ const FlintWSCContent = () => {
   const [originTokens, setOriginTokens] = React.useState([]);
   const [tokens, setTokens] = React.useState([]);
   const [originAddress, setOriginAddress] = React.useState(null);
+  const [currentSentTxs, setCurrentSentTxs] = React.useState({});
 
   const [status, setStatus] = React.useState("idle");
 
   const wrapWrapper = async (destination, assetId, amount) => {
     return provider?.wrap(destination, assetId, amount.toNumber());
   };
+
+  useInterval(
+    async () => {
+      if (!provider || Object.keys(currentSentTxs).length === 0) return;
+
+      for (const txHash of Object.keys(currentSentTxs)) {
+        const response = await provider.getTxStatus(txHash);
+
+        if (response === TxPendingStatus.WaitingL1Confirmation) {
+          message.loading({
+            content: `Waiting L1 confirmation for your ${currentSentTxs[txHash]} asset...`,
+            key: txHash,
+            duration: 0
+          });
+        }
+        if (response === TxPendingStatus.WaitingBridgeConfirmation) {
+          message.loading({
+            content: `Waiting Bridge confirmation for your ${currentSentTxs[txHash]} asset...`,
+            key: txHash,
+            duration: 0
+          });
+        }
+        if (response === TxPendingStatus.WaitingL2Confirmation) {
+          message.loading({
+            content: `Waiting L2 confirmation for your ${currentSentTxs[txHash]} asset...`,
+            key: txHash,
+            duration: 0
+          });
+        }
+        if (response === TxPendingStatus.Confirmed) {
+          message.success({
+            content: `Your ${currentSentTxs[txHash]} asset has been successfully moved!`,
+            key: txHash,
+            duration: 3
+          });
+          const newCurrentSentTxs = { ...currentSentTxs };
+          delete newCurrentSentTxs[txHash];
+          setCurrentSentTxs(newCurrentSentTxs);
+        }
+      }
+    },
+    currentSentTxs.hash !== "" ? 4000 : null
+  );
 
   const areTokensAllowed = async (assetIds) => {
     return await provider?.areTokensAllowed(assetIds);
@@ -180,7 +225,7 @@ const FlintWSCContent = () => {
     setOriginTokens(originTokens ?? []);
 
     const tokenBalances = await provider.getTokenBalances();
-    setTokens(tokenBalances ?? []); 
+    setTokens(tokenBalances ?? []);
   }, [provider]);
 
   useInterval(() => {
@@ -242,6 +287,7 @@ const FlintWSCContent = () => {
         {connectionStatus.map((item, index, arr) => {
           return (
             <Step
+              key={index}
               title={item.label}
               caption={item.caption}
               status={item.status}
@@ -261,6 +307,8 @@ const FlintWSCContent = () => {
             isLoading={isLoading}
             isSuccess={isSuccess}
             address={originAddress}
+            currentSentTxs={currentSentTxs}
+            setCurrentSentTxs={setCurrentSentTxs}
           />
         </Tabs.TabPane>
 
@@ -338,7 +386,15 @@ const FlintWSCContent = () => {
 
 export default FlintWSCContent;
 
-const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess, address }) => {
+const CardanoAssets = ({
+  tokens = [],
+  wrap,
+  isLoading,
+  isSuccess,
+  address,
+  currentSentTxs,
+  setCurrentSentTxs
+}) => {
   const [tokenAmounts, setTokenAmounts] = React.useState(new Map());
   const [amounts, setAmounts] = React.useState([]);
 
@@ -362,18 +418,29 @@ const CardanoAssets = ({ tokens = [], wrap, isLoading, isSuccess, address }) => 
   };
 
   const moveToken = async (token) => {
-    message.loading({ content: "Moving asset...", key: "moving-asset-L2" });
+    message.loading({
+      content: `Starting ${token.assetName} asset moving...`,
+      key: "moving-asset-L2",
+      duration: 0
+    });
     try {
-      await wrap(
+      const txHash = await wrap(
         undefined,
         token.unit,
         new BigNumber(tokenAmounts.get(token.unit) || "0")
       );
-      updateTokenAmount(token.unit, "");
-      message.success({
-        content: "Asset moved successfully",
-        key: "moving-asset-L2"
+      const transactions = { ...currentSentTxs };
+      transactions[txHash] = token.assetName;
+      setCurrentSentTxs(transactions);
+
+      message.destroy("moving-asset-L2");
+      message.loading({
+        content: `Moving your ${token.assetName} asset...`,
+        key: txHash,
+        duration: 0
       });
+
+      updateTokenAmount(token.unit, "");
     } catch (err) {
       console.error(err);
       message.error({
@@ -521,7 +588,11 @@ const WSCAssets = ({
               className="button-primary-small"
               onClick={async () => {
                 try {
-                  message.loading({ content: "Moving asset...", key: "moving-asset-L1" });
+                  message.loading({
+                    content: "Moving asset...",
+                    key: "moving-asset-L1",
+                    duration: 0
+                  });
                   const normalizedAda = normalizeAda(destinationBalance);
                   console.log("normalizedAda", normalizedAda);
                   const lovelace = new BigNumber(normalizedAda).multipliedBy(
