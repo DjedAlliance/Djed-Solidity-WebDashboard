@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomButton from "../../atoms/CustomButton/CustomButton";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { Modal, Steps } from "antd";
@@ -18,9 +18,17 @@ const Step3Content = () => {
   return <div>Step 3 Content</div>;
 };
 
-const BuySellWSCButton = ({ onClick, buyOrSell, currencyName, disabled }) => {
+const BuySellWSCButton = ({
+  onClick,
+  buyOrSell,
+  currencyName,
+  disabled,
+  activeConnector
+}) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [currentStep, setCurrentStep] = React.useState(0);
+
+  const [wscProvider, setWscProvider] = React.useState(null);
 
   const showModal = () => {
     console.log("test!");
@@ -39,6 +47,19 @@ const BuySellWSCButton = ({ onClick, buyOrSell, currencyName, disabled }) => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    const loadWscProvider = async () => {
+      try {
+        const provider = await activeConnector.getProvider();
+        if (!provider) return;
+        setWscProvider(provider);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    loadWscProvider();
+  }, [activeConnector]);
 
   return (
     <>

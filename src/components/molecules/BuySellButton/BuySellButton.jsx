@@ -18,6 +18,7 @@ const BuySellButton = ({ onClick, buyOrSell, currencyName, disabled }) => {
         variant="primary"
         icon={<ArrowRightOutlined />}
         onClick={onClick}
+        activeConnector={activeConnector}
         // disabled={disabled}
       />
     );
