@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Modal, Steps, Icon, Spin, Select, message } from "antd";
-import { useAppProvider } from "../../../context/AppProvider";
+
 import "./WSCButton.scss";
 import { LoadingOutlined } from "@ant-design/icons";
 import BigNumber from "bignumber.js";
@@ -9,6 +9,7 @@ import { TxPendingStatus } from "milkomeda-wsc/build/WSCLibTypes";
 import useInterval from "../../../utils/hooks/useInterval";
 import { erc20ABI } from "@wagmi/core";
 import { useSigner } from "wagmi";
+import { useWSCProvider } from "../WSCProvider";
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -31,14 +32,14 @@ const statusMessages = {
   error: "Ups something went wrong."
 };
 const WrapContent = ({
-  wscProvider,
   amount: defaultAmountEth,
   token: defaultTokenUnit = "lovelace",
   selectedToken,
   setSelectedToken
 }) => {
+  const { wscProvider, originTokens } = useWSCProvider();
   const [amount, setAmount] = React.useState(null);
-  const [originTokens, setOriginTokens] = React.useState([]);
+  const [formattedOriginTokens, setFormattedOriginTokens] = React.useState([]);
 
   const [txHash, setTxHash] = React.useState(null);
 
@@ -57,7 +58,6 @@ const WrapContent = ({
   );
 
   const wrapToken = async () => {
-    console.log("wrapping it", selectedToken, amount);
     setTxStatus("init");
     try {
       const txHash = await wscProvider?.wrap(
@@ -83,9 +83,7 @@ const WrapContent = ({
 
   useEffect(() => {
     const loadOriginTokens = async () => {
-      const originTokens = await wscProvider.origin_getTokenBalances();
       const token = originTokens.find((t) => t.unit === defaultTokenUnit);
-      console.log(defaultAmountEth, "defaultAmountEth", token);
       const defaultToken = {
         ...token,
         quantity: defaultAmountEth ?? token.quantity
@@ -96,16 +94,15 @@ const WrapContent = ({
         ...token,
         quantity: formatTokenAmount(token.quantity, token.decimals)
       }));
-      console.log("originTokens", originTokens);
-      setOriginTokens(formattedTokens ?? []);
+      setFormattedOriginTokens(formattedTokens ?? []);
     };
     loadOriginTokens();
-  }, [defaultAmountEth, defaultTokenUnit, wscProvider]);
+  }, [defaultAmountEth, defaultTokenUnit, originTokens, setSelectedToken]);
 
   if (!selectedToken) return <div>Loading...</div>;
 
   const isAmountValid = new BigNumber(amount).lte(selectedToken.quantity);
-  console.log(selectedToken, "selectedToken");
+
   return (
     <div className="step-1-content">
       <h1>Wrapping</h1>
@@ -119,13 +116,18 @@ const WrapContent = ({
           style={{ width: 120 }}
           onChange={handleTokenChange}
         >
-          {originTokens.map((token) => (
-            <Option value={token.unit}>{token.assetName}</Option>
+          {formattedOriginTokens.map((token) => (
+            <Option key={token.unit} value={token.unit}>
+              {token.assetName}
+            </Option>
           ))}
         </Select>
       </div>
       <p>
-        You'll be wrapping {amount} <strong>{selectedToken.assetName}</strong>
+        You'll be wrapping{" "}
+        <strong>
+          {amount} {selectedToken.assetName}
+        </strong>
       </p>
       <div style={{ color: "red" }}>
         {!selectedToken?.bridgeAllowed && "bridge doesnt allow this token"}
@@ -139,17 +141,21 @@ const WrapContent = ({
       </button>
       {txStatus}
       <div>
-        {txStatus !== TxPendingStatus.Confirmed && txStatus !== "idle" && (
-          <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-        )}
+        {txStatus !== TxPendingStatus.Confirmed &&
+          txStatus !== "idle" &&
+          txStatus !== "error" && (
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+          )}
         {txStatus !== "idle" && <p>{statusMessages[txStatus]}</p>}
       </div>
     </div>
   );
 };
 
-const TokenAllowanceContent = ({ wscProvider, selectedToken }) => {
+const TokenAllowanceContent = ({ selectedToken }) => {
   const { data: signer } = useSigner();
+  const { wscProvider } = useWSCProvider();
+
   const onTokenAllowance = async () => {
     if (selectedToken.unit === "lovelace") return;
 
@@ -176,7 +182,6 @@ const TokenAllowanceContent = ({ wscProvider, selectedToken }) => {
 };
 
 const ActionExecutionContent = ({ wscProvider, onWSCAction }) => {
-  console.log(onWSCAction, "ac");
   return (
     <div className="step-3-content">
       <h1>Action Execution</h1>
@@ -190,8 +195,10 @@ const ActionExecutionContent = ({ wscProvider, onWSCAction }) => {
     </div>
   );
 };
-const UnwrapContent = ({ wscProvider }) => {
+const UnwrapContent = () => {
   const [txHash, setTxHash] = React.useState(null);
+  const { wscProvider } = useWSCProvider();
+
   const [destinationBalance, setDestinationBalance] = React.useState(null);
   const normalizeAda = (amount) => {
     const maxDecimalPlaces = 6;
@@ -205,7 +212,7 @@ const UnwrapContent = ({ wscProvider }) => {
   };
   const unwrapToken = async (destination, assetId, amount) => {
     const normalizedAda = normalizeAda(destinationBalance);
-    console.log(normalizedAda, "normalizedAda");
+
     // const lovelace = new BigNumber(normalizedAda).multipliedBy(new BigNumber(10).pow(6));
     // // only ADA
     // const txHash = await wscProvider?.unwrap(undefined, undefined, lovelace);
@@ -248,16 +255,12 @@ const WSCButton = ({
   currentAmountWei,
   direction
 }) => {
-  const { activeConnector } = useAppProvider();
-
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [currentStep, setCurrentStep] = React.useState(0);
 
-  const [wscProvider, setWscProvider] = React.useState(null);
   const [selectedToken, setSelectedToken] = React.useState(null);
 
   const showModal = () => {
-    console.log("test!");
     setIsModalOpen(true);
   };
 
@@ -274,24 +277,6 @@ const WSCButton = ({
     setIsModalOpen(false);
   };
 
-  useEffect(() => {
-    const loadWscProvider = async () => {
-      try {
-        const provider = await activeConnector.getProvider();
-        if (!provider) return;
-        setWscProvider(provider);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    loadWscProvider();
-  }, [activeConnector]);
-
-  if (!activeConnector?.id?.includes("wsc")) {
-    return <></>;
-  }
-  console.log(currentAmountWei, "currentAmountWei");
-
   const steps =
     direction === directions.WRAP
       ? [
@@ -301,7 +286,6 @@ const WSCButton = ({
               <WrapContent
                 setSelectedToken={setSelectedToken}
                 selectedToken={selectedToken}
-                wscProvider={wscProvider}
                 amount={
                   currentAmountWei
                     ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
@@ -313,25 +297,15 @@ const WSCButton = ({
 
           {
             title: "Action Execution",
-            content: (
-              <ActionExecutionContent
-                wscProvider={wscProvider}
-                onWSCAction={onWSCAction}
-              />
-            )
+            content: <ActionExecutionContent onWSCAction={onWSCAction} />
           },
           {
             title: "Token Allowance",
-            content: (
-              <TokenAllowanceContent
-                wscProvider={wscProvider}
-                selectedToken={selectedToken}
-              />
-            )
+            content: <TokenAllowanceContent selectedToken={selectedToken} />
           },
           {
             title: "Milkomeda - Unwrapping",
-            content: <UnwrapContent wscProvider={wscProvider} />
+            content: <UnwrapContent />
           }
         ]
       : // TODO: unwrap first
