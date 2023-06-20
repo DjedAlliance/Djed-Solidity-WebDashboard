@@ -7,6 +7,8 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { TxPendingStatus } from "milkomeda-wsc/build/WSCLibTypes";
 import useInterval from "../../../utils/hooks/useInterval";
+import { erc20ABI } from "@wagmi/core";
+import { useSigner } from "wagmi";
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -31,11 +33,12 @@ const statusMessages = {
 const Step1Content = ({
   wscProvider,
   amount: defaultAmountEth,
-  token: defaultTokenUnit = "lovelace"
+  token: defaultTokenUnit = "lovelace",
+  selectedToken,
+  setSelectedToken
 }) => {
   const [amount, setAmount] = React.useState(null);
   const [originTokens, setOriginTokens] = React.useState([]);
-  const [selectedToken, setSelectedToken] = React.useState(null);
 
   const [txHash, setTxHash] = React.useState(null);
 
@@ -144,7 +147,20 @@ const Step1Content = ({
     </div>
   );
 };
-const Step2Content = ({ wscProvider }) => {
+
+const Step2Content = ({ wscProvider, selectedToken }) => {
+  const { data: signer } = useSigner();
+  const onTokenAllowance = async () => {
+    if (selectedToken.unit === "lovelace") return;
+
+    // console.log(selectedToken, "erc20Contract", wscProvider);
+    // const erc20Contract = new ethers.Contract(
+    //   `0x${selectedToken.unit}`,
+    //   erc20ABI,
+    //   signer
+    // );
+    // const tx = await erc20Contract.approve(wscProvider?.bridgeAddress, "10000000");
+  };
   return (
     <div className="step-2-content">
       <h1>Token Allowance</h1>
@@ -154,14 +170,12 @@ const Step2Content = ({ wscProvider }) => {
           amet, consectetur adipiscing elit. Nullam
         </p>
       </div>
+      <button onClick={onTokenAllowance}>Token allowance</button>
     </div>
   );
 };
-const Step3Content = ({ wscProvider }) => {
-  const unwrapToken = async (destination, assetId, amount) => {
-    return wscProvider?.unwrap(destination, assetId, amount);
-  };
 
+const Step3Content = ({ wscProvider, onAction }) => {
   return (
     <div className="step-3-content">
       <h1>Action Execution</h1>
@@ -171,10 +185,41 @@ const Step3Content = ({ wscProvider }) => {
           amet, consectetur adipiscing elit. Nullam
         </p>
       </div>
+      <button onClick={onAction}>Perform Action</button>
     </div>
   );
 };
 const Step4Content = ({ wscProvider }) => {
+  const [txHash, setTxHash] = React.useState(null);
+  const [destinationBalance, setDestinationBalance] = React.useState(null);
+  const normalizeAda = (amount) => {
+    const maxDecimalPlaces = 6;
+    const decimalIndex = amount.indexOf(".");
+    const truncatedDestinationBalance =
+      decimalIndex === -1
+        ? destinationBalance
+        : destinationBalance.slice(0, decimalIndex + maxDecimalPlaces + 1);
+
+    return truncatedDestinationBalance;
+  };
+  const unwrapToken = async (destination, assetId, amount) => {
+    const normalizedAda = normalizeAda(destinationBalance);
+    console.log(normalizedAda, "normalizedAda");
+    // const lovelace = new BigNumber(normalizedAda).multipliedBy(new BigNumber(10).pow(6));
+    // // only ADA
+    // const txHash = await wscProvider?.unwrap(undefined, undefined, lovelace);
+    // setTxHash(txHash);
+    // console.log(txHash, "txHash");
+  };
+
+  useEffect(() => {
+    if (!wscProvider) return;
+    const loadDestinationBalance = async () => {
+      const destinationBalance = await wscProvider.eth_getBalance();
+      setDestinationBalance(destinationBalance);
+    };
+    loadDestinationBalance();
+  }, []);
   return (
     <div className="step-4-content">
       <h1>Unwrapping</h1>
@@ -184,6 +229,7 @@ const Step4Content = ({ wscProvider }) => {
           amet, consectetur adipiscing elit. Nullam
         </p>
       </div>
+      <button onClick={unwrapToken}>Unwrapping</button>
     </div>
   );
 };
@@ -202,6 +248,7 @@ const WSCButton = ({
   const [currentStep, setCurrentStep] = React.useState(0);
 
   const [wscProvider, setWscProvider] = React.useState(null);
+  const [selectedToken, setSelectedToken] = React.useState(null);
 
   const showModal = () => {
     console.log("test!");
@@ -275,6 +322,8 @@ const WSCButton = ({
         <div className="steps-content">
           {currentStep === 0 && (
             <Step1Content
+              setSelectedToken={setSelectedToken}
+              selectedToken={selectedToken}
               wscProvider={wscProvider}
               amount={
                 currentAmountWei
@@ -283,8 +332,12 @@ const WSCButton = ({
               }
             />
           )}
-          {currentStep === 1 && <Step2Content wscProvider={wscProvider} />}
-          {currentStep === 2 && <Step3Content wscProvider={wscProvider} />}
+          {currentStep === 1 && (
+            <Step2Content wscProvider={wscProvider} selectedToken={selectedToken} />
+          )}
+          {currentStep === 2 && (
+            <Step3Content wscProvider={wscProvider} onAction={onAction} />
+          )}
           {currentStep === 3 && <Step4Content wscProvider={wscProvider} />}
         </div>
       </Modal>

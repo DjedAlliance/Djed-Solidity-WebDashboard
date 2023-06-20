@@ -266,7 +266,7 @@ export default function ReserveCoin() {
   const onSubmit = (e) => {
     if (termsAccepted) {
       e.preventDefault();
-      tradeFxn();
+      tradeFxn(); // TODO:
     }
   };
 

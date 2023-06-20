@@ -660,7 +660,7 @@ const WSCAssets = ({
                     {shortAddress}
                   </a>
                 </div>
-                {allowedTokensMap[token.contractAddress] ? (
+                {allowedTokensMap?.[token.contractAddress] ? (
                   <button
                     className="button-primary-small"
                     onClick={async () => {
