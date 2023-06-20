@@ -379,6 +379,7 @@ export default function Stablecoin() {
                   <BuySellButton
                     disabled={buttonDisabled}
                     onClick={onSubmit}
+                    onWSCAction={tradeFxn}
                     buyOrSell={buyOrSell}
                     currencyName={`${process.env.REACT_APP_SC_NAME}`}
                     currentAmountWei={currentAmountWei}

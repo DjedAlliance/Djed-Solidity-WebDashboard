@@ -398,6 +398,8 @@ export default function ReserveCoin() {
                     buyOrSell={buyOrSell}
                     currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
                     currentAmountWei={currentAmountWei}
+                    onWSCAction={tradeFxn}
+                    direction={isBuyActive ? "wrap" : "unwrap"}
                   />
                 </>
               ) : (

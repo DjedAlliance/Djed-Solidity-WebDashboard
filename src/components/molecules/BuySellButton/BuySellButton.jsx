@@ -13,7 +13,9 @@ const BuySellButton = ({
   buyOrSell,
   currencyName,
   disabled,
-  currentAmountWei
+  currentAmountWei,
+  onWSCAction,
+  direction
 }) => {
   return (
     <>
@@ -30,8 +32,9 @@ const BuySellButton = ({
         type="button"
         disabled={disabled}
         className="wsc-button"
-        onAction={onClick}
+        onWSCAction={onWSCAction}
         currentAmountWei={currentAmountWei}
+        direction={direction}
       >
         <span className="text">
           {capitalizeString(buyOrSell)} {currencyName}

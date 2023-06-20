@@ -30,7 +30,7 @@ const statusMessages = {
   [TxPendingStatus.Confirmed]: "Your asset has been successfully moved! Go to Next Step!",
   error: "Ups something went wrong."
 };
-const Step1Content = ({
+const WrapContent = ({
   wscProvider,
   amount: defaultAmountEth,
   token: defaultTokenUnit = "lovelace",
@@ -148,7 +148,7 @@ const Step1Content = ({
   );
 };
 
-const Step2Content = ({ wscProvider, selectedToken }) => {
+const ActionExecutionContent = ({ wscProvider, selectedToken }) => {
   const { data: signer } = useSigner();
   const onTokenAllowance = async () => {
     if (selectedToken.unit === "lovelace") return;
@@ -175,7 +175,8 @@ const Step2Content = ({ wscProvider, selectedToken }) => {
   );
 };
 
-const Step3Content = ({ wscProvider, onAction }) => {
+const TokenAllowanceContent = ({ wscProvider, onWSCAction }) => {
+  console.log(onWSCAction, "ac");
   return (
     <div className="step-3-content">
       <h1>Action Execution</h1>
@@ -185,11 +186,11 @@ const Step3Content = ({ wscProvider, onAction }) => {
           amet, consectetur adipiscing elit. Nullam
         </p>
       </div>
-      <button onClick={onAction}>Perform Action</button>
+      <button onClick={onWSCAction}>Perform Action</button>
     </div>
   );
 };
-const Step4Content = ({ wscProvider }) => {
+const UnwrapContent = ({ wscProvider }) => {
   const [txHash, setTxHash] = React.useState(null);
   const [destinationBalance, setDestinationBalance] = React.useState(null);
   const normalizeAda = (amount) => {
@@ -234,13 +235,18 @@ const Step4Content = ({ wscProvider }) => {
   );
 };
 
+const directions = {
+  WRAP: "wrap",
+  UNWRAP: "unwrap"
+};
 const WSCButton = ({
-  onAction,
+  onWSCAction,
   type,
   className,
   disabled,
   children,
-  currentAmountWei
+  currentAmountWei,
+  direction
 }) => {
   const { activeConnector } = useAppProvider();
 
@@ -286,12 +292,56 @@ const WSCButton = ({
   }
   console.log(currentAmountWei, "currentAmountWei");
 
-  const steps = [
-    { title: "Cardano - Wrapping" },
-    { title: "Token Allowance" },
-    { title: "Action Execution" },
-    { title: "Milkomeda - Unwrapping" }
-  ];
+  const steps =
+    direction === directions.WRAP
+      ? [
+          {
+            title: "Cardano - Wrapping",
+            content: (
+              <WrapContent
+                setSelectedToken={setSelectedToken}
+                selectedToken={selectedToken}
+                wscProvider={wscProvider}
+                amount={
+                  currentAmountWei
+                    ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
+                    : "0"
+                }
+              />
+            )
+          },
+          {
+            title: "Action Execution",
+            content: (
+              <ActionExecutionContent
+                wscProvider={wscProvider}
+                selectedToken={selectedToken}
+              />
+            )
+          },
+          {
+            title: "Token Allowance",
+            content: (
+              <TokenAllowanceContent
+                wscProvider={wscProvider}
+                onWSCAction={onWSCAction}
+              />
+            )
+          },
+          {
+            title: "Milkomeda - Unwrapping",
+            content: <UnwrapContent wscProvider={wscProvider} />
+          }
+        ]
+      : // TODO: unwrap first
+        [
+          { title: "Milkomeda - Unwrapping" },
+          { title: "Token Allowance" },
+          { title: "Action Execution" },
+          { title: "Cardano - wrap" }
+        ];
+
+  const currentContent = steps[currentStep].content;
 
   return (
     <>
@@ -319,27 +369,7 @@ const WSCButton = ({
             <Step key={idx} title={item.title} progressDot={item.progressDot} />
           ))}
         </Steps>
-        <div className="steps-content">
-          {currentStep === 0 && (
-            <Step1Content
-              setSelectedToken={setSelectedToken}
-              selectedToken={selectedToken}
-              wscProvider={wscProvider}
-              amount={
-                currentAmountWei
-                  ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
-                  : "0"
-              }
-            />
-          )}
-          {currentStep === 1 && (
-            <Step2Content wscProvider={wscProvider} selectedToken={selectedToken} />
-          )}
-          {currentStep === 2 && (
-            <Step3Content wscProvider={wscProvider} onAction={onAction} />
-          )}
-          {currentStep === 3 && <Step4Content wscProvider={wscProvider} />}
-        </div>
+        <div className="steps-content">{currentContent}</div>
       </Modal>
     </>
   );
