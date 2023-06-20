@@ -148,7 +148,7 @@ const WrapContent = ({
   );
 };
 
-const ActionExecutionContent = ({ wscProvider, selectedToken }) => {
+const TokenAllowanceContent = ({ wscProvider, selectedToken }) => {
   const { data: signer } = useSigner();
   const onTokenAllowance = async () => {
     if (selectedToken.unit === "lovelace") return;
@@ -175,7 +175,7 @@ const ActionExecutionContent = ({ wscProvider, selectedToken }) => {
   );
 };
 
-const TokenAllowanceContent = ({ wscProvider, onWSCAction }) => {
+const ActionExecutionContent = ({ wscProvider, onWSCAction }) => {
   console.log(onWSCAction, "ac");
   return (
     <div className="step-3-content">
@@ -310,12 +310,13 @@ const WSCButton = ({
               />
             )
           },
+
           {
             title: "Action Execution",
             content: (
               <ActionExecutionContent
                 wscProvider={wscProvider}
-                selectedToken={selectedToken}
+                onWSCAction={onWSCAction}
               />
             )
           },
@@ -324,7 +325,7 @@ const WSCButton = ({
             content: (
               <TokenAllowanceContent
                 wscProvider={wscProvider}
-                onWSCAction={onWSCAction}
+                selectedToken={selectedToken}
               />
             )
           },
