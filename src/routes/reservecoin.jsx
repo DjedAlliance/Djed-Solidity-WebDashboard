@@ -259,6 +259,10 @@ export default function ReserveCoin() {
     ? buyRc.bind(null, tradeData.totalBCUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
 
+  const currentAmountWei = isBuyActive
+    ? tradeData?.totalBCUnscaled
+    : tradeData?.amountUnscaled;
+
   const onSubmit = (e) => {
     if (termsAccepted) {
       e.preventDefault();
@@ -393,6 +397,7 @@ export default function ReserveCoin() {
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
                     currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
+                    currentAmountWei={currentAmountWei}
                   />
                 </>
               ) : (
