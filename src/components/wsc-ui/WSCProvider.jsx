@@ -9,13 +9,13 @@ export const WSCProvider = ({ children }) => {
   const [wscProvider, setWscProvider] = React.useState(null);
 
   const [originTokens, setOriginTokens] = useState([]);
+  const [tokens, setTokens] = useState([]);
+  const [destinationBalance, setDestinationBalance] = useState(null);
 
   const [originAddress, setOriginAddress] = useState(null);
   const [pendingTxs, setPendingTxs] = useState([]);
   const [address, setAddress] = useState(null);
-  const [destinationBalance, setDestinationBalance] = useState(null);
   const [originBalance, setOriginBalance] = useState(null);
-  const [tokens, setTokens] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [algorandConnected, setAlgorandConnected] = useState(false);
   const [cardanoConnected, setCardanoConnected] = useState(false);
@@ -29,8 +29,13 @@ export const WSCProvider = ({ children }) => {
         const provider = await activeConnector.getProvider();
         if (!provider) return;
         const originTokens = await provider.origin_getTokenBalances();
+        const tokenBalances = await provider.getTokenBalances();
+        const destinationBalance = await provider.eth_getBalance();
+        console.log("destinationBalance", destinationBalance);
         setWscProvider(provider);
         setOriginTokens(originTokens);
+        setTokens(tokenBalances ?? []);
+        setDestinationBalance(destinationBalance);
       } catch (e) {
         console.log(e);
       }

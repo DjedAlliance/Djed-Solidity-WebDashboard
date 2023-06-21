@@ -32,7 +32,7 @@ import {
   metamaskConnector,
   supportedChain
 } from "../utils/web3/wagmi";
-import { useConnect, useAccount, useNetwork, useSigner, useProvider } from "wagmi";
+import { useConnect, useAccount, useNetwork, useSigner } from "wagmi";
 
 const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
@@ -143,7 +143,7 @@ export const AppProvider = ({ children }) => {
   };
   const connectToEternlWSC = () => {
     connect({
-      connector: eternlWSCConnector,
+      connector: eternlWSCConnector
     });
   };
   const connectFlintWallet = () => {

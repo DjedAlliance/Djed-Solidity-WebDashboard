@@ -22,7 +22,7 @@ const formatTokenAmount = (amount, decimals) => {
   return amount;
 };
 
-const statusMessages = {
+const statusWrapFirstMessages = {
   init: "Staring wrapping your token...",
   pending: "Wrapping your tokens...",
   [TxPendingStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation...",
@@ -31,14 +31,24 @@ const statusMessages = {
   [TxPendingStatus.Confirmed]: "Your asset has been successfully moved! Go to Next Step!",
   error: "Ups something went wrong."
 };
+const statusUnwrapFirstMessages = {
+  init: "Staring unwrapping your token...",
+  pending: "Unwrapping your tokens...",
+  [TxPendingStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation...",
+  [TxPendingStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation...",
+  [TxPendingStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation...",
+  [TxPendingStatus.Confirmed]: "Your asset has been successfully moved! Go to Next Step!",
+  error: "Ups something went wrong."
+};
 const WrapContent = ({
-  amount: defaultAmountEth,
+  defaultAmountEth,
   token: defaultTokenUnit = "lovelace",
   selectedToken,
-  setSelectedToken
+  setSelectedToken,
+  amount,
+  setAmount
 }) => {
   const { wscProvider, originTokens } = useWSCProvider();
-  const [amount, setAmount] = React.useState(null);
   const [formattedOriginTokens, setFormattedOriginTokens] = React.useState([]);
 
   const [txHash, setTxHash] = React.useState(null);
@@ -146,27 +156,52 @@ const WrapContent = ({
           txStatus !== "error" && (
             <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
           )}
-        {txStatus !== "idle" && <p>{statusMessages[txStatus]}</p>}
+        {txStatus !== "idle" && <p>{statusWrapFirstMessages[txStatus]}</p>}
       </div>
     </div>
   );
 };
 
-const TokenAllowanceContent = ({ selectedToken }) => {
+const TokenAllowanceContent = ({ contractAddress }) => {
   const { data: signer } = useSigner();
-  const { wscProvider } = useWSCProvider();
+  const { wscProvider, tokens } = useWSCProvider();
+  const [approvalStatus, setApprovalStatus] = React.useState("idle");
 
   const onTokenAllowance = async () => {
-    if (selectedToken.unit === "lovelace") return;
+    const selectedToken = tokens.find((t) => t.contractAddress === contractAddress);
+    if (!selectedToken) return;
 
-    // console.log(selectedToken, "erc20Contract", wscProvider);
-    // const erc20Contract = new ethers.Contract(
-    //   `0x${selectedToken.unit}`,
-    //   erc20ABI,
-    //   signer
-    // );
-    // const tx = await erc20Contract.approve(wscProvider?.bridgeAddress, "10000000");
+    const convertAmountBN = ethers.utils.parseUnits(
+      selectedToken.balance,
+      selectedToken?.decimals
+    );
+
+    try {
+      setApprovalStatus("pending");
+      const erc20Contract = new ethers.Contract(
+        selectedToken.contractAddress,
+        erc20ABI,
+        signer
+      );
+      const bridgeAddress = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
+      const approvalTx = await erc20Contract.functions.approve(
+        bridgeAddress,
+        convertAmountBN,
+        { gasLimit: 500000 }
+      );
+      const approvalReceipt = await approvalTx.wait();
+      console.log(approvalReceipt, "approvalReceipt");
+      setApprovalStatus("success");
+    } catch (err) {
+      setApprovalStatus("error");
+      console.error(err);
+    }
   };
+
+  const isLoading = approvalStatus === "pending";
+  const isSuccess = approvalStatus === "success";
+  const isError = approvalStatus === "error";
+
   return (
     <div className="step-2-content">
       <h1>Token Allowance</h1>
@@ -176,12 +211,22 @@ const TokenAllowanceContent = ({ selectedToken }) => {
           amet, consectetur adipiscing elit. Nullam
         </p>
       </div>
+      <div>
+        {isLoading && (
+          <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+        )}
+        {isError && <p style={{ color: "red" }}>Try again, something went wrong</p>}
+        {isSuccess && (
+          <p>You've successfully approved the bridge to spend your tokens. Go Next!</p>
+        )}
+      </div>
       <button onClick={onTokenAllowance}>Token allowance</button>
     </div>
   );
 };
 
-const ActionExecutionContent = ({ wscProvider, onWSCAction }) => {
+const ActionExecutionContent = ({ wscProvider, onWSCAction, amount }) => {
+  // TODO: need to find a way to know if everything went well
   return (
     <div className="step-3-content">
       <h1>Action Execution</h1>
@@ -195,39 +240,45 @@ const ActionExecutionContent = ({ wscProvider, onWSCAction }) => {
     </div>
   );
 };
-const UnwrapContent = () => {
+const UnwrapContent = ({
+  contractAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128"
+}) => {
+  const { wscProvider, tokens } = useWSCProvider();
   const [txHash, setTxHash] = React.useState(null);
-  const { wscProvider } = useWSCProvider();
+  const [txStatus, setTxStatus] = React.useState("idle");
 
-  const [destinationBalance, setDestinationBalance] = React.useState(null);
-  const normalizeAda = (amount) => {
-    const maxDecimalPlaces = 6;
-    const decimalIndex = amount.indexOf(".");
-    const truncatedDestinationBalance =
-      decimalIndex === -1
-        ? destinationBalance
-        : destinationBalance.slice(0, decimalIndex + maxDecimalPlaces + 1);
+  useInterval(
+    async () => {
+      if (!wscProvider || txHash == null) return;
+      const response = await wscProvider.getTxStatus(txHash);
+      setTxStatus(response);
+      if (response === TxPendingStatus.Confirmed) {
+        setTxHash(null);
+      }
+    },
+    txHash != null ? 4000 : null
+  );
 
-    return truncatedDestinationBalance;
+  const unwrapToken = async () => {
+    const selectedToken = tokens.find((t) => t.contractAddress === contractAddress);
+    if (!selectedToken) return;
+
+    setTxStatus("init");
+
+    try {
+      const txHash = await wscProvider.unwrap(
+        undefined,
+        selectedToken.contractAddress,
+        new BigNumber(selectedToken.balance)
+      );
+      setTxHash(txHash);
+      setTxStatus("pending");
+    } catch (err) {
+      console.error(err);
+      setTxStatus("error");
+    }
   };
-  const unwrapToken = async (destination, assetId, amount) => {
-    const normalizedAda = normalizeAda(destinationBalance);
 
-    // const lovelace = new BigNumber(normalizedAda).multipliedBy(new BigNumber(10).pow(6));
-    // // only ADA
-    // const txHash = await wscProvider?.unwrap(undefined, undefined, lovelace);
-    // setTxHash(txHash);
-    // console.log(txHash, "txHash");
-  };
-
-  useEffect(() => {
-    if (!wscProvider) return;
-    const loadDestinationBalance = async () => {
-      const destinationBalance = await wscProvider.eth_getBalance();
-      setDestinationBalance(destinationBalance);
-    };
-    loadDestinationBalance();
-  }, []);
   return (
     <div className="step-4-content">
       <h1>Unwrapping</h1>
@@ -238,6 +289,15 @@ const UnwrapContent = () => {
         </p>
       </div>
       <button onClick={unwrapToken}>Unwrapping</button>
+      <div>{txStatus}</div>
+      <div>
+        {txStatus !== TxPendingStatus.Confirmed &&
+          txStatus !== "idle" &&
+          txStatus !== "error" && (
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+          )}
+        {txStatus !== "idle" && <p>{statusUnwrapFirstMessages[txStatus]}</p>}
+      </div>
     </div>
   );
 };
@@ -253,10 +313,12 @@ const WSCButton = ({
   disabled,
   children,
   currentAmountWei,
-  direction
+  direction,
+  contractAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128"
 }) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [currentStep, setCurrentStep] = React.useState(0);
+  const [amount, setAmount] = React.useState(null);
 
   const [selectedToken, setSelectedToken] = React.useState(null);
 
@@ -286,7 +348,9 @@ const WSCButton = ({
               <WrapContent
                 setSelectedToken={setSelectedToken}
                 selectedToken={selectedToken}
-                amount={
+                amount={amount}
+                setAmount={setAmount}
+                defaultAmountEth={
                   currentAmountWei
                     ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
                     : "0"
@@ -301,11 +365,17 @@ const WSCButton = ({
           },
           {
             title: "Token Allowance",
-            content: <TokenAllowanceContent selectedToken={selectedToken} />
+            content: (
+              <TokenAllowanceContent
+                contractAddress={contractAddress}
+                amount={amount}
+                selectedToken={selectedToken}
+              />
+            )
           },
           {
             title: "Milkomeda - Unwrapping",
-            content: <UnwrapContent />
+            content: <UnwrapContent amount={amount} />
           }
         ]
       : // TODO: unwrap first
@@ -315,8 +385,6 @@ const WSCButton = ({
           { title: "Action Execution" },
           { title: "Cardano - wrap" }
         ];
-
-  const currentContent = steps[currentStep].content;
 
   return (
     <>
@@ -344,7 +412,7 @@ const WSCButton = ({
             <Step key={idx} title={item.title} progressDot={item.progressDot} />
           ))}
         </Steps>
-        <div className="steps-content">{currentContent}</div>
+        <div className="steps-content">{steps[currentStep].content}</div>
       </Modal>
     </>
   );
