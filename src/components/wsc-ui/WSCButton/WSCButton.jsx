@@ -46,7 +46,8 @@ const WrapContent = ({
   selectedToken,
   setSelectedToken,
   amount,
-  setAmount
+  setAmount,
+  goNextStep
 }) => {
   const { wscProvider, originTokens } = useWSCProvider();
   const [formattedOriginTokens, setFormattedOriginTokens] = React.useState([]);
@@ -62,6 +63,9 @@ const WrapContent = ({
       setTxStatus(response);
       if (response === TxPendingStatus.Confirmed) {
         setTxHash(null);
+        setTimeout(() => {
+          goNextStep();
+        }, 2000);
       }
     },
     txHash != null ? 4000 : null
@@ -162,7 +166,7 @@ const WrapContent = ({
   );
 };
 
-const TokenAllowanceContent = ({ contractAddress }) => {
+const TokenAllowanceContent = ({ contractAddress, goNextStep }) => {
   const { data: signer } = useSigner();
   const { wscProvider, tokens } = useWSCProvider();
   const [approvalStatus, setApprovalStatus] = React.useState("idle");
@@ -192,6 +196,9 @@ const TokenAllowanceContent = ({ contractAddress }) => {
       const approvalReceipt = await approvalTx.wait();
       console.log(approvalReceipt, "approvalReceipt");
       setApprovalStatus("success");
+      setTimeout(() => {
+        goNextStep();
+      }, 2000);
     } catch (err) {
       setApprovalStatus("error");
       console.error(err);
@@ -355,6 +362,7 @@ const WSCButton = ({
                     ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
                     : "0"
                 }
+                goNextStep={handleNextStep}
               />
             )
           },
@@ -370,6 +378,7 @@ const WSCButton = ({
                 contractAddress={contractAddress}
                 amount={amount}
                 selectedToken={selectedToken}
+                goNextStep={handleNextStep}
               />
             )
           },
@@ -378,12 +387,39 @@ const WSCButton = ({
             content: <UnwrapContent amount={amount} />
           }
         ]
-      : // TODO: unwrap first
+      : // TODO: verify steps when selling and adjust logic
         [
-          { title: "Milkomeda - Unwrapping" },
-          { title: "Token Allowance" },
-          { title: "Action Execution" },
-          { title: "Cardano - wrap" }
+          { title: "Milkomeda - Unwrapping", content: <UnwrapContent amount={amount} /> },
+          {
+            title: "Token Allowance",
+            content: (
+              <TokenAllowanceContent
+                contractAddress={contractAddress}
+                amount={amount}
+                selectedToken={selectedToken}
+              />
+            )
+          },
+          {
+            title: "Action Execution",
+            content: <ActionExecutionContent onWSCAction={onWSCAction} />
+          },
+          {
+            title: "Cardano - wrap",
+            content: (
+              <WrapContent
+                setSelectedToken={setSelectedToken}
+                selectedToken={selectedToken}
+                amount={amount}
+                setAmount={setAmount}
+                defaultAmountEth={
+                  currentAmountWei
+                    ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
+                    : "0"
+                }
+              />
+            )
+          }
         ];
 
   return (
@@ -407,9 +443,9 @@ const WSCButton = ({
           </button>
         ]}
       >
-        <Steps current={currentStep}>
+        <Steps current={currentStep} labelPlacement="vertical">
           {steps.map((item, idx) => (
-            <Step key={idx} title={item.title} progressDot={item.progressDot} />
+            <Step key={idx} title={item.title} />
           ))}
         </Steps>
         <div className="steps-content">{steps[currentStep].content}</div>
