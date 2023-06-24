@@ -14,6 +14,13 @@ import { useWSCProvider } from "../WSCProvider";
 const { Step } = Steps;
 const { Option } = Select;
 
+export const convertWeiToTokens = ({ valueWei, token }) =>
+  new BigNumber(valueWei)
+    .dividedBy(new BigNumber(10).pow(token.decimals))
+    .dp(token.decimals);
+export const convertTokensToWei = ({ value, token }) =>
+  value.multipliedBy(new BigNumber(10).pow(token.decimals)).dp(0);
+
 const formatTokenAmount = (amount, decimals) => {
   if (decimals) {
     const divisor = new BigNumber(10).pow(decimals);
@@ -21,6 +28,14 @@ const formatTokenAmount = (amount, decimals) => {
   }
   return amount;
 };
+
+// TODO: this might be need to be passed on the config provider
+const cardanoAddressTReserveCoin =
+  "cc53696f7d40c96f2bca9e2e8fe31905d8207c4106f326f417ec36727452657365727665436f696e";
+const cardanoAddressTStableCoin =
+  "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
+
+const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
 
 const statusWrapFirstMessages = {
   init: "Staring wrapping your token...",
@@ -42,7 +57,7 @@ const statusUnwrapFirstMessages = {
 };
 const WrapContent = ({
   defaultAmountEth,
-  token: defaultTokenUnit = "lovelace",
+  defaultTokenUnit = "lovelace",
   selectedToken,
   setSelectedToken,
   amount,
@@ -88,11 +103,11 @@ const WrapContent = ({
   };
 
   const handleTokenChange = (tokenUnit) => {
-    const token = originTokens.find((t) => t.unit === tokenUnit);
+    const token = formattedOriginTokens.find((t) => t.unit === tokenUnit);
     setSelectedToken(token);
   };
   const onMaxToken = () => {
-    setAmount(selectedToken.quantity);
+    setAmount(selectedToken.quantity?.toFixed());
   };
 
   useEffect(() => {
@@ -100,14 +115,17 @@ const WrapContent = ({
       const token = originTokens.find((t) => t.unit === defaultTokenUnit);
       const defaultToken = {
         ...token,
-        quantity: defaultAmountEth ?? token.quantity
+        // quantity: defaultAmountEth ?? token.quantity
+        quantity: convertWeiToTokens({ valueWei: token.quantity, token })
       };
       setSelectedToken(defaultToken);
-      setAmount(defaultToken.quantity);
-      const formattedTokens = originTokens.map((token) => ({
-        ...token,
-        quantity: formatTokenAmount(token.quantity, token.decimals)
-      }));
+      setAmount(defaultToken.quantity.toFixed());
+      const formattedTokens = originTokens
+        .filter((token) => token.bridgeAllowed)
+        .map((token) => ({
+          ...token,
+          quantity: convertWeiToTokens({ valueWei: token.quantity, token })
+        }));
       setFormattedOriginTokens(formattedTokens ?? []);
     };
     loadOriginTokens();
@@ -248,7 +266,7 @@ const ActionExecutionContent = ({ wscProvider, onWSCAction, amount }) => {
   );
 };
 const UnwrapContent = ({
-  contractAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128"
+  contractAddress = reserveCoinAddress // TODO: remove hardcoded value
 }) => {
   const { wscProvider, tokens } = useWSCProvider();
   const [txHash, setTxHash] = React.useState(null);
@@ -321,7 +339,7 @@ const WSCButton = ({
   children,
   currentAmountWei,
   direction,
-  contractAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128"
+  contractAddress = reserveCoinAddress // TODO
 }) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [currentStep, setCurrentStep] = React.useState(0);
@@ -334,10 +352,12 @@ const WSCButton = ({
   };
 
   const handleNextStep = () => {
+    if (currentStep === 2) return;
     const nextStepIdx = currentStep + 1;
     setCurrentStep(nextStepIdx);
   };
   const handlePrevStep = () => {
+    if (currentStep === 0) return;
     const prevStepIdx = currentStep - 1;
     setCurrentStep(prevStepIdx);
   };
@@ -350,9 +370,10 @@ const WSCButton = ({
     direction === directions.WRAP
       ? [
           {
-            title: "Cardano - Wrapping",
+            title: "Cardano Wrapping",
             content: (
               <WrapContent
+                defaultTokenUnit="lovelace" // TODO: hardcoded for now
                 setSelectedToken={setSelectedToken}
                 selectedToken={selectedToken}
                 amount={amount}
@@ -376,38 +397,22 @@ const WSCButton = ({
             content: (
               <TokenAllowanceContent
                 contractAddress={contractAddress}
-                amount={amount}
                 selectedToken={selectedToken}
                 goNextStep={handleNextStep}
               />
             )
           },
           {
-            title: "Milkomeda - Unwrapping",
-            content: <UnwrapContent amount={amount} />
+            title: "Milkomeda Unwrapping",
+            content: <UnwrapContent />
           }
         ]
-      : // TODO: verify steps when selling and adjust logic
-        [
-          { title: "Milkomeda - Unwrapping", content: <UnwrapContent amount={amount} /> },
+      : [
           {
-            title: "Token Allowance",
-            content: (
-              <TokenAllowanceContent
-                contractAddress={contractAddress}
-                amount={amount}
-                selectedToken={selectedToken}
-              />
-            )
-          },
-          {
-            title: "Action Execution",
-            content: <ActionExecutionContent onWSCAction={onWSCAction} />
-          },
-          {
-            title: "Cardano - wrap",
+            title: "Cardano Wrapping",
             content: (
               <WrapContent
+                defaultTokenUnit={cardanoAddressTReserveCoin} // TODO: hardcoded for now
                 setSelectedToken={setSelectedToken}
                 selectedToken={selectedToken}
                 amount={amount}
@@ -417,8 +422,27 @@ const WSCButton = ({
                     ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
                     : "0"
                 }
+                goNextStep={handleNextStep}
               />
             )
+          },
+          {
+            title: "Token Allowance",
+            content: (
+              <TokenAllowanceContent
+                contractAddress={contractAddress}
+                selectedToken={selectedToken}
+                goNextStep={handleNextStep}
+              />
+            )
+          },
+          {
+            title: "Action Execution",
+            content: <ActionExecutionContent onWSCAction={onWSCAction} />
+          },
+          {
+            title: "Milkomeda Unwrapping",
+            content: <UnwrapContent />
           }
         ];
 

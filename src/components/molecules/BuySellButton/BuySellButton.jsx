@@ -30,7 +30,7 @@ const BuySellButton = ({
       />
       <WSCButton
         type="button"
-        disabled={disabled}
+        // disabled={disabled}
         className="wsc-button"
         onWSCAction={onWSCAction}
         currentAmountWei={currentAmountWei}
