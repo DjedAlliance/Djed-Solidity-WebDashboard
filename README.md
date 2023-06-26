@@ -2,7 +2,6 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-
 ## Pre-requisites
 
 We handle environment variables in `.env` files with default values in [env/](./env/) folder, i.e. [env/](./env/) contains `*.env` files for specific environments. If the repo is freshly cloned, you can copy one of those files to the root folder as `.env`, `cp ./env/milkomeda-c1-testnet.env .env` is good enough for most cases.
