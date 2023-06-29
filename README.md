@@ -17,14 +17,9 @@ Djed is a formally verified crypto-backed autonomous stablecoin protocol.
 
 This repository contains the complete source code for a frontend application designed to facilitate user interaction with deployments of the Djed protocol's Solidity implementation. 
 
-With the aim of providing a smooth user experience, the codebase offers a comprehensive set of functionalities for users to engage with Djed deployments efficiently. 
+The solidity implementation of Djed can be found in the following repository: [link to the Djed Solidity implementation repository](https://github.com/DjedAlliance/Djed-Solidity). 
 
-The frontend enables users to explore and interact with various features and capabilities of Djed, leveraging the power of the Solidity implementation. 
-
-By accessing this repository, developers and enthusiasts can delve into the inner workings of the frontend and gain a deeper understanding of how it integrates with Djed's Solidity implementation to enable a robust and user-friendly experience.
-
-Here you can interact with a deployment that uses [these smart contracts](https://github.com/DjedAlliance/Djed-Solidity/commits/Belus) on Milkomeda-C1.
-
+By utilizing this frontend application, users can conveniently engage with Djed deployments on Milkomeda-C1 and explore the functionalities provided by the smart contracts.
 
 ## Installation
 
@@ -32,15 +27,17 @@ We use [nvm](https://github.com/nvm-sh/nvm) to handle the Node version, if you d
 
 
 Run `npm install` to download the project dependencies.
-```bash
+```
 npm install
 ```
 
-## Usage
+### Usage
 
 In the project directory, you can run:
 
-### `npm start`
+```
+npm start
+```
 
 Runs the app in the development mode.
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
@@ -49,16 +46,24 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
+```
+npm test
+```
+
+
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run format`
+```
+npm run format
+```
 
 Formats the code to comply with the `prettier` style.
 
-### `npm run build`
+```
+npm run build
+```
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
@@ -68,7 +73,9 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+```
+npm run eject
+```
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
