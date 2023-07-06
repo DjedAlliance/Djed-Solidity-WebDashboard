@@ -4,6 +4,10 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
+iframe {
+  display: none !important;
+}
+
 .logo {
   display: flex;
   align-items: center;

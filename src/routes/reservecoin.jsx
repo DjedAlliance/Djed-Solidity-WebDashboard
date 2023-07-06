@@ -255,13 +255,65 @@ export default function ReserveCoin() {
       });
   };
 
+  const buyRcPromise = (total) => {
+    return new Promise((resolve, reject) => {
+      promiseTx(isWalletConnected, buyRcTx(djedContract, account, total), signer)
+        .then(({ hash }) => {
+          verifyTx(web3, hash)
+            .then((res) => {
+              if (res) {
+                resolve();
+              } else {
+                reject(new Error("The transaction reverted."));
+              }
+            })
+            .catch((err) => {
+              console.error("Error:", err.message);
+              reject(err);
+            });
+        })
+        .catch((err) => {
+          console.error("Error:", err.message);
+          reject(err);
+        });
+    });
+  };
+
+  const sellRcPromise = (amount) => {
+    return new Promise((resolve, reject) => {
+      promiseTx(isWalletConnected, sellRcTx(djedContract, account, amount), signer)
+        .then(({ hash }) => {
+          verifyTx(web3, hash)
+            .then((res) => {
+              if (res) {
+                resolve();
+              } else {
+                reject(new Error("The transaction reverted."));
+              }
+            })
+            .catch((err) => {
+              console.error("Error:", err.message);
+              reject(err);
+            });
+        })
+        .catch((err) => {
+          console.error("Error:", err.message);
+          reject(err);
+        });
+    });
+  };
+
   const tradeFxn = isBuyActive
     ? buyRc.bind(null, tradeData.totalBCUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
 
-  const currentAmountWei = isBuyActive
-    ? tradeData?.totalBCUnscaled
-    : tradeData?.amountUnscaled;
+  const tradeFxnPromise = isBuyActive
+    ? buyRcPromise.bind(null, tradeData.totalBCUnscaled)
+    : sellRcPromise.bind(null, tradeData.amountUnscaled);
+
+  const currentAmount = isBuyActive
+    ? tradeData.totalBCUnscaled
+    : tradeData.amountUnscaled;
 
   const onSubmit = (e) => {
     if (termsAccepted) {
@@ -397,9 +449,9 @@ export default function ReserveCoin() {
                     onClick={onSubmit}
                     buyOrSell={buyOrSell}
                     currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
-                    currentAmountWei={currentAmountWei}
-                    onWSCAction={tradeFxn}
-                    direction={isBuyActive ? "wrap" : "unwrap"}
+                    currentAmount={currentAmount}
+                    onWSCAction={tradeFxnPromise}
+                    stepTxDirection={isBuyActive ? "buy" : "sell"}
                   />
                 </>
               ) : (

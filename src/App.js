@@ -9,7 +9,7 @@ import { AppProvider } from "./context/AppProvider";
 import { client } from "./utils/web3/wagmi";
 import { WagmiConfig } from "wagmi";
 import { useEffect } from "react";
-import { WSCProvider } from "./components/wsc-ui/WSCProvider";
+import { ConnectWSCProvider } from "milkomeda-wsc-ui";
 
 export default function App() {
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function App() {
     <BrowserRouter>
       <WagmiConfig client={client}>
         <AppProvider>
-          <WSCProvider>
+          <ConnectWSCProvider>
             <Routes>
               <Route path="/" element={<MainLayout />}>
                 <Route path="" element={<Protocol />} />
@@ -38,7 +38,7 @@ export default function App() {
                 />
               </Route>
             </Routes>
-          </WSCProvider>
+          </ConnectWSCProvider>
         </AppProvider>
       </WagmiConfig>
     </BrowserRouter>

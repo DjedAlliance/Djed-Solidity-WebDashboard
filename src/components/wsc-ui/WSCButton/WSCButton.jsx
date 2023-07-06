@@ -5,7 +5,7 @@ import "./WSCButton.scss";
 import { LoadingOutlined } from "@ant-design/icons";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { TxPendingStatus } from "milkomeda-wsc/build/WSCLibTypes";
+// import { TxPendingStatus } from "milkomeda-wsc/build/WSCLibTypes";
 import useInterval from "../../../utils/hooks/useInterval";
 import { erc20ABI } from "@wagmi/core";
 import { useSigner } from "wagmi";
@@ -40,19 +40,19 @@ const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
 const statusWrapFirstMessages = {
   init: "Staring wrapping your token...",
   pending: "Wrapping your tokens...",
-  [TxPendingStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation...",
-  [TxPendingStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation...",
-  [TxPendingStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation...",
-  [TxPendingStatus.Confirmed]: "Your asset has been successfully moved! Go to Next Step!",
+  WaitingL1Confirmation: "Waiting for L1 confirmation...",
+  WaitingBridgeConfirmation: "Waiting for bridge confirmation...",
+  WaitingL2Confirmation: "Waiting for L2 confirmation...",
+  Confirmed: "Your asset has been successfully moved! Go to Next Step!",
   error: "Ups something went wrong."
 };
 const statusUnwrapFirstMessages = {
   init: "Staring unwrapping your token...",
   pending: "Unwrapping your tokens...",
-  [TxPendingStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation...",
-  [TxPendingStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation...",
-  [TxPendingStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation...",
-  [TxPendingStatus.Confirmed]: "Your asset has been successfully moved! Go to Next Step!",
+  WaitingL1Confirmation: "Waiting for L1 confirmation...",
+  WaitingBridgeConfirmation: "Waiting for bridge confirmation...",
+  WaitingL2Confirmation: "Waiting for L2 confirmation...",
+  Confirmed: "Your asset has been successfully moved! Go to Next Step!",
   error: "Ups something went wrong."
 };
 const WrapContent = ({
@@ -76,7 +76,7 @@ const WrapContent = ({
       if (!wscProvider || txHash == null) return;
       const response = await wscProvider.getTxStatus(txHash);
       setTxStatus(response);
-      if (response === TxPendingStatus.Confirmed) {
+      if (response === "Confirmed") {
         setTxHash(null);
         setTimeout(() => {
           goNextStep();
@@ -173,11 +173,9 @@ const WrapContent = ({
       </button>
       {txStatus}
       <div>
-        {txStatus !== TxPendingStatus.Confirmed &&
-          txStatus !== "idle" &&
-          txStatus !== "error" && (
-            <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-          )}
+        {txStatus !== "Confirmed" && txStatus !== "idle" && txStatus !== "error" && (
+          <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+        )}
         {txStatus !== "idle" && <p>{statusWrapFirstMessages[txStatus]}</p>}
       </div>
     </div>
@@ -277,7 +275,7 @@ const UnwrapContent = ({
       if (!wscProvider || txHash == null) return;
       const response = await wscProvider.getTxStatus(txHash);
       setTxStatus(response);
-      if (response === TxPendingStatus.Confirmed) {
+      if (response === "Confirmed") {
         setTxHash(null);
       }
     },
@@ -316,11 +314,9 @@ const UnwrapContent = ({
       <button onClick={unwrapToken}>Unwrapping</button>
       <div>{txStatus}</div>
       <div>
-        {txStatus !== TxPendingStatus.Confirmed &&
-          txStatus !== "idle" &&
-          txStatus !== "error" && (
-            <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-          )}
+        {txStatus !== "Confirmed" && txStatus !== "idle" && txStatus !== "error" && (
+          <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+        )}
         {txStatus !== "idle" && <p>{statusUnwrapFirstMessages[txStatus]}</p>}
       </div>
     </div>
@@ -365,6 +361,14 @@ const WSCButton = ({
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  console.log(
+    amount,
+    "->",
+    currentAmountWei
+      ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
+      : "0"
+  );
 
   const steps =
     direction === directions.WRAP

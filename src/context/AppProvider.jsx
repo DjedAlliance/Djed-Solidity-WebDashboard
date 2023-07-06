@@ -27,8 +27,6 @@ import { BigNumber } from "ethers";
 
 import {
   flintWalletConnector,
-  flintWSCConnector,
-  eternlWSCConnector,
   metamaskConnector,
   supportedChain
 } from "../utils/web3/wagmi";
@@ -38,7 +36,7 @@ const AppContext = createContext();
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
 export const AppProvider = ({ children }) => {
-  const { connect } = useConnect();
+  const { connect, connectors } = useConnect();
   const {
     connector: activeConnector,
     isConnected: isWalletConnected,
@@ -142,8 +140,12 @@ export const AppProvider = ({ children }) => {
     });
   };
   const connectToEternlWSC = () => {
+    const etrnalWSCConnector = connectors.find(
+      (connector) => connector.id === "etrnal-wsc"
+    );
+    if (!etrnalWSCConnector) return;
     connect({
-      connector: eternlWSCConnector
+      connector: etrnalWSCConnector
     });
   };
   const connectFlintWallet = () => {
@@ -153,6 +155,9 @@ export const AppProvider = ({ children }) => {
     });
   };
   const connectToFlintWSC = async () => {
+    const flintWSCConnector = connectors.find(
+      (connector) => connector.id === "flint-wsc"
+    );
     connect({
       connector: flintWSCConnector
     });
