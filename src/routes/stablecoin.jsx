@@ -257,8 +257,8 @@ export default function Stablecoin() {
           <div className="DescriptionContainer">
             <p>
               The StableCoin of this Djed deployment is called{" "}
-              <strong>{process.env.REACT_APP_SC_NAME}</strong>. It is pegged to the
-              USD, similarly to various{" "}
+              <strong>{process.env.REACT_APP_SC_NAME}</strong>. It is pegged to the USD,
+              similarly to various{" "}
               <a
                 href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
                 target="_blank"
