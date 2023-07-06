@@ -10,15 +10,7 @@ module.exports = {
         topLevelAwait: true,
         layers: true
       };
-      webpackConfig.resolve.alias = {
-        "react/jsx-runtime": require.resolve("react/jsx-runtime")
-      };
-      webpackConfig.devServer = {
-        overlay: {
-          warnings: true,
-          errors: true
-        }
-      };
+
       webpackConfig.resolve.fallback = {
         buffer: require.resolve("buffer/"),
         stream: require.resolve("stream-browserify")

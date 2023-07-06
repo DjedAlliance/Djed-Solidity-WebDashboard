@@ -9,7 +9,7 @@ import { AppProvider } from "./context/AppProvider";
 import { client } from "./utils/web3/wagmi";
 import { WagmiConfig } from "wagmi";
 import { useEffect } from "react";
-import { ConnectWSCProvider } from "milkomeda-wsc-ui";
+import { ConnectWSCProvider } from "milkomeda-wsc-ui-test-beta";
 
 export default function App() {
   useEffect(() => {

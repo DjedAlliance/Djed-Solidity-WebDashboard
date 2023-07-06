@@ -4,7 +4,7 @@ import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { FlintWalletConnector } from "./connectors/flint";
 // import { CardanoWSCConnector } from "./connectors/cardano-wsc";
-import { getDefaultConfig } from "milkomeda-wsc-ui";
+import { getDefaultConfig } from "milkomeda-wsc-ui-test-beta";
 
 const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 

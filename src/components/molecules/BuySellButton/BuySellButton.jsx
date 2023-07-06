@@ -2,7 +2,7 @@ import React from "react";
 import CustomButton from "../../atoms/CustomButton/CustomButton";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import "./BuySellButton.scss";
-import { useWSCTransactionConfig, ConnectWSCButton } from "milkomeda-wsc-ui";
+import { useWSCTransactionConfig, ConnectWSCButton } from "milkomeda-wsc-ui-test-beta";
 
 const capitalizeString = (string) => {
   return string?.charAt(0).toUpperCase() + string?.slice(1);

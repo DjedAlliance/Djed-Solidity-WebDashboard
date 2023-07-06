@@ -2,7 +2,7 @@ import React from "react";
 import "./_FlintWSCContent.scss";
 import { Skeleton, Tabs, message } from "antd";
 import BigNumber from "bignumber.js";
-import { useWSCProvider } from "milkomeda-wsc-ui";
+import { useWSCProvider } from "milkomeda-wsc-ui-test-beta";
 
 const useInterval = (callback, delay) => {
   const savedCallback = React.useRef(undefined);
