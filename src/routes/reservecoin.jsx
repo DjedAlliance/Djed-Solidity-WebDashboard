@@ -31,6 +31,7 @@ import {
   isTxLimitReached
 } from "../utils/ethereum";
 import { BigNumber } from "ethers";
+import { ConnectWSCButton, useWSCTransactionConfig } from "milkomeda-wsc-ui";
 
 export default function ReserveCoin() {
   const {
@@ -48,7 +49,8 @@ export default function ReserveCoin() {
     isRatioBelowMax,
     isRatioAboveMin,
     coinContracts,
-    getFutureScPrice
+    getFutureScPrice,
+    activeConnector
   } = useAppProvider();
 
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
@@ -316,10 +318,9 @@ export default function ReserveCoin() {
     : tradeData.amountUnscaled;
 
   const onSubmit = (e) => {
-    if (termsAccepted) {
-      e.preventDefault();
-      tradeFxn(); // TODO:
-    }
+    if (!termsAccepted) return;
+    // e.preventDefault();
+    tradeFxn();
   };
 
   const transactionValidated = isBuyActive
@@ -392,7 +393,7 @@ export default function ReserveCoin() {
             </strong>{" "}
             {process.env.REACT_APP_RC_NAME}
           </h2>
-          <form>
+          <form onSubmit={onSubmit}>
             <div className="PurchaseContainer">
               <OperationSelector
                 coinName={`${process.env.REACT_APP_RC_SYMBOL}`}
@@ -418,6 +419,7 @@ export default function ReserveCoin() {
             </div>
             <input
               type="checkbox"
+              id="accept-terms"
               name="accept-terms"
               onChange={() => setTermsAccepted(!termsAccepted)}
               checked={termsAccepted}
@@ -430,6 +432,7 @@ export default function ReserveCoin() {
               </a>
               .
             </label>
+
             <div className="ConnectWallet">
               <br />
               {isWalletConnected ? (
@@ -444,15 +447,14 @@ export default function ReserveCoin() {
                     )}
                   </p>
                     ) : null*/}
-                  <BuySellButton
-                    disabled={buttonDisabled}
-                    onClick={onSubmit}
-                    buyOrSell={buyOrSell}
-                    currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
-                    currentAmount={currentAmount}
-                    onWSCAction={tradeFxnPromise}
-                    stepTxDirection={isBuyActive ? "buy" : "sell"}
-                  />
+                  {activeConnector?.id.search("wsc") === -1 && (
+                    <BuySellButton
+                      disabled={buttonDisabled}
+                      onClick={onSubmit}
+                      buyOrSell={buyOrSell}
+                      currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
+                    />
+                  )}
                 </>
               ) : (
                 <>
@@ -464,6 +466,14 @@ export default function ReserveCoin() {
               )}
             </div>
           </form>
+          {activeConnector?.id.search("wsc") > -1 && (
+            <WSCButton
+              disabled={buttonDisabled || !termsAccepted}
+              currentAmount={currentAmount}
+              onWSCAction={tradeFxnPromise}
+              stepTxDirection={isBuyActive ? "buy" : "sell"}
+            />
+          )}
           {txStatusRejected && (
             <ModalTransaction
               transactionType="Failed Transaction"
@@ -492,3 +502,28 @@ export default function ReserveCoin() {
     </main>
   );
 }
+
+// custom wsc button
+
+const cardanoAddressTReserveCoin =
+  "cc53696f7d40c96f2bca9e2e8fe31905d8207c4106f326f417ec36727452657365727665436f696e";
+const cardanoAddressTStableCoin =
+  "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
+
+const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
+
+const WSCButton = ({ disabled, currentAmount, onWSCAction, stepTxDirection }) => {
+  useWSCTransactionConfig({
+    defaultCardanoToken: {
+      unit: stepTxDirection === "buy" ? "lovelace" : cardanoAddressTReserveCoin, //default lovelace
+      amount: +currentAmount
+    },
+    cardanoTokenAddress: cardanoAddressTReserveCoin,
+    evmTokenAddress: reserveCoinAddress,
+    wscActionCallback: onWSCAction,
+    stepTxDirection,
+    titleModal: stepTxDirection === "buy" ? "Buy with WSC" : "Sell with WSC"
+  });
+
+  return <ConnectWSCButton disabled={disabled} />;
+};

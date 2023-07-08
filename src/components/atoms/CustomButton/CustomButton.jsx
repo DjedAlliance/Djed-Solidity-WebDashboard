@@ -5,7 +5,7 @@ const CustomButton = ({ text, variant, type, icon, iconWallet, onClick, disabled
   const classname = `CustomButton ${variant}`;
   return (
     <button
-      type={type ?? "button"}
+      // type={type ?? "button"}
       className={classname}
       onClick={onClick}
       disabled={disabled}
