@@ -513,8 +513,6 @@ const cardanoAddressTStableCoin =
 const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
 
 const WSCButton = ({ disabled, currentAmount, onWSCAction, stepTxDirection }) => {
-  //20000000 - 20 RC
-
   useWSCTransactionConfig({
     defaultCardanoToken: {
       unit: stepTxDirection === "buy" ? "lovelace" : cardanoAddressTReserveCoin, //default lovelace
