@@ -21,6 +21,7 @@ export const flintWalletConnector = new FlintWalletConnector({
 export const client = createClient(
   getDefaultConfig({
     chains: [supportedChain],
+    autoConnect: false,
     storage: createStorage({
       storage: window.localStorage,
       key: "djed.stablecoin"
