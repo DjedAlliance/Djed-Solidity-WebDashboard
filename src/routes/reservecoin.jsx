@@ -31,7 +31,7 @@ import {
   isTxLimitReached
 } from "../utils/ethereum";
 import { BigNumber } from "ethers";
-import { ConnectWSCButton, useWSCTransactionConfig } from "milkomeda-wsc-ui";
+import { ConnectWSCButton, useWSCTransactionConfig } from "milkomeda-wsc-ui-test-beta";
 
 export default function ReserveCoin() {
   const {
@@ -264,7 +264,7 @@ export default function ReserveCoin() {
           verifyTx(web3, hash)
             .then((res) => {
               if (res) {
-                resolve();
+                resolve(hash);
               } else {
                 reject(new Error("The transaction reverted."));
               }
@@ -288,7 +288,7 @@ export default function ReserveCoin() {
           verifyTx(web3, hash)
             .then((res) => {
               if (res) {
-                resolve();
+                resolve(hash);
               } else {
                 reject(new Error("The transaction reverted."));
               }
@@ -319,7 +319,7 @@ export default function ReserveCoin() {
 
   const onSubmit = (e) => {
     if (!termsAccepted) return;
-    // e.preventDefault();
+    e.preventDefault();
     tradeFxn();
   };
 
@@ -468,7 +468,7 @@ export default function ReserveCoin() {
           </form>
           {activeConnector?.id.search("wsc") > -1 && (
             <WSCButton
-              disabled={buttonDisabled || !termsAccepted}
+              // disabled={buttonDisabled} // fix
               currentAmount={currentAmount}
               onWSCAction={tradeFxnPromise}
               stepTxDirection={isBuyActive ? "buy" : "sell"}
@@ -513,6 +513,8 @@ const cardanoAddressTStableCoin =
 const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
 
 const WSCButton = ({ disabled, currentAmount, onWSCAction, stepTxDirection }) => {
+  //20000000 - 20 RC
+
   useWSCTransactionConfig({
     defaultCardanoToken: {
       unit: stepTxDirection === "buy" ? "lovelace" : cardanoAddressTReserveCoin, //default lovelace

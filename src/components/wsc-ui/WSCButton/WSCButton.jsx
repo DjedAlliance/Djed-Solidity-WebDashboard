@@ -362,14 +362,6 @@ const WSCButton = ({
     setIsModalOpen(false);
   };
 
-  console.log(
-    amount,
-    "->",
-    currentAmountWei
-      ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
-      : "0"
-  );
-
   const steps =
     direction === directions.WRAP
       ? [

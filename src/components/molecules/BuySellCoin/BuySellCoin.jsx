@@ -4,6 +4,27 @@ import { Input } from "antd";
 import "./_BuySellCoin.scss";
 import { useAppProvider } from "../../../context/AppProvider";
 import { TRANSACTION_VALIDITY } from "../../../utils/constants";
+import { useWSCProvider } from "milkomeda-wsc-ui-test-beta";
+import { stringToBigNumber } from "../../../utils/helpers";
+import { ethers } from "ethers";
+
+const cardanoReservecoinAddress =
+  "cc53696f7d40c96f2bca9e2e8fe31905d8207c4106f326f417ec36727452657365727665436f696e";
+
+const cardanoStablecoinAddress =
+  "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
+
+export const useSellCardanoToken = () => {
+  const { wscProvider, originTokens } = useWSCProvider();
+  const cardanoReservecoinAsset = React.useMemo(
+    () => originTokens.find((token) => token.unit === cardanoReservecoinAddress),
+    [originTokens, cardanoReservecoinAddress]
+  );
+  return {
+    wscProvider,
+    cardanoReservecoinAsset
+  };
+};
 
 const BuySellCoin = ({
   coinName,
@@ -22,6 +43,7 @@ const BuySellCoin = ({
 }) => {
   const FEE_UI = process.env.REACT_APP_FEE_UI;
   const { isWalletConnected, isWrongChain } = useAppProvider();
+  const { wscProvider, cardanoReservecoinAsset } = useSellCardanoToken();
   const inputValid = validity === TRANSACTION_VALIDITY.OK;
   const inputBarNotMarked =
     !inputValue || !isWalletConnected || isWrongChain || inputValid;
@@ -64,6 +86,17 @@ const BuySellCoin = ({
           <ExclamationCircleOutlined />
           Your wallet is connected to the wrong blockchain network. Please connect it to{" "}
           {process.env.REACT_APP_BC} and refresh the page.
+        </p>
+      ) : null}
+      {wscProvider && cardanoReservecoinAsset ? (
+        <p className="FeeInfo">
+          <InfoCircleOutlined />
+          Your current balance is{" "}
+          {ethers.utils.formatUnits(
+            cardanoReservecoinAsset.quantity,
+            cardanoReservecoinAsset.decimals
+          )}{" "}
+          {cardanoReservecoinAsset.assetName}
         </p>
       ) : null}
       <hr />
