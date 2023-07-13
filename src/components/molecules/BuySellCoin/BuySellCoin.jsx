@@ -18,11 +18,21 @@ export const useSellCardanoToken = () => {
   const { wscProvider, originTokens } = useWSCProvider();
   const cardanoReservecoinAsset = React.useMemo(
     () => originTokens.find((token) => token.unit === cardanoReservecoinAddress),
-    [originTokens, cardanoReservecoinAddress]
+    [originTokens]
   );
+  const adaToken = React.useMemo(
+    () => originTokens.find((token) => token.unit === "lovelace"),
+    [originTokens]
+  );
+
   return {
     wscProvider,
-    cardanoReservecoinAsset
+    cardanoReservecoinAsset,
+    destinationBalanceADA: adaToken ?? {
+      quantity: "0",
+      decimals: 6,
+      assetName: "ADA"
+    }
   };
 };
 
@@ -43,7 +53,8 @@ const BuySellCoin = ({
 }) => {
   const FEE_UI = process.env.REACT_APP_FEE_UI;
   const { isWalletConnected, isWrongChain } = useAppProvider();
-  const { wscProvider, cardanoReservecoinAsset } = useSellCardanoToken();
+  const { wscProvider, cardanoReservecoinAsset, destinationBalanceADA } =
+    useSellCardanoToken();
   const inputValid = validity === TRANSACTION_VALIDITY.OK;
   const inputBarNotMarked =
     !inputValue || !isWalletConnected || isWrongChain || inputValid;
@@ -97,6 +108,17 @@ const BuySellCoin = ({
             cardanoReservecoinAsset.decimals
           )}{" "}
           {cardanoReservecoinAsset.assetName}
+        </p>
+      ) : null}
+      {wscProvider && destinationBalanceADA ? (
+        <p className="FeeInfo">
+          <InfoCircleOutlined />
+          Your current balance is{" "}
+          {ethers.utils.formatUnits(
+            destinationBalanceADA.quantity,
+            destinationBalanceADA.decimals
+          )}{" "}
+          {destinationBalanceADA.assetName}
         </p>
       ) : null}
       <hr />
