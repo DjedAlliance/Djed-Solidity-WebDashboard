@@ -519,7 +519,7 @@ const WSCButton = ({ disabled, currentAmount, onWSCAction, stepTxDirection }) =>
       amount: +currentAmount
     },
     cardanoTokenAddress: cardanoAddressTReserveCoin,
-    evmTokenAddress: reserveCoinAddress,
+    evmTokenAddress: stepTxDirection === "buy" ? reserveCoinAddress : "",
     wscActionCallback: onWSCAction,
     stepTxDirection,
     titleModal: stepTxDirection === "buy" ? "Buy with WSC" : "Sell with WSC"
