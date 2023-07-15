@@ -103,10 +103,7 @@ const BuySellCoin = ({
         <p className="FeeInfo">
           <InfoCircleOutlined />
           Your current balance is{" "}
-          {ethers.utils.formatUnits(
-            cardanoReservecoinAsset.quantity,
-            cardanoReservecoinAsset.decimals
-          )}{" "}
+          {ethers.utils.formatUnits(cardanoReservecoinAsset.quantity, 0)}{" "}
           {cardanoReservecoinAsset.assetName}
         </p>
       ) : null}
