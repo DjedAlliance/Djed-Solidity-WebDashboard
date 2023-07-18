@@ -485,9 +485,8 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
       amount: +unwrapAmount // amountUnscaled
     },
     titleModal: "Buy with WSC",
-    stepTxDirection: "buy",
     evmTokenAddress: reserveCoinAddress,
-    wscSmartContractInfo: {
+    evmContractRequest: {
       address: DJED_ADDRESS,
       abi: djedArtifact.abi,
       functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
@@ -508,9 +507,8 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
       amount: +unwrapAmount // totalBCUnscaled
     },
     titleModal: "Sell with WSC",
-    stepTxDirection: "sell",
     evmTokenAddress: reserveCoinAddress,
-    wscSmartContractInfo: {
+    evmContractRequest: {
       address: DJED_ADDRESS,
       abi: djedArtifact.abi,
       functionName: "sellReserveCoins", //amount, account, FEE_UI_UNSCALED, UI
