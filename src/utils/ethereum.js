@@ -18,9 +18,9 @@ import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY } from "./constants";
 import { BigNumber } from "ethers";
 
 const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
-const DJED_ADDRESS = process.env.REACT_APP_DJED_ADDRESS;
+export const DJED_ADDRESS = process.env.REACT_APP_DJED_ADDRESS;
 const FEE_UI = process.env.REACT_APP_FEE_UI;
-const UI = process.env.REACT_APP_UI;
+export const UI = process.env.REACT_APP_UI;
 
 export const BC_DECIMALS = 18;
 export const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
@@ -28,7 +28,10 @@ export const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this
 const REFRESH_PERIOD = 4000;
 const CONFIRMATION_WAIT_PERIOD = REFRESH_PERIOD + 1000;
 export const scalingFactor = decimalUnscaling("1", SCALING_DECIMALS);
-const FEE_UI_UNSCALED = decimalUnscaling((FEE_UI / 100).toString(), SCALING_DECIMALS);
+export const FEE_UI_UNSCALED = decimalUnscaling(
+  (FEE_UI / 100).toString(),
+  SCALING_DECIMALS
+);
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {

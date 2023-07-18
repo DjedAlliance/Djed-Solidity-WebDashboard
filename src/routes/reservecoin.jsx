@@ -28,10 +28,18 @@ import {
   verifyTx,
   BC_DECIMALS,
   calculateTxFees,
-  isTxLimitReached
+  isTxLimitReached,
+  DJED_ADDRESS,
+  FEE_UI_UNSCALED,
+  UI
 } from "../utils/ethereum";
-import { BigNumber } from "ethers";
-import { ConnectWSCButton, useWSCTransactionConfig } from "milkomeda-wsc-ui-test-beta";
+import { BigNumber, ethers } from "ethers";
+import {
+  ConnectWSCButton,
+  TransactionConfigWSCProvider
+} from "milkomeda-wsc-ui-test-beta";
+import djedArtifact from "../artifacts/Djed.json";
+import { useAccount } from "wagmi";
 
 export default function ReserveCoin() {
   const {
@@ -240,8 +248,9 @@ export default function ReserveCoin() {
     promiseTx(isWalletConnected, sellRcTx(djedContract, account, amount), signer)
       .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
+          console.log(hash, "hash");
           if (res) {
-            console.log("Sell RC success!");
+            console.log("Sell RC success!", hash);
             setTxStatus("success");
           } else {
             console.log("Sell RC reverted!");
@@ -257,61 +266,9 @@ export default function ReserveCoin() {
       });
   };
 
-  const buyRcPromise = (total) => {
-    return new Promise((resolve, reject) => {
-      promiseTx(isWalletConnected, buyRcTx(djedContract, account, total), signer)
-        .then(({ hash }) => {
-          verifyTx(web3, hash)
-            .then((res) => {
-              if (res) {
-                resolve(hash);
-              } else {
-                reject(new Error("The transaction reverted."));
-              }
-            })
-            .catch((err) => {
-              console.error("Error:", err.message);
-              reject(err);
-            });
-        })
-        .catch((err) => {
-          console.error("Error:", err.message);
-          reject(err);
-        });
-    });
-  };
-
-  const sellRcPromise = (amount) => {
-    return new Promise((resolve, reject) => {
-      promiseTx(isWalletConnected, sellRcTx(djedContract, account, amount), signer)
-        .then(({ hash }) => {
-          verifyTx(web3, hash)
-            .then((res) => {
-              if (res) {
-                resolve(hash);
-              } else {
-                reject(new Error("The transaction reverted."));
-              }
-            })
-            .catch((err) => {
-              console.error("Error:", err.message);
-              reject(err);
-            });
-        })
-        .catch((err) => {
-          console.error("Error:", err.message);
-          reject(err);
-        });
-    });
-  };
-
   const tradeFxn = isBuyActive
     ? buyRc.bind(null, tradeData.totalBCUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
-
-  const tradeFxnPromise = isBuyActive
-    ? buyRcPromise.bind(null, tradeData.totalBCUnscaled)
-    : sellRcPromise.bind(null, tradeData.amountUnscaled);
 
   const currentAmount = isBuyActive
     ? tradeData.totalBCUnscaled
@@ -470,8 +427,10 @@ export default function ReserveCoin() {
             <WSCButton
               // disabled={buttonDisabled} // fix
               currentAmount={currentAmount}
-              onWSCAction={tradeFxnPromise}
               stepTxDirection={isBuyActive ? "buy" : "sell"}
+              unwrapAmount={
+                isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
+              }
             />
           )}
           {txStatusRejected && (
@@ -512,27 +471,61 @@ const cardanoAddressTStableCoin =
 
 const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
 
-const WSCButton = ({ disabled, currentAmount, onWSCAction, stepTxDirection }) => {
-  // useContract({
-  //   address,
-  //   abi,
-  //   functionName,
-  //   args,
-  //   overrides,
-  //   enabled
-  // });
+const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
+  const { address: account } = useAccount();
+  console.log(currentAmount, "currentAmount");
 
-  useWSCTransactionConfig({
-    defaultCardanoToken: {
-      unit: stepTxDirection === "buy" ? "lovelace" : cardanoAddressTReserveCoin, //default lovelace
+  const buyOptions = {
+    defaultWrapToken: {
+      unit: "lovelace",
       amount: +currentAmount
     },
-    cardanoTokenAddress: cardanoAddressTReserveCoin,
+    defaultUnwrapToken: {
+      unit: reserveCoinAddress,
+      amount: +unwrapAmount // amountUnscaled
+    },
+    titleModal: "Buy with WSC",
+    stepTxDirection: "buy",
     evmTokenAddress: reserveCoinAddress,
-    wscActionCallback: onWSCAction,
-    stepTxDirection,
-    titleModal: stepTxDirection === "buy" ? "Buy with WSC" : "Sell with WSC"
-  });
+    wscSmartContractInfo: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
+      args: [account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: ethers.BigNumber.from(currentAmount ?? "0")
+      }
+    }
+  };
 
-  return <ConnectWSCButton disabled={disabled} />;
+  const sellOptions = {
+    defaultWrapToken: {
+      unit: cardanoAddressTReserveCoin,
+      amount: +currentAmount
+    },
+    defaultUnwrapToken: {
+      unit: "",
+      amount: +unwrapAmount // totalBCUnscaled
+    },
+    titleModal: "Sell with WSC",
+    stepTxDirection: "sell",
+    evmTokenAddress: reserveCoinAddress,
+    wscSmartContractInfo: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "sellReserveCoins", //amount, account, FEE_UI_UNSCALED, UI
+      args: [+currentAmount, account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: "0"
+      }
+    }
+  };
+
+  return (
+    <TransactionConfigWSCProvider
+      options={stepTxDirection === "buy" ? buyOptions : sellOptions}
+    >
+      <ConnectWSCButton />
+    </TransactionConfigWSCProvider>
+  );
 };
