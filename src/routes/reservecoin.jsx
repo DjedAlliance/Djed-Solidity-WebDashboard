@@ -425,7 +425,7 @@ export default function ReserveCoin() {
           </form>
           {activeConnector?.id.search("wsc") > -1 && (
             <WSCButton
-              // disabled={buttonDisabled} // fix
+              disabled={value === null || isWrongChain || !termsAccepted}
               currentAmount={currentAmount}
               stepTxDirection={isBuyActive ? "buy" : "sell"}
               unwrapAmount={
@@ -525,7 +525,7 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
     <TransactionConfigWSCProvider
       options={stepTxDirection === "buy" ? buyOptions : sellOptions}
     >
-      <ConnectWSCButton />
+      <ConnectWSCButton disabled={disabled} />
     </TransactionConfigWSCProvider>
   );
 };
