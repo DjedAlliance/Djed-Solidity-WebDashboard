@@ -144,8 +144,7 @@ const FlintWSCContent = () => {
     tokens,
     originAddress
   } = useWSCProvider();
-  console.log(tokens, "unwrapppp");
-  console.log(originTokens, "wrappp");
+
   const [currentSentTxs, setCurrentSentTxs] = React.useState({});
 
   const wrapWrapper = async (destination, assetId, amount) => {
@@ -375,7 +374,7 @@ const CardanoAssets = ({
       key: "moving-asset-L2",
       duration: 0
     });
-    console.log(new BigNumber(tokenAmounts.get(token.unit) || "0").toFixed());
+
     try {
       const txHash = await wrap(
         undefined,
@@ -409,7 +408,6 @@ const CardanoAssets = ({
     const adjustedAmount = amount.dividedBy(new BigNumber(10).pow(decimals));
     updateTokenAmount(token.unit, adjustedAmount.toString());
   };
-  console.log(tokens, "tokens");
 
   return (
     <div>

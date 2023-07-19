@@ -500,7 +500,6 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
       }
     }
   };
-  console.log(stepTxDirection === "buy" ? buyOptions : sellOptions, "stablecoin-options");
 
   return (
     <TransactionConfigWSCProvider

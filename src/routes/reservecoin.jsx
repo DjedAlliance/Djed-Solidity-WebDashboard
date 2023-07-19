@@ -517,10 +517,6 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
       }
     }
   };
-  console.log(
-    stepTxDirection === "buy" ? buyOptions : sellOptions,
-    "reservecoin-options"
-  );
 
   return (
     <TransactionConfigWSCProvider
