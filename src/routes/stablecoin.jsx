@@ -26,9 +26,20 @@ import {
   verifyTx,
   BC_DECIMALS,
   calculateTxFees,
-  isTxLimitReached
+  isTxLimitReached,
+  DJED_ADDRESS,
+  FEE_UI_UNSCALED,
+  UI
 } from "../utils/ethereum";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
+import { useAccount } from "wagmi";
+import djedArtifact from "../artifacts/Djed.json";
+import {
+  ConnectWSCButton,
+  TransactionConfigWSCProvider,
+  useModal as useWSCModal,
+  useWSCProvider
+} from "milkomeda-wsc-ui-test-beta";
 
 export default function Stablecoin() {
   const {
@@ -47,6 +58,9 @@ export default function Stablecoin() {
     coinContracts,
     getFutureScPrice
   } = useAppProvider();
+  const { isWSCConnected } = useWSCProvider();
+  const { setOpen } = useWSCModal();
+
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
@@ -229,7 +243,7 @@ export default function Stablecoin() {
       });
   };
 
-  const currentAmountWei = isBuyActive
+  const currentAmount = isBuyActive
     ? tradeData.totalBCUnscaled
     : tradeData.amountUnscaled;
 
@@ -238,10 +252,13 @@ export default function Stablecoin() {
     : sellSc.bind(null, tradeData.amountUnscaled);
 
   const onSubmit = (e) => {
-    if (termsAccepted) {
-      e.preventDefault();
-      tradeFxn();
+    if (!termsAccepted) return;
+    e.preventDefault();
+    if (isWSCConnected) {
+      setOpen(true);
+      return;
     }
+    tradeFxn();
   };
 
   const transactionValidated = isBuyActive
@@ -325,7 +342,7 @@ export default function Stablecoin() {
             </strong>{" "}
             {process.env.REACT_APP_SC_NAME}
           </h2>
-          <form>
+          <form onSubmit={onSubmit}>
             <div className="PurchaseContainer">
               <OperationSelector
                 coinName={`${process.env.REACT_APP_SC_SYMBOL}`}
@@ -376,14 +393,23 @@ export default function Stablecoin() {
                     )}
                   </p>
                     ) : null*/}
-                  <BuySellButton
-                    disabled={buttonDisabled}
-                    onClick={onSubmit}
-                    onWSCAction={tradeFxn}
-                    buyOrSell={buyOrSell}
-                    currencyName={`${process.env.REACT_APP_SC_NAME}`}
-                    currentAmountWei={currentAmountWei}
-                  />
+
+                  {isWSCConnected ? (
+                    <WSCButton
+                      disabled={value === null || isWrongChain || !termsAccepted}
+                      currentAmount={currentAmount}
+                      stepTxDirection={isBuyActive ? "buy" : "sell"}
+                      unwrapAmount={
+                        isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
+                      }
+                    />
+                  ) : (
+                    <BuySellButton
+                      disabled={buttonDisabled}
+                      buyOrSell={buyOrSell}
+                      currencyName={`${process.env.REACT_APP_SC_NAME}`}
+                    />
+                  )}
                 </>
               ) : (
                 <>
@@ -423,3 +449,64 @@ export default function Stablecoin() {
     </main>
   );
 }
+
+const cardanoAddressTStableCoin =
+  "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
+const stableCoinEVMAddress = "0xcbA90fB1003b9D1bc6a2b66257D2585011b004e9";
+
+const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
+  const { address: account } = useAccount();
+
+  const buyOptions = {
+    defaultWrapToken: {
+      unit: "lovelace",
+      amount: currentAmount
+    },
+    defaultUnwrapToken: {
+      unit: stableCoinEVMAddress,
+      amount: unwrapAmount // amountUnscaled
+    },
+    titleModal: "Buy SC with WSC",
+    evmTokenAddress: stableCoinEVMAddress,
+    evmContractRequest: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "buyStableCoins", //account, FEE_UI_UNSCALED, UI
+      args: [account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: ethers.BigNumber.from(currentAmount ?? "0")
+      }
+    }
+  };
+
+  const sellOptions = {
+    defaultWrapToken: {
+      unit: cardanoAddressTStableCoin,
+      amount: currentAmount
+    },
+    defaultUnwrapToken: {
+      unit: "",
+      amount: unwrapAmount // totalBCUnscaled
+    },
+    titleModal: "Sell SC with WSC",
+    evmTokenAddress: stableCoinEVMAddress,
+    evmContractRequest: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "sellStableCoins", //amount, account, FEE_UI_UNSCALED, UI
+      args: [currentAmount, account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: "0"
+      }
+    }
+  };
+  console.log(stepTxDirection === "buy" ? buyOptions : sellOptions, "stablecoin-options");
+
+  return (
+    <TransactionConfigWSCProvider
+      options={stepTxDirection === "buy" ? buyOptions : sellOptions}
+    >
+      <ConnectWSCButton disabled={disabled} />
+    </TransactionConfigWSCProvider>
+  );
+};

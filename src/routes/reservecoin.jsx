@@ -36,7 +36,9 @@ import {
 import { BigNumber, ethers } from "ethers";
 import {
   ConnectWSCButton,
-  TransactionConfigWSCProvider
+  TransactionConfigWSCProvider,
+  useWSCProvider,
+  useModal as useWSCModal
 } from "milkomeda-wsc-ui-test-beta";
 import djedArtifact from "../artifacts/Djed.json";
 import { useAccount } from "wagmi";
@@ -57,10 +59,10 @@ export default function ReserveCoin() {
     isRatioBelowMax,
     isRatioAboveMin,
     coinContracts,
-    getFutureScPrice,
-    activeConnector
+    getFutureScPrice
   } = useAppProvider();
-
+  const { isWSCConnected } = useWSCProvider();
+  const { setOpen } = useWSCModal();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
@@ -277,6 +279,10 @@ export default function ReserveCoin() {
   const onSubmit = (e) => {
     if (!termsAccepted) return;
     e.preventDefault();
+    if (isWSCConnected) {
+      setOpen(true);
+      return;
+    }
     tradeFxn();
   };
 
@@ -404,10 +410,18 @@ export default function ReserveCoin() {
                     )}
                   </p>
                     ) : null*/}
-                  {activeConnector?.id.search("wsc") === -1 && (
+                  {isWSCConnected ? (
+                    <WSCButton
+                      disabled={value === null || isWrongChain || !termsAccepted}
+                      currentAmount={currentAmount}
+                      stepTxDirection={isBuyActive ? "buy" : "sell"}
+                      unwrapAmount={
+                        isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
+                      }
+                    />
+                  ) : (
                     <BuySellButton
                       disabled={buttonDisabled}
-                      onClick={onSubmit}
                       buyOrSell={buyOrSell}
                       currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
                     />
@@ -423,16 +437,7 @@ export default function ReserveCoin() {
               )}
             </div>
           </form>
-          {activeConnector?.id.search("wsc") > -1 && (
-            <WSCButton
-              disabled={value === null || isWrongChain || !termsAccepted}
-              currentAmount={currentAmount}
-              stepTxDirection={isBuyActive ? "buy" : "sell"}
-              unwrapAmount={
-                isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
-              }
-            />
-          )}
+
           {txStatusRejected && (
             <ModalTransaction
               transactionType="Failed Transaction"
@@ -462,30 +467,24 @@ export default function ReserveCoin() {
   );
 }
 
-// custom wsc button
-
 const cardanoAddressTReserveCoin =
   "cc53696f7d40c96f2bca9e2e8fe31905d8207c4106f326f417ec36727452657365727665436f696e";
-const cardanoAddressTStableCoin =
-  "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
-
-const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
+const reserveCoinEVMAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
 
 const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
   const { address: account } = useAccount();
-  console.log(currentAmount, "currentAmount");
 
   const buyOptions = {
     defaultWrapToken: {
       unit: "lovelace",
-      amount: +currentAmount
+      amount: currentAmount
     },
     defaultUnwrapToken: {
-      unit: reserveCoinAddress,
-      amount: +unwrapAmount // amountUnscaled
+      unit: reserveCoinEVMAddress,
+      amount: unwrapAmount // amountUnscaled
     },
-    titleModal: "Buy with WSC",
-    evmTokenAddress: reserveCoinAddress,
+    titleModal: "Buy RC with WSC",
+    evmTokenAddress: reserveCoinEVMAddress,
     evmContractRequest: {
       address: DJED_ADDRESS,
       abi: djedArtifact.abi,
@@ -500,24 +499,28 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
   const sellOptions = {
     defaultWrapToken: {
       unit: cardanoAddressTReserveCoin,
-      amount: +currentAmount
+      amount: currentAmount
     },
     defaultUnwrapToken: {
       unit: "",
-      amount: +unwrapAmount // totalBCUnscaled
+      amount: unwrapAmount // totalBCUnscaled
     },
-    titleModal: "Sell with WSC",
-    evmTokenAddress: reserveCoinAddress,
+    titleModal: "Sell RC with WSC",
+    evmTokenAddress: reserveCoinEVMAddress,
     evmContractRequest: {
       address: DJED_ADDRESS,
       abi: djedArtifact.abi,
       functionName: "sellReserveCoins", //amount, account, FEE_UI_UNSCALED, UI
-      args: [+currentAmount, account, FEE_UI_UNSCALED, UI],
+      args: [currentAmount, account, FEE_UI_UNSCALED, UI],
       overrides: {
         value: "0"
       }
     }
   };
+  console.log(
+    stepTxDirection === "buy" ? buyOptions : sellOptions,
+    "reservecoin-options"
+  );
 
   return (
     <TransactionConfigWSCProvider
