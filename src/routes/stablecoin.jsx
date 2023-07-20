@@ -460,7 +460,7 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
   const buyOptions = {
     defaultWrapToken: {
       unit: "lovelace",
-      amount: currentAmount
+      amount: currentAmount // amountUnscaled
     },
     defaultUnwrapToken: {
       unit: stableCoinEVMAddress,
