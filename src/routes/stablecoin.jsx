@@ -496,7 +496,7 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
       functionName: "sellStableCoins", //amount, account, FEE_UI_UNSCALED, UI
       args: [currentAmount, account, FEE_UI_UNSCALED, UI],
       overrides: {
-        value: "0"
+        value: ethers.BigNumber.from("0")
       }
     }
   };

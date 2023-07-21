@@ -15,7 +15,7 @@ const cardanoStablecoinAddress =
   "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
 
 export const useSellCardanoToken = () => {
-  const { wscProvider, originTokens } = useWSCProvider();
+  const { wscProvider, originTokens, isWSCConnected } = useWSCProvider();
   const cardanoReservecoinAsset = React.useMemo(
     () => originTokens.find((token) => token.unit === cardanoReservecoinAddress),
     [originTokens]
@@ -27,6 +27,7 @@ export const useSellCardanoToken = () => {
 
   return {
     wscProvider,
+    isWSCConnected,
     cardanoReservecoinAsset,
     destinationBalanceADA: adaToken ?? {
       quantity: "0",
@@ -53,7 +54,7 @@ const BuySellCoin = ({
 }) => {
   const FEE_UI = process.env.REACT_APP_FEE_UI;
   const { isWalletConnected, isWrongChain } = useAppProvider();
-  const { wscProvider, cardanoReservecoinAsset, destinationBalanceADA } =
+  const { isWSCConnected, cardanoReservecoinAsset, destinationBalanceADA } =
     useSellCardanoToken();
   const inputValid = validity === TRANSACTION_VALIDITY.OK;
   const inputBarNotMarked =
@@ -80,18 +81,22 @@ const BuySellCoin = ({
           }}
         />
       </div>
-      <p className="FeeInfo">
-        <InfoCircleOutlined />
-        {isWalletConnected
-          ? `Your current balance is ${scaledCoinBalance} ${coinName}.`
-          : `Please connect your wallet to see your ${coinName} balance.`}
-      </p>
-      <p className="FeeInfo">
-        <InfoCircleOutlined />
-        {isWalletConnected
-          ? `Your current balance is ${scaledBaseBalance} mADA.`
-          : `Please connect your wallet to see your mADA balance.`}
-      </p>
+      {!isWSCConnected && (
+        <>
+          <p className="FeeInfo">
+            <InfoCircleOutlined />
+            {isWalletConnected
+              ? `Your current balance is ${scaledCoinBalance} ${coinName}.`
+              : `Please connect your wallet to see your ${coinName} balance.`}
+          </p>
+          <p className="FeeInfo">
+            <InfoCircleOutlined />
+            {isWalletConnected
+              ? `Your current balance is ${scaledBaseBalance} mADA.`
+              : `Please connect your wallet to see your mADA balance.`}
+          </p>
+        </>
+      )}
       {isWrongChain ? (
         <p className="Alert">
           <ExclamationCircleOutlined />
@@ -99,7 +104,7 @@ const BuySellCoin = ({
           {process.env.REACT_APP_BC} and refresh the page.
         </p>
       ) : null}
-      {wscProvider && cardanoReservecoinAsset ? (
+      {isWSCConnected && cardanoReservecoinAsset ? (
         <p className="FeeInfo">
           <InfoCircleOutlined />
           Your current balance is{" "}
@@ -107,7 +112,7 @@ const BuySellCoin = ({
           {cardanoReservecoinAsset.assetName}
         </p>
       ) : null}
-      {wscProvider && destinationBalanceADA ? (
+      {isWSCConnected && destinationBalanceADA ? (
         <p className="FeeInfo">
           <InfoCircleOutlined />
           Your current balance is{" "}

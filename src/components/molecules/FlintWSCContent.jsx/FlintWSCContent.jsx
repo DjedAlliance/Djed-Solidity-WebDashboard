@@ -136,7 +136,6 @@ const FlintWSCContent = () => {
   const {
     wscProvider,
     pendingTxs,
-
     address,
     destinationBalance,
     originBalance,
