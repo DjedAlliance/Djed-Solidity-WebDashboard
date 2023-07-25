@@ -9,6 +9,7 @@ import "./_MetamaskStatusButton.scss";
 import { useDisconnect } from "wagmi";
 import { Button, Popover } from "antd";
 import FlintWSCContent, { WSCWalletLink } from "../FlintWSCContent.jsx/FlintWSCContent";
+import { WSCInterface } from "milkomeda-wsc-ui-test-beta";
 
 const WalletConnectButton = () => {
   const {
@@ -36,7 +37,7 @@ const WalletConnectButton = () => {
         content={
           isWalletConnected ? (
             <>
-              {activeConnector?.id?.includes("wsc") && <FlintWSCContent />}
+              {activeConnector?.id?.includes("wsc") && <WSCInterface />}
               <div className="only-mobile">
                 <WSCWalletLink />
               </div>
