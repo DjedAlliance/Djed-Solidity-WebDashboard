@@ -44,9 +44,6 @@ iframe {
 
   .WalletConfig {
     display: flex;
-    button {
-      width: max-content;
-    }
   }
 
   &.header-desktop {
@@ -226,11 +223,13 @@ iframe {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  button {
+  button.CustomButton {
     width: 100%;
     justify-content: start;
     margin: 0 !important;
+
   }
+
 }
 
 @media only screen and (max-width: 425px) {
