@@ -11,6 +11,10 @@ import { WagmiConfig } from "wagmi";
 import { useEffect } from "react";
 import { ConnectWSCProvider } from "milkomeda-wsc-ui-test-beta";
 
+const wscCustomTheme = {
+  "--wsc-body-background": "#100901",
+  "--wsc-body-color-muted": "rgb(255 255 255 / 60%)"
+};
 export default function App() {
   useEffect(() => {
     document.title = `Djed on ${process.env.REACT_APP_BC}`;
@@ -20,7 +24,7 @@ export default function App() {
     <BrowserRouter>
       <WagmiConfig client={client}>
         <AppProvider>
-          <ConnectWSCProvider>
+          <ConnectWSCProvider customTheme={wscCustomTheme}>
             <Routes>
               <Route path="/" element={<MainLayout />}>
                 <Route path="" element={<Protocol />} />
