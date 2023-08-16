@@ -23,7 +23,6 @@
     "start": "craco start",
     "build": "craco build",
     "build:milkomeda-c1-testnet": "npx -y env-cmd -f ./env/milkomeda-c1-testnet.env npm run build",
-    "build:milkomeda-c1-staging": "npx -y env-cmd -f ./env/milkomeda-c1.env npm run build",
     "build:milkomeda-c1": "npx -y env-cmd -f ./env/milkomeda-c1.env npm run build",
     "test": "craco test",
     "lint": "prettier --check '**/*.{js,jsx}'",
