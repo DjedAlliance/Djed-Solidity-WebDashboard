@@ -450,10 +450,6 @@ export default function Stablecoin() {
   );
 }
 
-const cardanoAddressTStableCoin =
-  "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
-const stableCoinEVMAddress = "0xcbA90fB1003b9D1bc6a2b66257D2585011b004e9";
-
 const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
   const { address: account } = useAccount();
 
@@ -463,11 +459,11 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
       amount: currentAmount // amountUnscaled
     },
     defaultUnwrapToken: {
-      unit: stableCoinEVMAddress,
+      unit: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
       amount: unwrapAmount // amountUnscaled
     },
     titleModal: "Buy SC with WSC",
-    evmTokenAddress: stableCoinEVMAddress,
+    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
     evmContractRequest: {
       address: DJED_ADDRESS,
       abi: djedArtifact.abi,
@@ -481,7 +477,7 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
 
   const sellOptions = {
     defaultWrapToken: {
-      unit: cardanoAddressTStableCoin,
+      unit: process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS,
       amount: currentAmount
     },
     defaultUnwrapToken: {
@@ -489,7 +485,7 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
       amount: unwrapAmount // totalBCUnscaled
     },
     titleModal: "Sell SC with WSC",
-    evmTokenAddress: stableCoinEVMAddress,
+    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
     evmContractRequest: {
       address: DJED_ADDRESS,
       abi: djedArtifact.abi,

@@ -5,19 +5,18 @@ import "./_BuySellCoin.scss";
 import { useAppProvider } from "../../../context/AppProvider";
 import { TRANSACTION_VALIDITY } from "../../../utils/constants";
 import { useWSCProvider } from "milkomeda-wsc-ui-test-beta";
-import { stringToBigNumber } from "../../../utils/helpers";
 import { ethers } from "ethers";
-
-const cardanoReservecoinAddress =
-  "cc53696f7d40c96f2bca9e2e8fe31905d8207c4106f326f417ec36727452657365727665436f696e";
-
-const cardanoStablecoinAddress =
-  "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
 
 export const useSellCardanoToken = () => {
   const { wscProvider, originTokens, isWSCConnected } = useWSCProvider();
+  const cardanoReservecoinAddress = process.env.REACT_APP_CARDANO_RESERVECOIN_ADDRESS;
+  const cardanoStablecoinAddress = process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS;
   const cardanoReservecoinAsset = React.useMemo(
     () => originTokens.find((token) => token.unit === cardanoReservecoinAddress),
+    [originTokens]
+  );
+  const cardanoStablecoinAsset = React.useMemo(
+    () => originTokens.find((token) => token.unit === cardanoStablecoinAddress),
     [originTokens]
   );
   const adaToken = React.useMemo(
@@ -29,6 +28,7 @@ export const useSellCardanoToken = () => {
     wscProvider,
     isWSCConnected,
     cardanoReservecoinAsset,
+    cardanoStablecoinAsset,
     destinationBalanceADA: adaToken ?? {
       quantity: "0",
       decimals: 6,
@@ -54,8 +54,12 @@ const BuySellCoin = ({
 }) => {
   const FEE_UI = process.env.REACT_APP_FEE_UI;
   const { isWalletConnected, isWrongChain } = useAppProvider();
-  const { isWSCConnected, cardanoReservecoinAsset, destinationBalanceADA } =
-    useSellCardanoToken();
+  const {
+    isWSCConnected,
+    cardanoReservecoinAsset,
+    cardanoStablecoinAsset,
+    destinationBalanceADA
+  } = useSellCardanoToken();
   const inputValid = validity === TRANSACTION_VALIDITY.OK;
   const inputBarNotMarked =
     !inputValue || !isWalletConnected || isWrongChain || inputValid;
@@ -110,6 +114,14 @@ const BuySellCoin = ({
           Your current balance is{" "}
           {ethers.utils.formatUnits(cardanoReservecoinAsset.quantity, 0)}{" "}
           {cardanoReservecoinAsset.assetName}
+        </p>
+      ) : null}
+      {isWSCConnected && cardanoStablecoinAsset ? (
+        <p className="FeeInfo">
+          <InfoCircleOutlined />
+          Your current balance is{" "}
+          {ethers.utils.formatUnits(cardanoStablecoinAsset.quantity, 0)}{" "}
+          {cardanoStablecoinAsset.assetName}
         </p>
       ) : null}
       {isWSCConnected && destinationBalanceADA ? (

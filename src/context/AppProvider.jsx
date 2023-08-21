@@ -33,7 +33,7 @@ import {
 import { useConnect, useAccount, useNetwork, useSigner } from "wagmi";
 
 const AppContext = createContext();
-const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
+export const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
 export const AppProvider = ({ children }) => {
   const { connect, connectors } = useConnect();

@@ -19,10 +19,11 @@ export const flintWalletConnector = new FlintWalletConnector({
 
 export const client = createClient(
   getDefaultConfig({
-    oracleUrl: "https://wsc-server-devnet.c1.milkomeda.com",
-    blockfrostId: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
+    oracleUrl: process.env.REACT_APP_WSC_ORACLE_URL,
+    blockfrostId: process.env.REACT_APP_WSC_BLOCKFROST_ID,
     chains: [supportedChain],
-    network: MilkomedaNetworkName.C1Devnet,
+    network:
+      CHAIN_ID === 2001 ? MilkomedaNetworkName.C1Mainnet : MilkomedaNetworkName.C1Devnet,
     autoConnect: false,
     storage: createStorage({
       storage: window.localStorage,

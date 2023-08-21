@@ -467,10 +467,6 @@ export default function ReserveCoin() {
   );
 }
 
-const cardanoAddressTReserveCoin =
-  "cc53696f7d40c96f2bca9e2e8fe31905d8207c4106f326f417ec36727452657365727665436f696e";
-const reserveCoinEVMAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
-
 const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
   const { address: account } = useAccount();
 
@@ -480,11 +476,11 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
       amount: currentAmount
     },
     defaultUnwrapToken: {
-      unit: reserveCoinEVMAddress,
+      unit: process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS,
       amount: unwrapAmount // amountUnscaled
     },
     titleModal: "Buy RC with WSC",
-    evmTokenAddress: reserveCoinEVMAddress,
+    evmTokenAddress: process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS,
     evmContractRequest: {
       address: DJED_ADDRESS,
       abi: djedArtifact.abi,
@@ -498,7 +494,7 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
 
   const sellOptions = {
     defaultWrapToken: {
-      unit: cardanoAddressTReserveCoin,
+      unit: process.env.REACT_APP_CARDANO_RESERVECOIN_ADDRESS,
       amount: currentAmount
     },
     defaultUnwrapToken: {
@@ -506,7 +502,7 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
       amount: unwrapAmount // totalBCUnscaled
     },
     titleModal: "Sell RC with WSC",
-    evmTokenAddress: reserveCoinEVMAddress,
+    evmTokenAddress: process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS,
     evmContractRequest: {
       address: DJED_ADDRESS,
       abi: djedArtifact.abi,
