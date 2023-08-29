@@ -22,8 +22,7 @@ export const client = createClient(
     oracleUrl: process.env.REACT_APP_WSC_ORACLE_URL,
     blockfrostId: process.env.REACT_APP_WSC_BLOCKFROST_ID,
     chains: [supportedChain],
-    network:
-      CHAIN_ID === 2001 ? MilkomedaNetworkName.C1Mainnet : MilkomedaNetworkName.C1Devnet,
+    network: process.env.REACT_APP_WSC_MILKOMEDA_NETWORK_NAME,
     autoConnect: false,
     storage: createStorage({
       storage: window.localStorage,
