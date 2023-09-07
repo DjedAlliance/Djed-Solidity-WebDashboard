@@ -13,11 +13,11 @@ export const useSellCardanoToken = () => {
   const cardanoStablecoinAddress = process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS;
   const cardanoReservecoinAsset = React.useMemo(
     () => originTokens.find((token) => token.unit === cardanoReservecoinAddress),
-    [originTokens]
+    [cardanoReservecoinAddress, originTokens]
   );
   const cardanoStablecoinAsset = React.useMemo(
     () => originTokens.find((token) => token.unit === cardanoStablecoinAddress),
-    [originTokens]
+    [cardanoStablecoinAddress, originTokens]
   );
   const adaToken = React.useMemo(
     () => originTokens.find((token) => token.unit === "lovelace"),
