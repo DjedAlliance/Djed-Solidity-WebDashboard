@@ -13,7 +13,32 @@ import { ConnectWSCProvider } from "milkomeda-wsc-ui-test-beta";
 
 const wscCustomTheme = {
   "--wsc-body-background": "#100901",
-  "--wsc-body-color-muted": "rgb(255 255 255 / 60%)"
+  "--wsc-body-color-muted": "rgb(255 255 255 / 60%)",
+  "--wsc-body-color": "white",
+  "--wsc-body-divider": "#3f3d40",
+  "--wsc-stepper-separator": "#3f3d40",
+  "--wsc-overlay-backdrop-filter": "blur(6px)",
+
+  // primary buttons
+  "--wsc-primary-button-color": "white",
+  "--wsc-primary-button-background": "#41455c",
+  "--wsc-primary-button-box-shadow": "none",
+  "--wsc-primary-button-hover-background": "#2c2f3e",
+  // secondary button
+  "--wsc-secondary-button-color": "white",
+  "--wsc-secondary-button-background": "transparent",
+  "--wsc-secondary-button-box-shadow": "inset 0 0 0 1px #41455c",
+  "--wsc-secondary-button-hover-background": "rgba(0,0,0,0.4)",
+  // connect main button
+  "--wsc-connectbutton-background": "#41455c",
+  "--wsc-connectbutton-text": "#fff",
+  "--wsc-connectbutton-hover-background": "#2c2f3e",
+  "--wsc-connectbutton-active-box-shadow": "none",
+  "--wsc-connectbutton-box-shadow": "none",
+  "--wsc-connectbutton-color": "#fff",
+  "--wsc-connectbutton-hover-color": "#fff",
+  "--wsc-connectbutton-active-background": "#2c2f3e",
+  "--wsc-connectbutton-active-color": "white"
 };
 export default function App() {
   useEffect(() => {
