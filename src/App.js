@@ -18,6 +18,7 @@ const wscCustomTheme = {
   "--wsc-body-divider": "#3f3d40",
   "--wsc-stepper-separator": "#3f3d40",
   "--wsc-overlay-backdrop-filter": "blur(6px)",
+  "--wsc-alert-background": "#212433",
 
   // primary buttons
   "--wsc-primary-button-color": "white",

@@ -5,37 +5,6 @@ import "./_BuySellCoin.scss";
 import { useAppProvider } from "../../../context/AppProvider";
 import { TRANSACTION_VALIDITY } from "../../../utils/constants";
 import { useWSCProvider } from "milkomeda-wsc-ui-test-beta";
-import { ethers } from "ethers";
-
-export const useSellCardanoToken = () => {
-  const { wscProvider, originTokens, isWSCConnected } = useWSCProvider();
-  const cardanoReservecoinAddress = process.env.REACT_APP_CARDANO_RESERVECOIN_ADDRESS;
-  const cardanoStablecoinAddress = process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS;
-  const cardanoReservecoinAsset = React.useMemo(
-    () => originTokens.find((token) => token.unit === cardanoReservecoinAddress),
-    [cardanoReservecoinAddress, originTokens]
-  );
-  const cardanoStablecoinAsset = React.useMemo(
-    () => originTokens.find((token) => token.unit === cardanoStablecoinAddress),
-    [cardanoStablecoinAddress, originTokens]
-  );
-  const adaToken = React.useMemo(
-    () => originTokens.find((token) => token.unit === "lovelace"),
-    [originTokens]
-  );
-
-  return {
-    wscProvider,
-    isWSCConnected,
-    cardanoReservecoinAsset,
-    cardanoStablecoinAsset,
-    destinationBalanceADA: adaToken ?? {
-      quantity: "0",
-      decimals: 6,
-      assetName: "ADA"
-    }
-  };
-};
 
 const BuySellCoin = ({
   coinName,
@@ -54,12 +23,8 @@ const BuySellCoin = ({
 }) => {
   const FEE_UI = process.env.REACT_APP_FEE_UI;
   const { isWalletConnected, isWrongChain } = useAppProvider();
-  const {
-    isWSCConnected,
-    cardanoReservecoinAsset,
-    cardanoStablecoinAsset,
-    destinationBalanceADA
-  } = useSellCardanoToken();
+  const { isWSCConnected } = useWSCProvider();
+
   const inputValid = validity === TRANSACTION_VALIDITY.OK;
   const inputBarNotMarked =
     !inputValue || !isWalletConnected || isWrongChain || inputValid;
@@ -108,33 +73,7 @@ const BuySellCoin = ({
           {process.env.REACT_APP_BC} and refresh the page.
         </p>
       ) : null}
-      {isWSCConnected && cardanoReservecoinAsset ? (
-        <p className="FeeInfo">
-          <InfoCircleOutlined />
-          Your current balance is{" "}
-          {ethers.utils.formatUnits(cardanoReservecoinAsset.quantity, 0)}{" "}
-          {cardanoReservecoinAsset.assetName}
-        </p>
-      ) : null}
-      {isWSCConnected && cardanoStablecoinAsset ? (
-        <p className="FeeInfo">
-          <InfoCircleOutlined />
-          Your current balance is{" "}
-          {ethers.utils.formatUnits(cardanoStablecoinAsset.quantity, 0)}{" "}
-          {cardanoStablecoinAsset.assetName}
-        </p>
-      ) : null}
-      {isWSCConnected && destinationBalanceADA ? (
-        <p className="FeeInfo">
-          <InfoCircleOutlined />
-          Your current balance is{" "}
-          {ethers.utils.formatUnits(
-            destinationBalanceADA.quantity,
-            destinationBalanceADA.decimals
-          )}{" "}
-          {destinationBalanceADA.assetName}
-        </p>
-      ) : null}
+
       <hr />
       <div className="AdditionalInfo">
         {/*<p>
