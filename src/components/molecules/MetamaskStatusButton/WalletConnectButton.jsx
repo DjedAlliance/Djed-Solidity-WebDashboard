@@ -15,15 +15,21 @@ const WalletConnectButton = () => {
     isFlintWalletInstalled,
     isEternlWalletInstalled,
     isMetamaskWalletInstalled,
+    isNufiWalletInstalled,
+    isNamiWalletInstalled,
     isWalletConnected,
     account,
     connectMetamask,
     connectFlintWallet,
     connectToFlintWSC,
     connectToEternlWSC,
+    connectToNamiWSC,
+    connectToNufiWSC,
     redirectToMetamask,
     redirectToFlint,
     redirectToEternl,
+    redirectToNami,
+    redirectToNufi,
     activeConnector
   } = useAppProvider();
 
@@ -89,6 +95,18 @@ const WalletConnectButton = () => {
               <CustomButton
                 text={isEternlWalletInstalled ? "Eternl WSC" : "Install Eternl"}
                 onClick={isEternlWalletInstalled ? connectToEternlWSC : redirectToEternl}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+              <CustomButton
+                text={isNamiWalletInstalled ? "Nami WSC" : "Install Nami"}
+                onClick={isNamiWalletInstalled ? connectToNamiWSC : redirectToNami}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+              <CustomButton
+                text={isNufiWalletInstalled ? "NuFi WSC" : "Install NuFi"}
+                onClick={isNufiWalletInstalled ? connectToNufiWSC : redirectToNufi}
                 iconWallet={<WalletOutlined />}
                 variant="primary"
               />

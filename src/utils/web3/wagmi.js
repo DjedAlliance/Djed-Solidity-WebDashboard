@@ -27,6 +27,7 @@ export const client = createClient(
     storage: createStorage({
       storage: window.localStorage,
       key: "djed.stablecoin"
-    })
+    }),
+    cardanoWalletNames: ["flint", "eternl", "nami", "nufi"]
   })
 );
