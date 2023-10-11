@@ -25,7 +25,7 @@ const BuySellCoin = ({
   const { isWalletConnected, isWrongChain } = useAppProvider();
   const { isWSCConnected } = useWSCProvider();
 
-  const inputValid = validity === TRANSACTION_VALIDITY.OK;
+  const inputValid = isWSCConnected ? true : validity === TRANSACTION_VALIDITY.OK;
   const inputBarNotMarked =
     !inputValue || !isWalletConnected || isWrongChain || inputValid;
 
@@ -50,7 +50,14 @@ const BuySellCoin = ({
           }}
         />
       </div>
-      {!isWSCConnected && (
+      {isWSCConnected ? (
+        <>
+          <p className="FeeInfo">
+            <InfoCircleOutlined />
+            You will transfer {totalAmount ?? "-"} ADA from your Cardano wallet.
+          </p>
+        </>
+      ) : (
         <>
           <p className="FeeInfo">
             <InfoCircleOutlined />
