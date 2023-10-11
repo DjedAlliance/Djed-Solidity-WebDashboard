@@ -4,7 +4,12 @@ import { Input } from "antd";
 import "./_BuySellCoin.scss";
 import { useAppProvider } from "../../../context/AppProvider";
 import { TRANSACTION_VALIDITY } from "../../../utils/constants";
-import { useWSCProvider } from "milkomeda-wsc-ui-test-beta";
+import {
+  useWSCProvider,
+  useGetOriginTokens,
+  useGetOriginBalance
+} from "milkomeda-wsc-ui-test-beta";
+import { ethers } from "ethers";
 
 const BuySellCoin = ({
   coinName,
@@ -24,10 +29,64 @@ const BuySellCoin = ({
   const FEE_UI = process.env.REACT_APP_FEE_UI;
   const { isWalletConnected, isWrongChain } = useAppProvider();
   const { isWSCConnected } = useWSCProvider();
+  const { originTokens } = useGetOriginTokens();
+  const { originBalance } = useGetOriginBalance();
 
   const inputValid = isWSCConnected ? true : validity === TRANSACTION_VALIDITY.OK;
   const inputBarNotMarked =
     !inputValue || !isWalletConnected || isWrongChain || inputValid;
+
+  const selectedCardanoAddress =
+    coinName === process.env.REACT_APP_SC_SYMBOL
+      ? process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS
+      : process.env.REACT_APP_CARDANO_RESERVECOIN_ADDRESS;
+
+  const selectedToken = originTokens.find(
+    (t) => t.unit.toLowerCase() === selectedCardanoAddress.toLowerCase()
+  ) ?? {
+    unit: "",
+    quantity: "0",
+    // decimals: number | null,
+    assetName: "-"
+  };
+
+  const renderInformation = () => {
+    const isBuying = buyOrSell === "Buy";
+    if (!isWSCConnected) {
+      return (
+        <>
+          <p className="FeeInfo">
+            <InfoCircleOutlined />
+            {isWalletConnected
+              ? `Your current balance is ${scaledCoinBalance} ${coinName}.`
+              : `Please connect your wallet to see your ${coinName} balance.`}
+          </p>
+          <p className="FeeInfo">
+            <InfoCircleOutlined />
+            {isWalletConnected
+              ? `Your current balance is ${scaledBaseBalance} mADA.`
+              : `Please connect your wallet to see your mADA balance.`}
+          </p>
+        </>
+      );
+    }
+    return (
+      <p className="FeeInfo">
+        <InfoCircleOutlined />
+        {isBuying ? (
+          <>Your current balance is {originBalance} ADA on Cardano wallet </>
+        ) : (
+          <>
+            Your current balance is{" "}
+            {ethers.utils
+              .formatUnits(selectedToken.quantity, selectedToken.decimals)
+              .toString() ?? "-"}{" "}
+            {selectedToken.assetName} on Cardano wallet
+          </>
+        )}
+      </p>
+    );
+  };
 
   return (
     <div className="BuySellCoin">
@@ -50,29 +109,7 @@ const BuySellCoin = ({
           }}
         />
       </div>
-      {isWSCConnected ? (
-        <>
-          <p className="FeeInfo">
-            <InfoCircleOutlined />
-            You will transfer {totalAmount ?? "-"} ADA from your Cardano wallet.
-          </p>
-        </>
-      ) : (
-        <>
-          <p className="FeeInfo">
-            <InfoCircleOutlined />
-            {isWalletConnected
-              ? `Your current balance is ${scaledCoinBalance} ${coinName}.`
-              : `Please connect your wallet to see your ${coinName} balance.`}
-          </p>
-          <p className="FeeInfo">
-            <InfoCircleOutlined />
-            {isWalletConnected
-              ? `Your current balance is ${scaledBaseBalance} mADA.`
-              : `Please connect your wallet to see your mADA balance.`}
-          </p>
-        </>
-      )}
+      {renderInformation()}
       {isWrongChain ? (
         <p className="Alert">
           <ExclamationCircleOutlined />
@@ -105,3 +142,5 @@ const BuySellCoin = ({
 };
 
 export default BuySellCoin;
+
+const BuySellInfoWsc = () => {};
