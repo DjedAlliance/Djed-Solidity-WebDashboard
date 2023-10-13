@@ -46,7 +46,6 @@ const BuySellCoin = ({
   ) ?? {
     unit: "",
     quantity: "0",
-    // decimals: number | null,
     assetName: "-"
   };
 
@@ -142,5 +141,3 @@ const BuySellCoin = ({
 };
 
 export default BuySellCoin;
-
-const BuySellInfoWsc = () => {};
