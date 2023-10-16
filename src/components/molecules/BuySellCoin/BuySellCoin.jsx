@@ -10,6 +10,7 @@ import {
   useGetOriginBalance
 } from "milkomeda-wsc-ui-test-beta";
 import { ethers } from "ethers";
+import BigNumber from "bignumber.js";
 
 const BuySellCoin = ({
   coinName,
@@ -69,21 +70,37 @@ const BuySellCoin = ({
         </>
       );
     }
+
+    const isValidAmountWSC = (() => {
+      if (!isWSCConnected) return true;
+      if (!inputValue) return true;
+      if (!isBuying) return true;
+      return new BigNumber(totalAmount).lte(originBalance);
+    })();
+
     return (
-      <p className="FeeInfo">
-        <InfoCircleOutlined />
-        {isBuying ? (
-          <>Your current balance is {originBalance} ADA on Cardano wallet </>
-        ) : (
-          <>
-            Your current balance is{" "}
-            {ethers.utils
-              .formatUnits(selectedToken.quantity, selectedToken.decimals)
-              .toString() ?? "-"}{" "}
-            {selectedToken.assetName} on Cardano wallet
-          </>
-        )}
-      </p>
+      <>
+        <p className="FeeInfo">
+          <InfoCircleOutlined />
+          {isBuying ? (
+            <>Your current balance is {originBalance} ADA on Cardano wallet </>
+          ) : (
+            <>
+              Your current balance is{" "}
+              {ethers.utils
+                .formatUnits(selectedToken.quantity, selectedToken.decimals)
+                .toString() ?? "-"}{" "}
+              {selectedToken.assetName} on Cardano wallet
+            </>
+          )}
+        </p>
+        {!isValidAmountWSC ? (
+          <p className="Alert">
+            <ExclamationCircleOutlined />
+            You don't have enough ADA to complete the transaction
+          </p>
+        ) : null}
+      </>
     );
   };
 
