@@ -88,7 +88,7 @@ const BuySellCoin = ({
             <>
               Your current balance is{" "}
               {ethers.utils
-                .formatUnits(selectedToken.quantity, selectedToken.decimals)
+                .formatUnits(selectedToken.quantity, selectedToken.decimals || 6)
                 .toString() ?? "-"}{" "}
               {selectedToken.assetName} on Cardano wallet
             </>
