@@ -51,7 +51,12 @@
 .wsc-interface {
   margin-top: 60px;
   & > div > div {
-    width: 100%;
     background-color: rgba(0, 0, 0, 0.5) !important;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 0;
+    overflow: auto;
+    min-height: unset !important;
+    max-height: unset !important;
   }
 }
