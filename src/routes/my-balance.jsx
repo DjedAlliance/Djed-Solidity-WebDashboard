@@ -10,9 +10,11 @@ import {
   getRcUsdEquivalent,
   getScAdaEquivalent
 } from "../utils/helpers";
+import { WSCInterface, useWSCProvider } from "milkomeda-wsc-ui-test-beta";
 
 export default function MyBalance() {
   const { coinsDetails, accountDetails } = useAppProvider();
+  const { isWSCConnected } = useWSCProvider();
 
   const scFloat = parseFloat(accountDetails?.scaledBalanceSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
@@ -52,6 +54,11 @@ export default function MyBalance() {
         {/*<div className="Bottom">
           <TransactionTable />
         </div>*/}
+        {isWSCConnected && (
+          <div className="wsc-interface">
+            <WSCInterface />
+          </div>
+        )}
       </div>
     </main>
   );
