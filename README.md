@@ -24,6 +24,16 @@ To download the project dependencies, run:
 npm install
 ```
 
+Setting the env file
+
+    Go to the 'env' folder.
+    Open the 'milkomeda-c1-testnet' file, select all the text, and copy it.
+    Go back to your project's main folder.
+    Create a new file in that folder.
+    Paste the copied text into the new file.
+    Name the new file '.env'.
+```
+
 ## Usage
 
 In the project directory, run:
