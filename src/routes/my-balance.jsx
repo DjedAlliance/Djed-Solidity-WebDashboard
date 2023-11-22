@@ -10,9 +10,11 @@ import {
   getRcUsdEquivalent,
   getScAdaEquivalent
 } from "../utils/helpers";
+import { WSCInterface, useWSCProvider } from "milkomeda-wsc-ui-test-beta";
 
 export default function MyBalance() {
   const { coinsDetails, accountDetails } = useAppProvider();
+  const { isWSCConnected } = useWSCProvider();
 
   const scFloat = parseFloat(accountDetails?.scaledBalanceSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
@@ -26,32 +28,39 @@ export default function MyBalance() {
   return (
     <main style={{ padding: "1rem 0" }}>
       <div className="MyBalanceSection">
-        <div className="Top">
-          <h1>Balance</h1>
-          <div className="Content">
-            <TotalBalance
-              coinIcon="/coin-icon-one.png"
-              coinName={`${process.env.REACT_APP_SC_NAME}`}
-              balanceAmount={accountDetails?.scaledBalanceSc}
-              balanceEquivalent={scConverted}
-            />
-            <TotalBalance
-              coinIcon="/coin-icon-two.png"
-              coinName={`${process.env.REACT_APP_RC_NAME}`}
-              balanceAmount={accountDetails?.scaledBalanceRc}
-              balanceEquivalent={rcConverted}
-            />
-            <TotalBalance
-              coinIcon="/coin-icon-three.png"
-              coinName={`${process.env.REACT_APP_CHAIN_COIN}`}
-              balanceAmount={accountDetails?.scaledBalanceBc}
-              balanceEquivalent={bcConverted}
-            />
+        {!isWSCConnected && (
+          <div className="Top">
+            <h1>Balance</h1>
+            <div className="Content">
+              <TotalBalance
+                coinIcon="/coin-icon-one.png"
+                coinName={`${process.env.REACT_APP_SC_NAME}`}
+                balanceAmount={accountDetails?.scaledBalanceSc}
+                balanceEquivalent={scConverted}
+              />
+              <TotalBalance
+                coinIcon="/coin-icon-two.png"
+                coinName={`${process.env.REACT_APP_RC_NAME}`}
+                balanceAmount={accountDetails?.scaledBalanceRc}
+                balanceEquivalent={rcConverted}
+              />
+              <TotalBalance
+                coinIcon="/coin-icon-three.png"
+                coinName={`${process.env.REACT_APP_CHAIN_COIN}`}
+                balanceAmount={accountDetails?.scaledBalanceBc}
+                balanceEquivalent={bcConverted}
+              />
+            </div>
           </div>
-        </div>
+        )}
         {/*<div className="Bottom">
           <TransactionTable />
         </div>*/}
+        {isWSCConnected && (
+          <div className="wsc-interface">
+            <WSCInterface />
+          </div>
+        )}
       </div>
     </main>
   );

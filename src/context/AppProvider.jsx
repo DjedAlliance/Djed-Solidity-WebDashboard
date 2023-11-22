@@ -27,18 +27,16 @@ import { BigNumber } from "ethers";
 
 import {
   flintWalletConnector,
-  flintWSCConnector,
-  eternlWSCConnector,
   metamaskConnector,
   supportedChain
 } from "../utils/web3/wagmi";
-import { useConnect, useAccount, useNetwork, useSigner, useProvider } from "wagmi";
+import { useConnect, useAccount, useNetwork, useSigner } from "wagmi";
 
 const AppContext = createContext();
-const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
+export const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
 export const AppProvider = ({ children }) => {
-  const { connect } = useConnect();
+  const { connect, connectors } = useConnect();
   const {
     connector: activeConnector,
     isConnected: isWalletConnected,
@@ -114,6 +112,12 @@ export const AppProvider = ({ children }) => {
   const redirectToEternl = () => {
     window.open("https://eternl.io/", "_blank");
   };
+  const redirectToNami = () => {
+    window.open("https://namiwallet.io/", "_blank");
+  };
+  const redirectToNufi = () => {
+    window.open("https://nu.fi/", "_blank");
+  };
 
   const setUpAccountSpecificValues = async () => {
     if (coinContracts == null) return;
@@ -142,10 +146,31 @@ export const AppProvider = ({ children }) => {
     });
   };
   const connectToEternlWSC = () => {
+    const etrnalWSCConnector = connectors.find(
+      (connector) => connector.id === "eternl-wsc"
+    );
+    if (!etrnalWSCConnector) return;
     connect({
-      connector: eternlWSCConnector,
+      connector: etrnalWSCConnector
     });
   };
+
+  const connectToNamiWSC = () => {
+    const namiWSCConnector = connectors.find((connector) => connector.id === "nami-wsc");
+    if (!namiWSCConnector) return;
+    connect({
+      connector: namiWSCConnector
+    });
+  };
+
+  const connectToNufiWSC = () => {
+    const nufiWSCConnector = connectors.find((connector) => connector.id === "nufi-wsc");
+    if (!nufiWSCConnector) return;
+    connect({
+      connector: nufiWSCConnector
+    });
+  };
+
   const connectFlintWallet = () => {
     // flint doesn't support switchNetwork at the time being
     connect({
@@ -153,6 +178,9 @@ export const AppProvider = ({ children }) => {
     });
   };
   const connectToFlintWSC = async () => {
+    const flintWSCConnector = connectors.find(
+      (connector) => connector.id === "flint-wsc"
+    );
     connect({
       connector: flintWSCConnector
     });
@@ -264,15 +292,23 @@ export const AppProvider = ({ children }) => {
             typeof window !== "undefined" ? window?.evmproviders?.flint?.isFlint : false,
           isEternlWalletInstalled:
             typeof window !== "undefined" ? window?.cardano?.eternl : false,
+          isNamiWalletInstalled:
+            typeof window !== "undefined" ? window?.cardano?.nami : false,
+          isNufiWalletInstalled:
+            typeof window !== "undefined" ? window?.cardano?.nufi : false,
           isWalletConnected,
           isWrongChain: isWalletConnected && chain?.id !== CHAIN_ID,
           connectMetamask,
           connectFlintWallet,
+          connectToNamiWSC,
+          connectToNufiWSC,
           connectToEternlWSC,
           connectToFlintWSC,
           redirectToMetamask,
           redirectToFlint,
           redirectToEternl,
+          redirectToNami,
+          redirectToNufi,
           activeConnector,
           account,
           signer,
