@@ -17,7 +17,6 @@ const MetamaskConnectButton = () => {
   const variant = isWalletConnected ? "secondary" : "primary";
   return (
     <CustomButton
-      type="submit"
       text={
         isWalletInstalled
           ? isWalletConnected

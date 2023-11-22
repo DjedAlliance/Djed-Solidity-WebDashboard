@@ -28,9 +28,20 @@ import {
   verifyTx,
   BC_DECIMALS,
   calculateTxFees,
-  isTxLimitReached
+  isTxLimitReached,
+  DJED_ADDRESS,
+  FEE_UI_UNSCALED,
+  UI
 } from "../utils/ethereum";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
+import {
+  ConnectWSCButton,
+  TransactionConfigWSCProvider,
+  useWSCProvider,
+  useModal as useWSCModal
+} from "milkomeda-wsc-ui-test-beta";
+import djedArtifact from "../artifacts/Djed.json";
+import { useAccount } from "wagmi";
 
 export default function ReserveCoin() {
   const {
@@ -50,7 +61,8 @@ export default function ReserveCoin() {
     coinContracts,
     getFutureScPrice
   } = useAppProvider();
-
+  const { isWSCConnected } = useWSCProvider();
+  const { setOpen } = useWSCModal();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
@@ -238,8 +250,9 @@ export default function ReserveCoin() {
     promiseTx(isWalletConnected, sellRcTx(djedContract, account, amount), signer)
       .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
+          console.log(hash, "hash");
           if (res) {
-            console.log("Sell RC success!");
+            console.log("Sell RC success!", hash);
             setTxStatus("success");
           } else {
             console.log("Sell RC reverted!");
@@ -259,11 +272,18 @@ export default function ReserveCoin() {
     ? buyRc.bind(null, tradeData.totalBCUnscaled)
     : sellRc.bind(null, tradeData.amountUnscaled);
 
+  const currentAmount = isBuyActive
+    ? tradeData.totalBCUnscaled
+    : tradeData.amountUnscaled;
+
   const onSubmit = (e) => {
-    if (termsAccepted) {
-      e.preventDefault();
-      tradeFxn();
+    if (!termsAccepted) return;
+    e.preventDefault();
+    if (isWSCConnected) {
+      setOpen(true);
+      return;
     }
+    tradeFxn();
   };
 
   const transactionValidated = isBuyActive
@@ -336,7 +356,7 @@ export default function ReserveCoin() {
             </strong>{" "}
             {process.env.REACT_APP_RC_NAME}
           </h2>
-          <form>
+          <form onSubmit={onSubmit}>
             <div className="PurchaseContainer">
               <OperationSelector
                 coinName={`${process.env.REACT_APP_RC_SYMBOL}`}
@@ -362,6 +382,7 @@ export default function ReserveCoin() {
             </div>
             <input
               type="checkbox"
+              id="accept-terms"
               name="accept-terms"
               onChange={() => setTermsAccepted(!termsAccepted)}
               checked={termsAccepted}
@@ -374,6 +395,7 @@ export default function ReserveCoin() {
               </a>
               .
             </label>
+
             <div className="ConnectWallet">
               <br />
               {isWalletConnected ? (
@@ -388,12 +410,22 @@ export default function ReserveCoin() {
                     )}
                   </p>
                     ) : null*/}
-                  <BuySellButton
-                    disabled={buttonDisabled}
-                    onClick={onSubmit}
-                    buyOrSell={buyOrSell}
-                    currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
-                  />
+                  {isWSCConnected ? (
+                    <WSCButton
+                      disabled={value === null || isWrongChain || !termsAccepted}
+                      currentAmount={currentAmount}
+                      stepTxDirection={isBuyActive ? "buy" : "sell"}
+                      unwrapAmount={
+                        isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
+                      }
+                    />
+                  ) : (
+                    <BuySellButton
+                      disabled={buttonDisabled}
+                      buyOrSell={buyOrSell}
+                      currencyName={`${process.env.REACT_APP_RC_SYMBOL}`}
+                    />
+                  )}
                 </>
               ) : (
                 <>
@@ -405,6 +437,7 @@ export default function ReserveCoin() {
               )}
             </div>
           </form>
+
           {txStatusRejected && (
             <ModalTransaction
               transactionType="Failed Transaction"
@@ -433,3 +466,59 @@ export default function ReserveCoin() {
     </main>
   );
 }
+
+const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
+  const { address: account } = useAccount();
+
+  const buyOptions = {
+    defaultWrapToken: {
+      unit: "lovelace",
+      amount: currentAmount
+    },
+    defaultUnwrapToken: {
+      unit: process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS,
+      amount: unwrapAmount // amountUnscaled
+    },
+    titleModal: "Buy RC with WSC",
+    evmTokenAddress: process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS,
+    evmContractRequest: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
+      args: [account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: ethers.BigNumber.from(currentAmount ?? "0")
+      }
+    }
+  };
+
+  const sellOptions = {
+    defaultWrapToken: {
+      unit: process.env.REACT_APP_CARDANO_RESERVECOIN_ADDRESS,
+      amount: currentAmount
+    },
+    defaultUnwrapToken: {
+      unit: "",
+      amount: unwrapAmount // totalBCUnscaled
+    },
+    titleModal: "Sell RC with WSC",
+    evmTokenAddress: process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS,
+    evmContractRequest: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "sellReserveCoins", //amount, account, FEE_UI_UNSCALED, UI
+      args: [currentAmount, account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: "0"
+      }
+    }
+  };
+
+  return (
+    <TransactionConfigWSCProvider
+      options={stepTxDirection === "buy" ? buyOptions : sellOptions}
+    >
+      <ConnectWSCButton disabled={disabled} />
+    </TransactionConfigWSCProvider>
+  );
+};

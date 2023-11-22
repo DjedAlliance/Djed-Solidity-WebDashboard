@@ -26,9 +26,20 @@ import {
   verifyTx,
   BC_DECIMALS,
   calculateTxFees,
-  isTxLimitReached
+  isTxLimitReached,
+  DJED_ADDRESS,
+  FEE_UI_UNSCALED,
+  UI
 } from "../utils/ethereum";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
+import { useAccount } from "wagmi";
+import djedArtifact from "../artifacts/Djed.json";
+import {
+  ConnectWSCButton,
+  TransactionConfigWSCProvider,
+  useModal as useWSCModal,
+  useWSCProvider
+} from "milkomeda-wsc-ui-test-beta";
 
 export default function Stablecoin() {
   const {
@@ -47,6 +58,9 @@ export default function Stablecoin() {
     coinContracts,
     getFutureScPrice
   } = useAppProvider();
+  const { isWSCConnected } = useWSCProvider();
+  const { setOpen } = useWSCModal();
+
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
@@ -229,15 +243,22 @@ export default function Stablecoin() {
       });
   };
 
+  const currentAmount = isBuyActive
+    ? tradeData.totalBCUnscaled
+    : tradeData.amountUnscaled;
+
   const tradeFxn = isBuyActive
     ? buySc.bind(null, tradeData.totalBCUnscaled)
     : sellSc.bind(null, tradeData.amountUnscaled);
 
   const onSubmit = (e) => {
-    if (termsAccepted) {
-      e.preventDefault();
-      tradeFxn();
+    if (!termsAccepted) return;
+    e.preventDefault();
+    if (isWSCConnected) {
+      setOpen(true);
+      return;
     }
+    tradeFxn();
   };
 
   const transactionValidated = isBuyActive
@@ -257,8 +278,8 @@ export default function Stablecoin() {
           <div className="DescriptionContainer">
             <p>
               The StableCoin of this Djed deployment is called{" "}
-              <strong>{process.env.REACT_APP_SC_NAME}</strong>. It is pegged to the
-              USD, similarly to various{" "}
+              <strong>{process.env.REACT_APP_SC_NAME}</strong>. It is pegged to the USD,
+              similarly to various{" "}
               <a
                 href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
                 target="_blank"
@@ -321,7 +342,7 @@ export default function Stablecoin() {
             </strong>{" "}
             {process.env.REACT_APP_SC_NAME}
           </h2>
-          <form>
+          <form onSubmit={onSubmit}>
             <div className="PurchaseContainer">
               <OperationSelector
                 coinName={`${process.env.REACT_APP_SC_SYMBOL}`}
@@ -372,12 +393,23 @@ export default function Stablecoin() {
                     )}
                   </p>
                     ) : null*/}
-                  <BuySellButton
-                    disabled={buttonDisabled}
-                    onClick={onSubmit}
-                    buyOrSell={buyOrSell}
-                    currencyName={`${process.env.REACT_APP_SC_NAME}`}
-                  />
+
+                  {isWSCConnected ? (
+                    <WSCButton
+                      disabled={value === null || isWrongChain || !termsAccepted}
+                      currentAmount={currentAmount}
+                      stepTxDirection={isBuyActive ? "buy" : "sell"}
+                      unwrapAmount={
+                        isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
+                      }
+                    />
+                  ) : (
+                    <BuySellButton
+                      disabled={buttonDisabled}
+                      buyOrSell={buyOrSell}
+                      currencyName={`${process.env.REACT_APP_SC_NAME}`}
+                    />
+                  )}
                 </>
               ) : (
                 <>
@@ -417,3 +449,59 @@ export default function Stablecoin() {
     </main>
   );
 }
+
+const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
+  const { address: account } = useAccount();
+
+  const buyOptions = {
+    defaultWrapToken: {
+      unit: "lovelace",
+      amount: currentAmount // amountUnscaled
+    },
+    defaultUnwrapToken: {
+      unit: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
+      amount: unwrapAmount // amountUnscaled
+    },
+    titleModal: "Buy SC with WSC",
+    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
+    evmContractRequest: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "buyStableCoins", //account, FEE_UI_UNSCALED, UI
+      args: [account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: ethers.BigNumber.from(currentAmount ?? "0")
+      }
+    }
+  };
+
+  const sellOptions = {
+    defaultWrapToken: {
+      unit: process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS,
+      amount: currentAmount
+    },
+    defaultUnwrapToken: {
+      unit: "",
+      amount: unwrapAmount // totalBCUnscaled
+    },
+    titleModal: "Sell SC with WSC",
+    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
+    evmContractRequest: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "sellStableCoins", //amount, account, FEE_UI_UNSCALED, UI
+      args: [currentAmount, account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: ethers.BigNumber.from("0")
+      }
+    }
+  };
+
+  return (
+    <TransactionConfigWSCProvider
+      options={stepTxDirection === "buy" ? buyOptions : sellOptions}
+    >
+      <ConnectWSCButton disabled={disabled} />
+    </TransactionConfigWSCProvider>
+  );
+};
