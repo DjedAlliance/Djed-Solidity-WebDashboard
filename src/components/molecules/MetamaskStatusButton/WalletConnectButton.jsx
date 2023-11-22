@@ -12,19 +12,27 @@ import { Button, Popover } from "antd";
 const WalletConnectButton = () => {
   const {
     isFlintWalletInstalled,
+    isEternlWalletInstalled,
     isMetamaskWalletInstalled,
+    isNufiWalletInstalled,
+    isNamiWalletInstalled,
     isWalletConnected,
     account,
     connectMetamask,
     connectFlintWallet,
+    connectToFlintWSC,
+    connectToEternlWSC,
+    connectToNamiWSC,
+    connectToNufiWSC,
     redirectToMetamask,
-    redirectToFlint
+    redirectToFlint,
+    redirectToEternl,
+    redirectToNami,
+    redirectToNufi
   } = useAppProvider();
 
   return (
     <div className="wrapper-connect-btn">
-      {/*TODO: adapt UI on mobile*/}
-
       <Popover
         getPopupContainer={(trigger) => trigger.parentElement}
         content={
@@ -41,6 +49,30 @@ const WalletConnectButton = () => {
               <CustomButton
                 text={isFlintWalletInstalled ? "Flint Wallet" : "Install Flint"}
                 onClick={isFlintWalletInstalled ? connectFlintWallet : redirectToFlint}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+              <CustomButton
+                text={isFlintWalletInstalled ? "Flint WSC" : "Install Flint"}
+                onClick={isFlintWalletInstalled ? connectToFlintWSC : redirectToFlint}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+              <CustomButton
+                text={isEternlWalletInstalled ? "Eternl WSC" : "Install Eternl"}
+                onClick={isEternlWalletInstalled ? connectToEternlWSC : redirectToEternl}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+              <CustomButton
+                text={isNamiWalletInstalled ? "Nami WSC" : "Install Nami"}
+                onClick={isNamiWalletInstalled ? connectToNamiWSC : redirectToNami}
+                iconWallet={<WalletOutlined />}
+                variant="primary"
+              />
+              <CustomButton
+                text={isNufiWalletInstalled ? "NuFi WSC" : "Install NuFi"}
+                onClick={isNufiWalletInstalled ? connectToNufiWSC : redirectToNufi}
                 iconWallet={<WalletOutlined />}
                 variant="primary"
               />

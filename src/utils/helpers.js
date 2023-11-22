@@ -8,13 +8,18 @@ export function web3Promise(contract, method, ...args) {
   return contract.methods[method](...args).call();
 }
 
-export function buildTx(from_, to_, value_, data_) {
-  return {
+// TODO: change setGasLimit to false by default
+export function buildTx(from_, to_, value_, data_, setGasLimit = true) {
+  const tx = {
     to: to_,
     from: from_,
     value: "0x" + new BN(value_).toString(16),
-    data: data_
+    data: data_,
   };
+  if (setGasLimit) {
+    tx.gasLimit = 500_000;
+  }
+  return tx;
 }
 
 export function convertInt(promise) {

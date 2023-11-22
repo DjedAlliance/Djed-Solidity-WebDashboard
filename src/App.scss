@@ -4,6 +4,10 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
+iframe {
+  display: none !important;
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -40,9 +44,6 @@ body {
 
   .WalletConfig {
     display: flex;
-    button {
-      width: max-content;
-    }
   }
 
   &.header-desktop {
@@ -222,11 +223,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  button {
+  button.CustomButton {
     width: 100%;
     justify-content: start;
     margin: 0 !important;
+
   }
+
 }
 
 @media only screen and (max-width: 425px) {
@@ -289,4 +292,15 @@ body {
       width: 100%;
     }
   }
+}
+.ant-message {
+  z-index: 1100;
+}
+.ant-message-info .anticon, .ant-message-loading .anticon {
+  color: #d07d2c;
+}
+.ant-message-notice-content{
+  background: #ffffff;
+  color: #100901;
+  font-weight: 600;
 }
