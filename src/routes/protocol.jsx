@@ -81,7 +81,6 @@ export default function Protocol() {
               monetary authority whose currency follows a self-driving monetary policy.
             </p>
           </div>
-          <MetamaskConnectButton />
         </div>
         <div className="Right">
           <h2 className="SubtTitle">
