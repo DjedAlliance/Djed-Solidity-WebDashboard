@@ -74,18 +74,6 @@ export default function Protocol() {
               and to pay for transaction fees on {process.env.REACT_APP_BC}.
             </p>
             <p>
-              To learn more about how to obtain{" "}
-              {process.env.REACT_APP_PROTOCOL_OBTAIN_NATIVE}, follow{" "}
-              <a
-                href={process.env.REACT_APP_OBTAIN_NATIVE_GUIDE}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                this guide
-              </a>
-              .
-            </p>
-            <p>
               This deployment is immutable, unstoppable, fully autonomous and
               zero-governance. No one is able to change the deployed code or the
               parameters of the deployment. No one is operating it. No one controls your
