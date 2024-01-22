@@ -41,6 +41,11 @@ jobs:
         run: CI=false npm run build:milkomeda-c1-testnet
 
       # CI=false disables reporting warnings as errors
+      - name: Prepare build (pr)
+        if: ${{ (github.head_ref || github.ref_name) != 'main' }}
+        run: CI=false npm run build:sepolia-testnet
+
+      # CI=false disables reporting warnings as errors
       - name: Prepare build (main)
         if: ${{ (github.head_ref || github.ref_name) == 'main' }}
         run: CI=false npm run build:milkomeda-c1
