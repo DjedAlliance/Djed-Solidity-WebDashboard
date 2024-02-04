@@ -3,6 +3,8 @@ import { Table, Tag } from "antd";
 
 import "./_TransactionTable.scss";
 
+const CHAIN_COIN = process.env.REACT_APP_CHAIN_COIN;
+
 const columns = [
   {
     title: "Transaction ID",
@@ -26,7 +28,7 @@ const columns = [
     key: "total",
     render: (text) => (
       <p className="Total">
-        {text} <span>mADA</span>
+        {text} <span>${CHAIN_COIN}</span>
       </p>
     )
   },
@@ -77,7 +79,7 @@ const data = [
   {
     key: "3",
     transactionId: "7680adec8eabcabac676be9e83854ade0bd22mnb",
-    transaction: "mADA",
+    transaction: CHAIN_COIN,
     total: "+0.005456",
     date: "12/04/21 09:31:06 EST"
   }

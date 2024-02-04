@@ -3,6 +3,8 @@ import CoinIndicator from "../../atoms/CoinIndictor/CoinIndicator";
 import "./_CoinCard.scss";
 // import { decimalScaling } from "../../../utils/helpers";
 
+const CHAIN_COIN = process.env.REACT_APP_CHAIN_COIN;
+
 const CoinCard = ({
   coinIcon,
   coinName,
@@ -22,14 +24,14 @@ const CoinCard = ({
       {sellPriceAmount && priceAmount !== sellPriceAmount ? (
         <div className="PriceInfo">
           <span>Current Buy Price</span>
-          <h3>{priceAmount} mADA</h3>
+          <h3>{priceAmount} ${CHAIN_COIN}</h3>
           <span>Current Sell Price</span>
-          <h3>{sellPriceAmount} mADA</h3>
+          <h3>{sellPriceAmount} ${CHAIN_COIN}</h3>
         </div>
       ) : (
         <div className="PriceInfo">
           <span>Current Price</span>
-          <h3>{priceAmount} mADA</h3>
+          <h3>{priceAmount} ${CHAIN_COIN}</h3>
         </div>
       )}
       <div className="AdditionalInfo">

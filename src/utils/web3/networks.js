@@ -40,5 +40,22 @@ export const supportedChains = [
         url: "https://explorer-mainnet-cardano-evm.c1.milkomeda.com"
       }
     }
+  },
+  {
+    id: 11155111,
+    name: "Sepolia Testnet",
+    network: "Sepolia Testnet",
+    nativeCurrency: {
+      name: "SepoliaETH",
+      symbol: "SepoliaETH",
+      decimals: 18
+    },
+    rpcUrls: {
+      public: { http: ["https://sepolia.infura.io/v3/"] },
+      default: { http: ["https://sepolia.infura.io/v3/"] }
+    },
+    blockExplorers: {
+      etherscan: { name: "", url: "https://sepolia.etherscan.io/" }
+    }
   }
 ];
