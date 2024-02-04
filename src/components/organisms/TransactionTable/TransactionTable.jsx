@@ -28,7 +28,7 @@ const columns = [
     key: "total",
     render: (text) => (
       <p className="Total">
-        {text} <span>${CHAIN_COIN}</span>
+        {text} <span>{CHAIN_COIN}</span>
       </p>
     )
   },
