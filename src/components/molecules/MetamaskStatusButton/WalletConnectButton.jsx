@@ -46,7 +46,7 @@ const WalletConnectButton = () => {
                 iconWallet={<WalletOutlined />}
                 variant="primary"
               />
-              <CustomButton
+              {/* <CustomButton
                 text={isFlintWalletInstalled ? "Flint Wallet" : "Install Flint"}
                 onClick={isFlintWalletInstalled ? connectFlintWallet : redirectToFlint}
                 iconWallet={<WalletOutlined />}
@@ -75,7 +75,7 @@ const WalletConnectButton = () => {
                 onClick={isNufiWalletInstalled ? connectToNufiWSC : redirectToNufi}
                 iconWallet={<WalletOutlined />}
                 variant="primary"
-              />
+              /> */}
             </>
           )
         }
