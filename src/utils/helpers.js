@@ -14,7 +14,7 @@ export function buildTx(from_, to_, value_, data_, setGasLimit = true) {
     to: to_,
     from: from_,
     value: "0x" + new BN(value_).toString(16),
-    data: data_,
+    data: data_
   };
   if (setGasLimit) {
     tx.gasLimit = 500_000;

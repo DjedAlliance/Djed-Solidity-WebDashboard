@@ -15,7 +15,7 @@ permissions:
   contents: read # for checkout
 
 jobs:
-  build-milkomeda:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,28 +39,3 @@ jobs:
 
       - name: Prepare production build
         run: npm run build:milkomeda-c1-testnet
-
-  build-sepolia:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: setup-node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      # TODO: Enable me once the tests are passing
-      # - name: Test
-      #   run: npm run test
-
-      - name: Prepare production build
-        run: npm run build:sepolia-testnet

@@ -21,7 +21,9 @@ const ReservesCard = ({
     <div className="Content">
       <div className="BaseReserves">
         <span>BaseCoin ({CHAIN_COIN}) Reserves</span>
-        <h3>{priceAmount} {CHAIN_COIN}</h3>
+        <h3>
+          {priceAmount} {CHAIN_COIN}
+        </h3>
         <p>≈ {equivalence}</p>
       </div>
       <div className="ReservesRatio">
