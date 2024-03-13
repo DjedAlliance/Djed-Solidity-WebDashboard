@@ -28,6 +28,8 @@ const BuySellCoin = ({
   validity
 }) => {
   const FEE_UI = process.env.REACT_APP_FEE_UI;
+  const CHAIN_COIN = process.env.REACT_APP_CHAIN_COIN;
+
   const { isWalletConnected, isWrongChain } = useAppProvider();
   const { isWSCConnected } = useWSCProvider();
   const { originTokens } = useGetOriginTokens();
@@ -64,8 +66,8 @@ const BuySellCoin = ({
           <p className="FeeInfo">
             <InfoCircleOutlined />
             {isWalletConnected
-              ? `Your current balance is ${scaledBaseBalance} mADA.`
-              : `Please connect your wallet to see your mADA balance.`}
+              ? `Your current balance is ${scaledBaseBalance} ${CHAIN_COIN}.`
+              : `Please connect your wallet to see your ${CHAIN_COIN} balance.`}
           </p>
         </>
       );
@@ -137,7 +139,7 @@ const BuySellCoin = ({
       <hr />
       <div className="AdditionalInfo">
         {/*<p>
-        {coinName} ≈ {priceAmount} mADA
+        {coinName} ≈ {priceAmount} ${CHAIN_COIN}
       </p>*/}
         <p>Fee = {fee}</p>
         <p>Treasury Fee = {treasuryFee}</p>
@@ -145,7 +147,7 @@ const BuySellCoin = ({
         {inputValue ? (
           <>
             <p>{`You will ${payOrReceive}  ~ ${inputValue} ${coinName}`}</p>
-            <p>{`You will ${payOrGet}  ~ ${totalAmount} mADA`}</p>
+            <p>{`You will ${payOrGet}  ~ ${totalAmount} ${CHAIN_COIN}`}</p>
             <p>{inputValid ? null : `Transaction is invalid: ${validity}.`}</p>
           </>
         ) : (

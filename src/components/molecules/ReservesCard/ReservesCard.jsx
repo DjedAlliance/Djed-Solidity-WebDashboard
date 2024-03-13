@@ -3,6 +3,8 @@ import CoinIndicator from "../../atoms/CoinIndictor/CoinIndicator";
 import NumberItem from "../../atoms/NumberItem/NumberItem";
 import "./_ReservesCard.scss";
 
+const CHAIN_COIN = process.env.REACT_APP_CHAIN_COIN;
+
 const ReservesCard = ({
   coinIcon,
   coinName,
@@ -18,8 +20,10 @@ const ReservesCard = ({
     <hr />
     <div className="Content">
       <div className="BaseReserves">
-        <span>BaseCoin (mADA) Reserves</span>
-        <h3>{priceAmount} mADA</h3>
+        <span>BaseCoin ({CHAIN_COIN}) Reserves</span>
+        <h3>
+          {priceAmount} {CHAIN_COIN}
+        </h3>
         <p>≈ {equivalence}</p>
       </div>
       <div className="ReservesRatio">
