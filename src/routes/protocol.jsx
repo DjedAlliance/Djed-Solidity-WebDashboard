@@ -2,7 +2,7 @@ import React from "react";
 //import { ArrowRightOutlined, PropertySafetyFilled } from "@ant-design/icons";
 //import { ReactComponent as Metamask } from "../images/metamask.svg";
 //import CustomButton from "../components/atoms/CustomButton/CustomButton";
-import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
+//import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 
 import "./_protocol.scss";
