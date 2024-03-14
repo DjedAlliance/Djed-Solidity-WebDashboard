@@ -11,24 +11,24 @@ import { Button, Popover } from "antd";
 
 const WalletConnectButton = () => {
   const {
-    isFlintWalletInstalled,
-    isEternlWalletInstalled,
+    //isFlintWalletInstalled,
+    //isEternlWalletInstalled,
     isMetamaskWalletInstalled,
-    isNufiWalletInstalled,
-    isNamiWalletInstalled,
+    //isNufiWalletInstalled,
+    //isNamiWalletInstalled,
     isWalletConnected,
     account,
     connectMetamask,
-    connectFlintWallet,
+    /*connectFlintWallet,
     connectToFlintWSC,
     connectToEternlWSC,
     connectToNamiWSC,
-    connectToNufiWSC,
+    connectToNufiWSC,*/
     redirectToMetamask,
-    redirectToFlint,
+    /*redirectToFlint,
     redirectToEternl,
     redirectToNami,
-    redirectToNufi
+    redirectToNufi*/
   } = useAppProvider();
 
   return (
