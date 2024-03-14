@@ -24,7 +24,7 @@ const WalletConnectButton = () => {
     connectToEternlWSC,
     connectToNamiWSC,
     connectToNufiWSC,*/
-    redirectToMetamask,
+    redirectToMetamask
     /*redirectToFlint,
     redirectToEternl,
     redirectToNami,
