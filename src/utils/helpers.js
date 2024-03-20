@@ -39,12 +39,14 @@ function intersperseCommas(s) {
   }
 }
 
-export function decimalScaling(unscaledString, decimals, show = 3) {
+export function decimalScaling(unscaledString, decimals, show = 6) {
   if (decimals <= 0) {
     return unscaledString + "0".repeat(-decimals);
   }
+
   let prefix;
   let suffix;
+
   if (unscaledString.length <= decimals) {
     prefix = "0";
     suffix = "0".repeat(decimals - unscaledString.length) + unscaledString;
@@ -52,9 +54,17 @@ export function decimalScaling(unscaledString, decimals, show = 3) {
     prefix = unscaledString.slice(0, -decimals);
     suffix = unscaledString.slice(-decimals);
   }
+
   suffix = suffix.slice(0, show);
   suffix = intersperseCommas(suffix);
+
+  if (show <= decimals) {
+    // Remove commas after the decimal point
+    suffix = suffix.replace(/,/g, "");
+  }
+
   prefix = reverseString(intersperseCommas(reverseString(prefix)));
+
   return prefix + "." + suffix;
 }
 
@@ -95,7 +105,9 @@ export function percentScaledPromise(promise, scaling) {
 // currency conversions:
 export function calculateBcUsdEquivalent(coinsDetails, amountFloat) {
   const adaPerUsd = parseFloat(coinsDetails?.scaledScExchangeRate.replaceAll(",", ""));
+  console.log(adaPerUsd);
   const eqPrice = (1e6 * amountFloat) / adaPerUsd;
+  console.log(eqPrice);
   return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }
 
@@ -105,8 +117,12 @@ export function getBcUsdEquivalent(coinsDetails, amountFloat) {
 
 export function calculateRcUsdEquivalent(coinsDetails, amountFloat) {
   const adaPerRc = parseFloat(coinsDetails?.scaledSellPriceRc);
+  console.log(adaPerRc);
   const adaPerUsd = parseFloat(coinsDetails?.scaledScExchangeRate.replaceAll(",", ""));
+  console.log(adaPerUsd);
+
   const eqPrice = (1e6 * amountFloat * adaPerRc) / adaPerUsd;
+  console.log(eqPrice);
   return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }
 export function getRcUsdEquivalent(coinsDetails, amountFloat) {
