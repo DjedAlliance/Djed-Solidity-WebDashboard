@@ -105,9 +105,9 @@ export function percentScaledPromise(promise, scaling) {
 // currency conversions:
 export function calculateBcUsdEquivalent(coinsDetails, amountFloat) {
   const adaPerUsd = parseFloat(coinsDetails?.scaledScExchangeRate.replaceAll(",", ""));
-  console.log(adaPerUsd);
+
   const eqPrice = (1e6 * amountFloat) / adaPerUsd;
-  console.log(eqPrice);
+
   return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }
 
@@ -117,12 +117,11 @@ export function getBcUsdEquivalent(coinsDetails, amountFloat) {
 
 export function calculateRcUsdEquivalent(coinsDetails, amountFloat) {
   const adaPerRc = parseFloat(coinsDetails?.scaledSellPriceRc);
-  console.log(adaPerRc);
+
   const adaPerUsd = parseFloat(coinsDetails?.scaledScExchangeRate.replaceAll(",", ""));
-  console.log(adaPerUsd);
 
   const eqPrice = (1e6 * amountFloat * adaPerRc) / adaPerUsd;
-  console.log(eqPrice);
+
   return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }
 export function getRcUsdEquivalent(coinsDetails, amountFloat) {
