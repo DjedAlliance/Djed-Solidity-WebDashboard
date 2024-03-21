@@ -39,12 +39,14 @@ function intersperseCommas(s) {
   }
 }
 
-export function decimalScaling(unscaledString, decimals, show = 3) {
+export function decimalScaling(unscaledString, decimals, show = 6) {
   if (decimals <= 0) {
     return unscaledString + "0".repeat(-decimals);
   }
+
   let prefix;
   let suffix;
+
   if (unscaledString.length <= decimals) {
     prefix = "0";
     suffix = "0".repeat(decimals - unscaledString.length) + unscaledString;
@@ -52,9 +54,17 @@ export function decimalScaling(unscaledString, decimals, show = 3) {
     prefix = unscaledString.slice(0, -decimals);
     suffix = unscaledString.slice(-decimals);
   }
+
   suffix = suffix.slice(0, show);
   suffix = intersperseCommas(suffix);
+
+  if (show <= decimals) {
+    // Remove commas after the decimal point
+    suffix = suffix.replace(/,/g, "");
+  }
+
   prefix = reverseString(intersperseCommas(reverseString(prefix)));
+
   return prefix + "." + suffix;
 }
 
@@ -116,7 +126,7 @@ export function getRcUsdEquivalent(coinsDetails, amountFloat) {
 export function getScAdaEquivalent(coinsDetails, amountFloat) {
   const adaPerSc = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
   const eqPrice = 1e6 * amountFloat * adaPerSc;
-  return decimalScaling(eqPrice.toFixed(0).toString(10), 6) + " mADA";
+  return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }
 
 export function validatePositiveNumber(amountScaled) {
