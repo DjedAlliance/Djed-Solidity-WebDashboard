@@ -105,9 +105,7 @@ export function percentScaledPromise(promise, scaling) {
 // currency conversions:
 export function calculateBcUsdEquivalent(coinsDetails, amountFloat) {
   const adaPerUsd = parseFloat(coinsDetails?.scaledScExchangeRate.replaceAll(",", ""));
-
   const eqPrice = (1e6 * amountFloat) / adaPerUsd;
-
   return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }
 
@@ -117,11 +115,8 @@ export function getBcUsdEquivalent(coinsDetails, amountFloat) {
 
 export function calculateRcUsdEquivalent(coinsDetails, amountFloat) {
   const adaPerRc = parseFloat(coinsDetails?.scaledSellPriceRc);
-
   const adaPerUsd = parseFloat(coinsDetails?.scaledScExchangeRate.replaceAll(",", ""));
-
   const eqPrice = (1e6 * amountFloat * adaPerRc) / adaPerUsd;
-
   return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }
 export function getRcUsdEquivalent(coinsDetails, amountFloat) {
@@ -131,7 +126,7 @@ export function getRcUsdEquivalent(coinsDetails, amountFloat) {
 export function getScAdaEquivalent(coinsDetails, amountFloat) {
   const adaPerSc = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
   const eqPrice = 1e6 * amountFloat * adaPerSc;
-  return decimalScaling(eqPrice.toFixed(0).toString(10), 6) + " mADA";
+  return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }
 
 export function validatePositiveNumber(amountScaled) {

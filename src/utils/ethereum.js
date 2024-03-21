@@ -101,12 +101,12 @@ export const getCoinDetails = async (
     ];
   } else if (NETWORK_ID === "11155111") {
     promiseArray = [
-      scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
+      scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), BC_DECIMALS),
       scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), scDecimals),
       scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
       scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
       scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
-      scaledPromise(web3Promise(djed, "scPrice", 0), scDecimals) // Example change for ADDRESS_2
+      scaledPromise(web3Promise(djed, "scPrice", 0), scDecimals)
     ];
   }
 
