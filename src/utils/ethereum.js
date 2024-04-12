@@ -231,12 +231,16 @@ export const promiseTx = (isWalletConnected, tx, signer) => {
 
 export const verifyTx = (web3, hash) => {
   return new Promise((res) => {
-    setTimeout(() => {
-      web3.eth.getTransactionReceipt(hash).then((receipt) => res(receipt.status));
-    }, CONFIRMATION_WAIT_PERIOD);
+    const checkStatus = () => {
+      web3.eth.getTransactionReceipt(hash).then((receipt) => {
+        receipt != null ?
+          res(receipt.status) :
+          setTimeout(checkStatus, CONFIRMATION_WAIT_PERIOD);
+      });
+    };
+    checkStatus();
   });
 };
-
 
 /**
  * Function that deducts all platform fees from the BC amount
