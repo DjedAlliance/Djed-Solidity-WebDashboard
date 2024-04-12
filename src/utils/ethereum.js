@@ -231,14 +231,9 @@ export const promiseTx = (isWalletConnected, tx, signer) => {
 
 export const verifyTx = (web3, hash) => {
   return new Promise((res) => {
-    const checkStatus = () => {
-      web3.eth.getTransactionReceipt(hash).then((receipt) => {
-        receipt != null ?
-          res(receipt.status) :
-          setTimeout(checkStatus, CONFIRMATION_WAIT_PERIOD);
-      });
-    };
-    checkStatus();
+    setTimeout(() => {
+      web3.eth.getTransactionReceipt(hash).then((receipt) => res(receipt.status));
+    }, CONFIRMATION_WAIT_PERIOD);
   });
 };
 
