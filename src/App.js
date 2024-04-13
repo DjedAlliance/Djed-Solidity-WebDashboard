@@ -10,6 +10,7 @@ import { client } from "./utils/web3/wagmi";
 import { WagmiConfig } from "wagmi";
 import { useEffect } from "react";
 import { ConnectWSCProvider } from "milkomeda-wsc-ui-test-beta";
+import { Helmet } from "react-helmet";
 
 const wscCustomTheme = {
   "--wsc-body-background": "#100901",
@@ -48,6 +49,11 @@ export default function App() {
 
   return (
     <BrowserRouter>
+    <Helmet>
+        <title>{`Djed on ${process.env.REACT_APP_BC}`}</title>
+        <meta name="description" content={`Djed is a formally verified crypto-backed autonomous stablecoin protocol. It has been researched since Q2 2020, its whitepaper has been released in August 2021, and it has multiple implementations and deployments. Here you can interact with a deployment that uses these smart contracts on ${process.env.REACT_APP_BC}.`} />
+        <meta property="og:image" content="https://milkomeda-c1-testnet.djed.one/Logo_symbol.png" />
+      </Helmet>
       <WagmiConfig client={client}>
         <AppProvider>
           <ConnectWSCProvider customTheme={wscCustomTheme}>
