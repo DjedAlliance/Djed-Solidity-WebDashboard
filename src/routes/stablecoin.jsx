@@ -252,6 +252,7 @@ export default function Stablecoin() {
     : sellSc.bind(null, tradeData.amountUnscaled);
 
   const onSubmit = (e) => {
+    if (!isWalletConnected) return;
     if (!termsAccepted) return;
     e.preventDefault();
     if (isWSCConnected) {
@@ -265,7 +266,7 @@ export default function Stablecoin() {
     ? buyValidity === TRANSACTION_VALIDITY.OK
     : sellValidity === TRANSACTION_VALIDITY.OK;
 
-  const buttonDisabled = value === null || isWrongChain || !transactionValidated;
+  const buttonDisabled = isNaN(parseInt(value)) || parseInt(value) === 0 || isWrongChain || !transactionValidated;
 
   const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
