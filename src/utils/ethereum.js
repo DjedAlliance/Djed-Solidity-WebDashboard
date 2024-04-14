@@ -237,7 +237,6 @@ export const verifyTx = (web3, hash) => {
   });
 };
 
-
 /**
  * Function that deducts all platform fees from the BC amount
  * @param {*} value The amount of BC from which fees should be deducted
