@@ -93,7 +93,7 @@ export default function Protocol() {
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
               tokenName={`${process.env.REACT_APP_SC_SYMBOL}`}
-              equivalence={scConverted}
+              equivalence={`${scConverted} ${process.env.REACT_APP_CHAIN_COIN}`}
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
