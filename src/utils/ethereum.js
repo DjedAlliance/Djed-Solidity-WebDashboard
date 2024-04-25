@@ -36,13 +36,13 @@ export const FEE_UI_UNSCALED = decimalUnscaling(
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {
-    
-      try {
-        const web3 = new Web3(BLOCKCHAIN_URI);
-        resolve(web3);
-      } catch (error) {
-        reject(error);
-      }
+
+    try {
+      const web3 = new Web3(BLOCKCHAIN_URI);
+      resolve(web3);
+    } catch (error) {
+      reject(error);
+    }
 
   });
 
