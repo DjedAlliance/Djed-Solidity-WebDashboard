@@ -291,7 +291,11 @@ export default function ReserveCoin() {
     ? buyValidity === TRANSACTION_VALIDITY.OK
     : sellValidity === TRANSACTION_VALIDITY.OK;
 
-  const buttonDisabled = isNaN(parseInt(value)) || parseInt(value) === 0 || isWrongChain || !transactionValidated;
+  const buttonDisabled =
+    isNaN(parseInt(value)) ||
+    parseInt(value) === 0 ||
+    isWrongChain ||
+    !transactionValidated;
 
   const rcFloat = parseFloat(coinsDetails?.scaledNumberRc.replaceAll(",", ""));
   const rcConverted = getRcUsdEquivalent(coinsDetails, rcFloat);
