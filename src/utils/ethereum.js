@@ -36,14 +36,12 @@ export const FEE_UI_UNSCALED = decimalUnscaling(
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {
-
     try {
       const web3 = new Web3(BLOCKCHAIN_URI);
       resolve(web3);
     } catch (error) {
       reject(error);
     }
-
   });
 
 export const getDjedContract = (web3) => {
@@ -232,9 +230,9 @@ export const verifyTx = (web3, hash) => {
   return new Promise((res) => {
     const checkStatus = () => {
       web3.eth.getTransactionReceipt(hash).then((receipt) => {
-        receipt != null ?
-          res(receipt.status) :
-          setTimeout(checkStatus, CONFIRMATION_WAIT_PERIOD);
+        receipt != null
+          ? res(receipt.status)
+          : setTimeout(checkStatus, CONFIRMATION_WAIT_PERIOD);
       });
     };
     checkStatus();
