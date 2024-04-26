@@ -37,7 +37,7 @@ module.exports = {
             warning.details &&
             warning.details.includes("source-map-loader")
           );
-        },
+        }
       ];
 
       return webpackConfig;
