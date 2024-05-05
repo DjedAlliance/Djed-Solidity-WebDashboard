@@ -55,6 +55,19 @@ export const AppProvider = ({ children }) => {
   const [systemParams, setSystemParams] = useState(null);
   const [accountDetails, setAccountDetails] = useState(null);
   const [coinBudgets, setCoinBudgets] = useState(null);
+  const [isVisible, setIsVisible] = useState(document.visibilityState === "visible");
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(document.visibilityState === "visible");
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
   useEffect(() => {
     if (!account) return;
     const setUp = async () => {
@@ -188,7 +201,7 @@ export const AppProvider = ({ children }) => {
 
   useInterval(
     async () => {
-      if (coinContracts == null) return;
+      if (coinContracts == null || !isVisible) return;
       const accountDetails = await getAccountDetails(
         web3,
         account,
@@ -206,12 +219,12 @@ export const AppProvider = ({ children }) => {
       );
       setCoinBudgets(coinBudgets);
     },
-    isWalletConnected ? ACCOUNT_DETAILS_REQUEST_INTERVAL : null
+    isWalletConnected && isVisible ? ACCOUNT_DETAILS_REQUEST_INTERVAL : null
   );
 
   useInterval(
     async () => {
-      if (coinContracts == null) return;
+      if (coinContracts == null || !isVisible) return;
       const coinsDetails = await getCoinDetails(
         coinContracts.stableCoin,
         coinContracts.reserveCoin,
@@ -222,7 +235,7 @@ export const AppProvider = ({ children }) => {
       );
       setCoinsDetails(coinsDetails);
     },
-    isWalletConnected ? COIN_DETAILS_REQUEST_INTERVAL : null
+    isWalletConnected && isVisible ? COIN_DETAILS_REQUEST_INTERVAL : null
   );
 
   const isRatioBelowMax = ({ scPrice, reserveBc }) => {

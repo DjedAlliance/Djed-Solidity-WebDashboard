@@ -34,21 +34,6 @@ export const FEE_UI_UNSCALED = decimalUnscaling(
   SCALING_DECIMALS
 );
 
-let isWindowActive = true; // Flag to track window visibility
-
-window.addEventListener("visibilitychange", () => {
-  isWindowActive = document.visibilityState === "visible";
-});
-
-const withWindowVisibilityCheck = (action) => {
-  return (...args) => {
-    if (!isWindowActive) {
-      return;
-    }
-    return action(...args);
-  };
-};
-
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {
     try {
@@ -93,75 +78,79 @@ export const getDecimals = async (stableCoin, reserveCoin) => {
   return { scDecimals, rcDecimals };
 };
 
-export const getCoinDetails = withWindowVisibilityCheck(
-  async (stableCoin, reserveCoin, djed, scDecimals, rcDecimals) => {
-    let promiseArray;
+export const getCoinDetails = async (
+  stableCoin,
+  reserveCoin,
+  djed,
+  scDecimals,
+  rcDecimals
+) => {
+  let promiseArray;
 
-    if (NETWORK_ID === "200101" || NETWORK_ID === "2001") {
-      promiseArray = [
-        scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
-        scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS),
-        scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
-        scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
-        scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
-        scaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS)
-      ];
-    } else if (NETWORK_ID === "11155111") {
-      promiseArray = [
-        scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), BC_DECIMALS),
-        scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), scDecimals),
-        scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
-        scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
-        scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
-        scaledPromise(web3Promise(djed, "scPrice", 0), scDecimals)
-      ];
-    }
-
-    const [
-      [scaledNumberSc, unscaledNumberSc],
-      [scaledPriceSc, unscaledPriceSc],
-      [scaledNumberRc, unscaledNumberRc],
-      [scaledReserveBc, unscaledReserveBc],
-      scaledBuyPriceRc,
-      scaledScExchangeRate
-    ] = await Promise.all(promiseArray);
-
-    const emptyValue = decimalScaling("0".toString(10), BC_DECIMALS);
-    let scaledSellPriceRc = emptyValue;
-    let unscaledSellPriceRc = emptyValue;
-    let percentReserveRatio = emptyValue;
-
-    //Check total stablecoin supply
-    if (!BigNumber.from(unscaledNumberRc).isZero()) {
-      [scaledSellPriceRc, unscaledSellPriceRc] = await scaledUnscaledPromise(
-        web3Promise(djed, "rcTargetPrice", 0),
-        BC_DECIMALS
-      );
-    }
-    //Check total reservecoin supply
-    if (!BigNumber.from(unscaledNumberSc).isZero()) {
-      percentReserveRatio = await percentScaledPromise(
-        web3Promise(djed, "ratio"),
-        SCALING_DECIMALS
-      );
-    }
-    return {
-      scaledNumberSc,
-      unscaledNumberSc,
-      scaledPriceSc,
-      unscaledPriceSc,
-      scaledNumberRc,
-      unscaledNumberRc,
-      scaledReserveBc,
-      unscaledReserveBc,
-      percentReserveRatio,
-      scaledBuyPriceRc,
-      scaledSellPriceRc,
-      unscaledSellPriceRc,
-      scaledScExchangeRate
-    };
+  if (NETWORK_ID === "200101" || NETWORK_ID === "2001") {
+    promiseArray = [
+      scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
+      scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS),
+      scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
+      scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
+      scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
+      scaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS)
+    ];
+  } else if (NETWORK_ID === "11155111") {
+    promiseArray = [
+      scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), BC_DECIMALS),
+      scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), scDecimals),
+      scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
+      scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
+      scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
+      scaledPromise(web3Promise(djed, "scPrice", 0), scDecimals)
+    ];
   }
-);
+
+  const [
+    [scaledNumberSc, unscaledNumberSc],
+    [scaledPriceSc, unscaledPriceSc],
+    [scaledNumberRc, unscaledNumberRc],
+    [scaledReserveBc, unscaledReserveBc],
+    scaledBuyPriceRc,
+    scaledScExchangeRate
+  ] = await Promise.all(promiseArray);
+
+  const emptyValue = decimalScaling("0".toString(10), BC_DECIMALS);
+  let scaledSellPriceRc = emptyValue;
+  let unscaledSellPriceRc = emptyValue;
+  let percentReserveRatio = emptyValue;
+
+  //Check total stablecoin supply
+  if (!BigNumber.from(unscaledNumberRc).isZero()) {
+    [scaledSellPriceRc, unscaledSellPriceRc] = await scaledUnscaledPromise(
+      web3Promise(djed, "rcTargetPrice", 0),
+      BC_DECIMALS
+    );
+  }
+  //Check total reservecoin supply
+  if (!BigNumber.from(unscaledNumberSc).isZero()) {
+    percentReserveRatio = await percentScaledPromise(
+      web3Promise(djed, "ratio"),
+      SCALING_DECIMALS
+    );
+  }
+  return {
+    scaledNumberSc,
+    unscaledNumberSc,
+    scaledPriceSc,
+    unscaledPriceSc,
+    scaledNumberRc,
+    unscaledNumberRc,
+    scaledReserveBc,
+    unscaledReserveBc,
+    percentReserveRatio,
+    scaledBuyPriceRc,
+    scaledSellPriceRc,
+    unscaledSellPriceRc,
+    scaledScExchangeRate
+  };
+};
 
 export const getSystemParams = async (djed) => {
   const [
@@ -190,28 +179,33 @@ export const getSystemParams = async (djed) => {
   };
 };
 
-export const getAccountDetails = withWindowVisibilityCheck(
-  async (web3, account, stableCoin, reserveCoin, scDecimals, rcDecimals) => {
-    const [
-      [scaledBalanceSc, unscaledBalanceSc],
-      [scaledBalanceRc, unscaledBalanceRc],
-      [scaledBalanceBc, unscaledBalanceBc]
-    ] = await Promise.all([
-      scaledUnscaledPromise(web3Promise(stableCoin, "balanceOf", account), scDecimals),
-      scaledUnscaledPromise(web3Promise(reserveCoin, "balanceOf", account), rcDecimals),
-      scaledUnscaledPromise(web3.eth.getBalance(account), BC_DECIMALS)
-    ]);
+export const getAccountDetails = async (
+  web3,
+  account,
+  stableCoin,
+  reserveCoin,
+  scDecimals,
+  rcDecimals
+) => {
+  const [
+    [scaledBalanceSc, unscaledBalanceSc],
+    [scaledBalanceRc, unscaledBalanceRc],
+    [scaledBalanceBc, unscaledBalanceBc]
+  ] = await Promise.all([
+    scaledUnscaledPromise(web3Promise(stableCoin, "balanceOf", account), scDecimals),
+    scaledUnscaledPromise(web3Promise(reserveCoin, "balanceOf", account), rcDecimals),
+    scaledUnscaledPromise(web3.eth.getBalance(account), BC_DECIMALS)
+  ]);
 
-    return {
-      scaledBalanceSc,
-      unscaledBalanceSc,
-      scaledBalanceRc,
-      unscaledBalanceRc,
-      scaledBalanceBc,
-      unscaledBalanceBc
-    };
-  }
-);
+  return {
+    scaledBalanceSc,
+    unscaledBalanceSc,
+    scaledBalanceRc,
+    unscaledBalanceRc,
+    scaledBalanceBc,
+    unscaledBalanceBc
+  };
+};
 
 export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDecimals) => {
   return {
@@ -436,9 +430,6 @@ export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
 };
 
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
-  if (!isWindowActive) {
-    throw new Error("Window is not active. Please activate the tab.");
-  }
   return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
 };
 
