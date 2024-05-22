@@ -349,7 +349,6 @@ const tradeDataPriceCore = (djed, method, decimals, amountScaled) => {
     }
   );
 };
-
 // reservecoin
 
 /**
