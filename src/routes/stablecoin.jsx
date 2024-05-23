@@ -266,7 +266,11 @@ export default function Stablecoin() {
     ? buyValidity === TRANSACTION_VALIDITY.OK
     : sellValidity === TRANSACTION_VALIDITY.OK;
 
-  const buttonDisabled = isNaN(parseInt(value)) || parseInt(value) === 0 || isWrongChain || !transactionValidated;
+  const buttonDisabled =
+    isNaN(parseInt(value)) ||
+    parseInt(value) === 0 ||
+    isWrongChain ||
+    !transactionValidated;
 
   const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);

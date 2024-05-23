@@ -21,7 +21,6 @@ const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
 export const DJED_ADDRESS = process.env.REACT_APP_DJED_ADDRESS;
 const FEE_UI = process.env.REACT_APP_FEE_UI;
 export const UI = process.env.REACT_APP_UI;
-const NETWORK_ID = process.env.REACT_APP_CHAIN_ID;
 
 export const BC_DECIMALS = 18;
 export const SCALING_DECIMALS = 24; // scalingFixed // TODO: why do we need this?
@@ -36,14 +35,12 @@ export const FEE_UI_UNSCALED = decimalUnscaling(
 
 export const getWeb3 = () =>
   new Promise(async (resolve, reject) => {
-    
-      try {
-        const web3 = new Web3(BLOCKCHAIN_URI);
-        resolve(web3);
-      } catch (error) {
-        reject(error);
-      }
-
+    try {
+      const web3 = new Web3(BLOCKCHAIN_URI);
+      resolve(web3);
+    } catch (error) {
+      reject(error);
+    }
   });
 
 export const getDjedContract = (web3) => {
@@ -79,7 +76,6 @@ export const getDecimals = async (stableCoin, reserveCoin) => {
   ]);
   return { scDecimals, rcDecimals };
 };
-
 export const getCoinDetails = async (
   stableCoin,
   reserveCoin,
@@ -87,37 +83,22 @@ export const getCoinDetails = async (
   scDecimals,
   rcDecimals
 ) => {
-  let promiseArray;
-
-  if (NETWORK_ID === "200101" || NETWORK_ID === "2001") {
-    promiseArray = [
-      scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
-      scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS),
-      scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
-      scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
-      scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
-      scaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS)
-    ];
-  } else if (NETWORK_ID === "11155111") {
-    promiseArray = [
-      scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), BC_DECIMALS),
-      scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), scDecimals),
-      scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
-      scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
-      scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
-      scaledPromise(web3Promise(djed, "scPrice", 0), scDecimals)
-    ];
-  }
-
   const [
     [scaledNumberSc, unscaledNumberSc],
     [scaledPriceSc, unscaledPriceSc],
     [scaledNumberRc, unscaledNumberRc],
     [scaledReserveBc, unscaledReserveBc],
     scaledBuyPriceRc,
-    scaledScExchangeRate
-  ] = await Promise.all(promiseArray);
 
+    scaledScExchangeRate
+  ] = await Promise.all([
+    scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
+    scaledUnscaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS),
+    scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
+    scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "scPrice", 0), BC_DECIMALS)
+  ]);
   const emptyValue = decimalScaling("0".toString(10), BC_DECIMALS);
   let scaledSellPriceRc = emptyValue;
   let unscaledSellPriceRc = emptyValue;
@@ -232,9 +213,9 @@ export const verifyTx = (web3, hash) => {
   return new Promise((res) => {
     const checkStatus = () => {
       web3.eth.getTransactionReceipt(hash).then((receipt) => {
-        receipt != null ?
-          res(receipt.status) :
-          setTimeout(checkStatus, CONFIRMATION_WAIT_PERIOD);
+        receipt != null
+          ? res(receipt.status)
+          : setTimeout(checkStatus, CONFIRMATION_WAIT_PERIOD);
       });
     };
     checkStatus();
