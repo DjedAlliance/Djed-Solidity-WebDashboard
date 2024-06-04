@@ -585,7 +585,7 @@ export const calculateFutureScPrice = async ({
     const futureScSupply = BigNumber.from(scSupply).add(BigNumber.from(amountSC));
     const futureRatio = BigNumber.from(ratio).add(BigNumber.from(amountBC));
 
-    if (futureScSupply === 0) {
+    if (futureScSupply.isZero()) {
       return scTargetPrice;
     } else {
       const futurePrice = futureRatio.mul(scDecimalScalingFactor).div(futureScSupply);
