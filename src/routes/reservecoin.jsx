@@ -292,8 +292,8 @@ export default function ReserveCoin() {
     : sellValidity === TRANSACTION_VALIDITY.OK;
 
   const buttonDisabled =
-    isNaN(parseInt(value)) ||
-    parseInt(value) === 0 ||
+    isNaN(parseFloat(value)) ||
+    parseFloat(value) === 0 ||
     isWrongChain ||
     !transactionValidated;
 
