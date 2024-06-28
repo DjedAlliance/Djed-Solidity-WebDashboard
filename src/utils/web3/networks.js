@@ -57,5 +57,26 @@ export const supportedChains = [
     blockExplorers: {
       etherscan: { name: "", url: "https://sepolia.etherscan.io/" }
     }
+  },
+  {
+    id: 63,
+    name: "Ethereum Classic Mordor",
+    network: "Ethereum Classic Mordor",
+    nativeCurrency: {
+      name: "METC",
+      symbol: "METC",
+      decimals: 18
+    },
+    rpcUrls: {
+      public: { http: ["https://rpc.mordor.etccooperative.org/"] },
+      default: { http: ["https://rpc.mordor.etccooperative.org/"] }
+    },
+    blockExplorers: {
+      etherscan: { name: "", url: "" },
+      default: {
+        name: "Blockscout",
+        url: "https://etc-mordor.blockscout.com/"
+      }
+    }
   }
 ];
