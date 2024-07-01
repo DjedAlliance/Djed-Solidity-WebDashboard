@@ -19,7 +19,7 @@
 /*BUTTONS THEMES*/
 
 .primary {
-  background: $gradient-theme-3;
+  background: var(--gradient-theme-3);
   border: 2px solid $grey-5;
   transition: 0.3s;
   color: $white;
