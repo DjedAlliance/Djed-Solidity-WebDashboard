@@ -28,6 +28,7 @@
     "build:milkomeda-c1-testnet": "npx -y env-cmd -f ./env/milkomeda-c1-testnet.env npm run build",
     "build:sepolia-testnet": "npx -y env-cmd -f ./env/sepolia-testnet.env npm run build",
     "build:milkomeda-c1": "npx -y env-cmd -f ./env/milkomeda-c1.env npm run build",
+    "build:ethereum-classic-mordor": "npx -y env-cmd -f ./env/ethereum-classic-mordor.env npm run build",
     "test": "craco test",
     "lint": "prettier --check '**/*.{js,jsx}'",
     "format": "prettier --write '**/*.{js,jsx}'",
