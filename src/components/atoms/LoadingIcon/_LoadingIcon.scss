@@ -6,11 +6,11 @@
   margin-bottom: 2em;
   width: 100%;
   .ant-spin {
-    color: $gold-dark;
+    color: var(--gold-dark);
   }
 }
 .LoadingIcon-fullpage {
-  background: $gradient-theme-5;
+  background: var(--gradient-theme-5);
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -18,6 +18,6 @@
   align-items: center;
 
   .ant-spin {
-    color: $gold-dark;
+    color: var(--gold-dark);
   }
 }

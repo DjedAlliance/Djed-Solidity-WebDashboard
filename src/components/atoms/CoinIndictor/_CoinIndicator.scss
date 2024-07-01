@@ -12,7 +12,7 @@
   }
 
   .CoinTitle {
-    @include primary-text($h4, $gold-dark, 800);
+    @include primary-text($h4, var(--gold-dark), 800);
     margin: 0;
   }
 }
