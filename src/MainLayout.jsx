@@ -11,6 +11,8 @@ import CustomButton from "./components/atoms/CustomButton/CustomButton";
 
 const { Header, Content } = Layout;
 
+const LOGO_PATH = process.env.REACT_APP_LOGO_PATH || "Logo_symbol.png"
+
 export default function MainLayout() {
   const { isWalletConnected } = useAppProvider();
   const location = useLocation();
@@ -21,7 +23,7 @@ export default function MainLayout() {
       <Layout className="layout">
         <Header className="header-desktop">
           <div className="logo">
-            <img src="/Logo_symbol.png" alt="Logo" />
+            <img src={LOGO_PATH} alt="Logo" />
           </div>
           <Menu mode="horizontal" selectedKeys={[location.pathname]}>
             <Menu.Item key="/audit">
@@ -101,7 +103,7 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
   return (
     <div className="header-mobile">
       <div className="logo">
-        <img src="/Logo_symbol.png" alt="Logo" />
+        <img src={LOGO_PATH} alt="Logo" />
       </div>
       <Dropdown
         overlayClassName="menu-mobile-dropdown"
