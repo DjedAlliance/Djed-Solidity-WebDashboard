@@ -11,7 +11,7 @@ import CustomButton from "./components/atoms/CustomButton/CustomButton";
 
 const { Header, Content } = Layout;
 
-const LOGO_PATH = process.env.REACT_APP_LOGO_PATH || "Logo_symbol.png"
+const LOGO_PATH = process.env.REACT_APP_LOGO_PATH || "Logo_symbol.png";
 
 export default function MainLayout() {
   const { isWalletConnected } = useAppProvider();
