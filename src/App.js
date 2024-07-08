@@ -45,18 +45,18 @@ export default function App() {
   useEffect(() => {
     document.title = `Djed on ${process.env.REACT_APP_BC}`;
 
-    const gradientTheme = process.env.REACT_APP_GRADIENT_THEME || 'gradient-theme-5'; 
-    const colorTheme = process.env.REACT_APP_COLOR_THEME || 'gold-dark';
+    const gradientTheme = process.env.REACT_APP_GRADIENT_THEME || "gradient-theme-5";
+    const colorTheme = process.env.REACT_APP_COLOR_THEME || "gold-dark";
 
     const root = document.documentElement;
 
     // Update gradient
     const gradient = getComputedStyle(root).getPropertyValue(`--${gradientTheme}`);
-    root.style.setProperty('--gradient-theme-5', gradient); 
+    root.style.setProperty("--gradient-theme-5", gradient);
 
     // Update color
     const color = getComputedStyle(root).getPropertyValue(`--${colorTheme}`);
-    root.style.setProperty('--gold-dark', color);
+    root.style.setProperty("--gold-dark", color);
   }, []);
 
   return (
