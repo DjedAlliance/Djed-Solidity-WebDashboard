@@ -78,5 +78,26 @@ export const supportedChains = [
         url: "https://etc-mordor.blockscout.com/"
       }
     }
+  },
+  {
+    id: 61,
+    name: "Ethereum Classic Mainnet",
+    network: "Ethereum Classic Mainnet",
+    nativeCurrency: {
+      name: "ETC",
+      symbol: "ETC",
+      decimals: 18
+    },
+    rpcUrls: {
+      public: { http: ["https://etc.rivet.link"] },
+      default: { http: ["https://etc.rivet.link"] }
+    },
+    blockExplorers: {
+      etherscan: { name: "", url: "" },
+      default: {
+        name: "Blockscout",
+        url: "https://blockscout.com/etc/mainnet/"
+      }
+    }
   }
 ];
