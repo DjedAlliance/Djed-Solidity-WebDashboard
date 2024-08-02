@@ -322,7 +322,7 @@ export default function Stablecoin() {
               StableCoins are implemented as a standard ERC-20 token contract and the
               contract's address is{" "}
               <a
-                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}address/${coinContracts?.stableCoin._address}`}
+                href={`${process.env.REACT_APP_EXPLORER}/address/${coinContracts?.stableCoin._address}`}
                 target="_blank"
                 rel="noreferrer"
               >
