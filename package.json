@@ -30,6 +30,7 @@
     "build:milkomeda": "npx -y env-cmd -f ./env/milkomeda.env npm run build",
     "build:mordor": "npx -y env-cmd -f ./env/mordor.env npm run build",
     "build:ethereum-classic": "npx -y env-cmd -f ./env/ethereum-classic.env npm run build",
+    "build:shu-mordor": "npx -y env-cmd -f ./env/shu-mordor.env npm run build",
     "test": "craco test",
     "lint": "prettier --check '**/*.{js,jsx}'",
     "format": "prettier --write '**/*.{js,jsx}'",

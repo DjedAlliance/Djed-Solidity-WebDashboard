@@ -124,7 +124,7 @@ export function getRcUsdEquivalent(coinsDetails, amountFloat) {
 }
 
 export function getScAdaEquivalent(coinsDetails, amountFloat) {
-  const adaPerSc = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
+  const adaPerSc = parseFloat(coinsDetails?.scaledScExchangeRate.replaceAll(",", ""));
   const eqPrice = 1e6 * amountFloat * adaPerSc;
   return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }

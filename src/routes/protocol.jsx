@@ -15,7 +15,7 @@ import {
 } from "../utils/helpers";
 
 export default function Protocol() {
-  const { coinsDetails, systemParams } = useAppProvider();
+  const { coinsDetails, isShu, systemParams } = useAppProvider();
 
   const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
@@ -91,9 +91,12 @@ export default function Protocol() {
               coinIcon="/coin-icon-one.png"
               coinName={`${process.env.REACT_APP_SC_NAME}`}
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
+              minPriceAmount={coinsDetails?.scaledMinPriceSc}
+              maxPriceAmount={coinsDetails?.scaledMaxPriceSc}
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
               tokenName={`${process.env.REACT_APP_SC_SYMBOL}`}
               equivalence={`${scConverted} ${process.env.REACT_APP_CHAIN_COIN}`}
+              isShu={isShu}
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
