@@ -16,7 +16,13 @@ import {
   web3Promise,
   percentageScale
 } from "./helpers";
-import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY, BC_TOKEN_DECIMALS, HIGH_PRECISION_DECIMALS, REFRESH_PERIOD_MS } from "./constants";
+import {
+  TRANSACTION_USD_LIMIT,
+  TRANSACTION_VALIDITY,
+  BC_TOKEN_DECIMALS,
+  HIGH_PRECISION_DECIMALS,
+  REFRESH_PERIOD_MS
+} from "./constants";
 import { BigNumber } from "ethers";
 
 const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
@@ -164,20 +170,23 @@ export const getShuCoinDetails = async (
     [scaledMaxPriceSc, unscaledMaxPriceSc],
     [scaledNumberRc, unscaledNumberRc],
     [scaledReserveBc, unscaledReserveBc],
-    scaledBuyPriceRc,
+    scaledBuyPriceRc
   ] = await Promise.all([
     scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
     scaledUnscaledPromise(web3Promise(djed, "scMinPrice", 0), BC_DECIMALS),
     scaledUnscaledPromise(web3Promise(djed, "scMaxPrice", 0), BC_DECIMALS),
     scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
     scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
-    scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS)
   ]);
   const emptyValue = decimalScaling("0".toString(10), BC_DECIMALS);
   let scaledSellPriceRc = emptyValue;
   let unscaledSellPriceRc = emptyValue;
   let percentReserveRatio = emptyValue;
-  const scaledScExchangeRate = scaledPromise((unscaledMinPriceSc + unscaledMaxPriceSc) / 2, BC_DECIMALS);
+  const scaledScExchangeRate = scaledPromise(
+    (unscaledMinPriceSc + unscaledMaxPriceSc) / 2,
+    BC_DECIMALS
+  );
 
   //Check total stablecoin supply
   if (!BigNumber.from(unscaledNumberRc).isZero()) {

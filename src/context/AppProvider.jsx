@@ -101,19 +101,19 @@ export const AppProvider = ({ children }) => {
         );
         const coinsDetails = isShu
           ? await getShuCoinDetails(
-            coinContracts.stableCoin,
-            coinContracts.reserveCoin,
-            djed,
-            decimals.scDecimals,
-            decimals.rcDecimals
-          )
+              coinContracts.stableCoin,
+              coinContracts.reserveCoin,
+              djed,
+              decimals.scDecimals,
+              decimals.rcDecimals
+            )
           : await getCoinDetails(
-            coinContracts.stableCoin,
-            coinContracts.reserveCoin,
-            djed,
-            decimals.scDecimals,
-            decimals.rcDecimals
-          );
+              coinContracts.stableCoin,
+              coinContracts.reserveCoin,
+              djed,
+              decimals.scDecimals,
+              decimals.rcDecimals
+            );
         const systemParams = await getSystemParams(djed);
         setWeb3(web3);
         setDjedContract(djed);
@@ -243,19 +243,19 @@ export const AppProvider = ({ children }) => {
       if (coinContracts == null || !isVisible) return;
       const coinsDetails = isShu
         ? await getShuCoinDetails(
-          coinContracts.stableCoin,
-          coinContracts.reserveCoin,
-          djedContract,
-          decimals.scDecimals,
-          decimals.rcDecimals
-        )
+            coinContracts.stableCoin,
+            coinContracts.reserveCoin,
+            djedContract,
+            decimals.scDecimals,
+            decimals.rcDecimals
+          )
         : await getCoinDetails(
-          coinContracts.stableCoin,
-          coinContracts.reserveCoin,
-          djedContract,
-          decimals.scDecimals,
-          decimals.rcDecimals
-        );
+            coinContracts.stableCoin,
+            coinContracts.reserveCoin,
+            djedContract,
+            decimals.scDecimals,
+            decimals.rcDecimals
+          );
       setCoinsDetails(coinsDetails);
     },
     isWalletConnected && isVisible ? COIN_DETAILS_REQUEST_INTERVAL : null
@@ -308,9 +308,12 @@ export const AppProvider = ({ children }) => {
     });
   };
 
-  const getFutureScPrice = async (params) => getFuturePrice({ ...params, method: calculateFutureScPrice });
-  const getFutureMinScPrice = async (params) => getFuturePrice({ ...params, method: calculateFutureMinScPrice });
-  const getFutureMaxScPrice = async (params) => getFuturePrice({ ...params, method: calculateFutureMaxScPrice });
+  const getFutureScPrice = async (params) =>
+    getFuturePrice({ ...params, method: calculateFutureScPrice });
+  const getFutureMinScPrice = async (params) =>
+    getFuturePrice({ ...params, method: calculateFutureMinScPrice });
+  const getFutureMaxScPrice = async (params) =>
+    getFuturePrice({ ...params, method: calculateFutureMaxScPrice });
 
   if (isLoading) {
     return <FullPageSpinner />;

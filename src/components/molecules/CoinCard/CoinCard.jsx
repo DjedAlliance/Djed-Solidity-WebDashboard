@@ -33,32 +33,30 @@ const CoinCard = ({
             {sellPriceAmount} {CHAIN_COIN}
           </h3>
         </div>
-      ) : isShu ?
-        (
-          <>
-            <div className="PriceInfo">
-              <span>Current Minimum Price</span>
-              <h3>
-                {priceAmount} {CHAIN_COIN}
-              </h3>
-            </div>
-
-            <div className="PriceInfo">
-              <span>Current Maximum Price</span>
-              <h3>
-                {priceAmount} {CHAIN_COIN}
-              </h3>
-            </div>
-          </>
-        )
-        : (
+      ) : isShu ? (
+        <>
           <div className="PriceInfo">
-            <span>Current Price</span>
+            <span>Current Minimum Price</span>
             <h3>
               {priceAmount} {CHAIN_COIN}
             </h3>
           </div>
-        )}
+
+          <div className="PriceInfo">
+            <span>Current Maximum Price</span>
+            <h3>
+              {priceAmount} {CHAIN_COIN}
+            </h3>
+          </div>
+        </>
+      ) : (
+        <div className="PriceInfo">
+          <span>Current Price</span>
+          <h3>
+            {priceAmount} {CHAIN_COIN}
+          </h3>
+        </div>
+      )}
       <div className="AdditionalInfo">
         <div className="InfoItem">
           <span>Circulating Supply</span>

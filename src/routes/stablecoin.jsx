@@ -97,13 +97,13 @@ export default function Stablecoin() {
 
         const futureSCPrice = isShu
           ? await getFutureMaxScPrice({
-            amountBC: data.totalUnscaled,
-            amountSC: data.amountUnscaled
-          })
+              amountBC: data.totalUnscaled,
+              amountSC: data.amountUnscaled
+            })
           : await getFutureScPrice({
-            amountBC: data.totalUnscaled,
-            amountSC: data.amountUnscaled
-          });
+              amountBC: data.totalUnscaled,
+              amountSC: data.amountUnscaled
+            });
 
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioAboveMinimum = isRatioAboveMin({
