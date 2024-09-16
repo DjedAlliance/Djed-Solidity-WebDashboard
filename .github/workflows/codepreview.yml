@@ -2,9 +2,9 @@ name: Create preview environment
 
 on:
   pull_request:
-    branches: [main, milkomeda-c1-testnet]
+    branches: [main]
   push:
-    branches: [main, milkomeda-c1-testnet]
+    branches: [main]
 
 concurrency:
   # The preview script can't handle concurrent deploys
@@ -54,6 +54,11 @@ jobs:
       - name: Prepare build (main)
         if: ${{ (github.head_ref || github.ref_name) == 'main' }}
         run: CI=false npm run build:milkomeda-c1
+
+      # CI=false disables reporting warnings as errors
+      - name: Prepare build (main)
+        if: ${{ (github.head_ref || github.ref_name) == 'main' }}
+        run: CI=false npm run build:shu-mordor
 
       - name: Create SSH key
         run: |

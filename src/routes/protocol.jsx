@@ -51,7 +51,11 @@ export default function Protocol() {
               </a>
               . Here you can interact with a{" "}
               <a
-                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
+                href={`${process.env.REACT_APP_EXPLORER}/address/${
+                  isShu
+                    ? process.env.REACT_APP_DJED_SHU_ADDRESS
+                    : process.env.REACT_APP_DJED_ADDRESS
+                }`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -116,6 +120,7 @@ export default function Protocol() {
               reserveRatioMin={systemParams?.reserveRatioMin}
               reserveRatioMax={systemParams?.reserveRatioMax}
               showCurrentReserveRatio={Number(coinsDetails?.unscaledNumberSc) > 0}
+              isShu={isShu}
             />
           </div>
         </div>

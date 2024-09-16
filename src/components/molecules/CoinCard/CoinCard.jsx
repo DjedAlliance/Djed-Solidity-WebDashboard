@@ -9,6 +9,8 @@ const CoinCard = ({
   coinIcon,
   coinName,
   priceAmount,
+  minPriceAmount,
+  maxPriceAmount,
   sellPriceAmount,
   circulatingAmount,
   tokenName,
@@ -38,14 +40,14 @@ const CoinCard = ({
           <div className="PriceInfo">
             <span>Current Minimum Price</span>
             <h3>
-              {priceAmount} {CHAIN_COIN}
+              {minPriceAmount} {CHAIN_COIN}
             </h3>
           </div>
 
           <div className="PriceInfo">
             <span>Current Maximum Price</span>
             <h3>
-              {priceAmount} {CHAIN_COIN}
+              {maxPriceAmount} {CHAIN_COIN}
             </h3>
           </div>
         </>

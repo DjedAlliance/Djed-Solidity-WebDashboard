@@ -163,7 +163,6 @@ export const getShuCoinDetails = async (
   scDecimals,
   rcDecimals
 ) => {
-  console.log(await web3Promise(djed, "rcBuyingPrice", 0));
   const [
     [scaledNumberSc, unscaledNumberSc],
     [scaledMinPriceSc, unscaledMinPriceSc],
@@ -183,10 +182,10 @@ export const getShuCoinDetails = async (
   let scaledSellPriceRc = emptyValue;
   let unscaledSellPriceRc = emptyValue;
   let percentReserveRatio = emptyValue;
-  const scaledScExchangeRate = scaledPromise(
-    (unscaledMinPriceSc + unscaledMaxPriceSc) / 2,
-    BC_DECIMALS
-  );
+  const scaledScExchangeRate = (
+    (parseFloat(scaledMinPriceSc) + parseFloat(scaledMaxPriceSc)) /
+    2
+  ).toString();
 
   //Check total stablecoin supply
   if (!BigNumber.from(unscaledNumberRc).isZero()) {
@@ -197,10 +196,10 @@ export const getShuCoinDetails = async (
   }
   //Check total reservecoin supply
   if (!BigNumber.from(unscaledNumberSc).isZero()) {
-    percentReserveRatio = await percentScaledPromise(
-      web3Promise(djed, "ratio"),
-      SCALING_DECIMALS
-    );
+    percentReserveRatio = [
+      await percentScaledPromise(web3Promise(djed, "ratioMin"), SCALING_DECIMALS),
+      await percentScaledPromise(web3Promise(djed, "ratioMax"), SCALING_DECIMALS)
+    ];
   }
   return {
     scaledNumberSc,
@@ -668,16 +667,16 @@ const calculateFuturePrice = async ({
       web3Promise(djedContract, "R", 0)
     ]);
 
+    const price = readPriceMethod === "readData" ? scTargetPrice : scTargetPrice[0];
+
     const futureScSupply = BigNumber.from(scSupply).add(BigNumber.from(amountSC));
     const futureRatio = BigNumber.from(ratio).add(BigNumber.from(amountBC));
 
     if (futureScSupply.isZero()) {
-      return scTargetPrice;
+      return price;
     } else {
       const futurePrice = futureRatio.mul(scDecimalScalingFactor).div(futureScSupply);
-      return BigNumber.from(scTargetPrice).lt(futurePrice)
-        ? scTargetPrice
-        : futurePrice.toString();
+      return BigNumber.from(price).lt(futurePrice) ? price : futurePrice.toString();
     }
   } catch (error) {
     console.log("calculateFuturePrice error", error);
