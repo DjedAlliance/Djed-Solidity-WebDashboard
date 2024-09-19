@@ -55,7 +55,7 @@ export const AppProvider = ({ children }) => {
   const [djedContract, setDjedContract] = useState(null);
   const [oracleContract, setOracleContract] = useState(null);
   const [coinContracts, setCoinContracts] = useState(null);
-  const [isShu, setShu] = useState(process.env.REACT_APP_SHU_VERSION);
+  const [isShu] = useState(process.env.REACT_APP_SHU_VERSION);
   const [decimals, setDecimals] = useState(null);
   const [coinsDetails, setCoinsDetails] = useState(null);
   const [systemParams, setSystemParams] = useState(null);
@@ -130,7 +130,7 @@ export const AppProvider = ({ children }) => {
     };
     setIsLoading(true);
     init();
-  }, []);
+  }, [isShu]);
 
   const redirectToMetamask = () => {
     window.open("https://metamask.io/", "_blank");
