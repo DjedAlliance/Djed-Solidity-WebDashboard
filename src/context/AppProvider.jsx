@@ -16,7 +16,12 @@ import {
   getCoinBudgets,
   calculateIsRatioBelowMax,
   calculateIsRatioAboveMin,
-  calculateFutureScPrice
+  calculateFutureScPrice,
+  getDjedShuContract,
+  getShuOracleContract,
+  getShuCoinDetails,
+  calculateFutureMinScPrice,
+  calculateFutureMaxScPrice
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
@@ -50,6 +55,7 @@ export const AppProvider = ({ children }) => {
   const [djedContract, setDjedContract] = useState(null);
   const [oracleContract, setOracleContract] = useState(null);
   const [coinContracts, setCoinContracts] = useState(null);
+  const [isShu] = useState(process.env.REACT_APP_SHU_VERSION);
   const [decimals, setDecimals] = useState(null);
   const [coinsDetails, setCoinsDetails] = useState(null);
   const [systemParams, setSystemParams] = useState(null);
@@ -82,22 +88,32 @@ export const AppProvider = ({ children }) => {
     const init = async () => {
       try {
         const web3 = await getWeb3();
-        const djed = getDjedContract(web3);
+        const djed = isShu ? getDjedShuContract(web3) : getDjedContract(web3);
         const oracle = await getOracleAddress(djed).then((addr) =>
-          getOracleContract(web3, addr, djed._address)
+          isShu
+            ? getShuOracleContract(web3, addr, djed._address)
+            : getOracleContract(web3, addr, djed._address)
         );
         const coinContracts = await getCoinContracts(djed, web3);
         const decimals = await getDecimals(
           coinContracts.stableCoin,
           coinContracts.reserveCoin
         );
-        const coinsDetails = await getCoinDetails(
-          coinContracts.stableCoin,
-          coinContracts.reserveCoin,
-          djed,
-          decimals.scDecimals,
-          decimals.rcDecimals
-        );
+        const coinsDetails = isShu
+          ? await getShuCoinDetails(
+              coinContracts.stableCoin,
+              coinContracts.reserveCoin,
+              djed,
+              decimals.scDecimals,
+              decimals.rcDecimals
+            )
+          : await getCoinDetails(
+              coinContracts.stableCoin,
+              coinContracts.reserveCoin,
+              djed,
+              decimals.scDecimals,
+              decimals.rcDecimals
+            );
         const systemParams = await getSystemParams(djed);
         setWeb3(web3);
         setDjedContract(djed);
@@ -114,7 +130,7 @@ export const AppProvider = ({ children }) => {
     };
     setIsLoading(true);
     init();
-  }, []);
+  }, [isShu]);
 
   const redirectToMetamask = () => {
     window.open("https://metamask.io/", "_blank");
@@ -225,14 +241,21 @@ export const AppProvider = ({ children }) => {
   useInterval(
     async () => {
       if (coinContracts == null || !isVisible) return;
-      const coinsDetails = await getCoinDetails(
-        coinContracts.stableCoin,
-        coinContracts.reserveCoin,
-        djedContract,
-        decimals.scDecimals,
-        decimals.rcDecimals,
-        oracleContract
-      );
+      const coinsDetails = isShu
+        ? await getShuCoinDetails(
+            coinContracts.stableCoin,
+            coinContracts.reserveCoin,
+            djedContract,
+            decimals.scDecimals,
+            decimals.rcDecimals
+          )
+        : await getCoinDetails(
+            coinContracts.stableCoin,
+            coinContracts.reserveCoin,
+            djedContract,
+            decimals.scDecimals,
+            decimals.rcDecimals
+          );
       setCoinsDetails(coinsDetails);
     },
     isWalletConnected && isVisible ? COIN_DETAILS_REQUEST_INTERVAL : null
@@ -274,8 +297,8 @@ export const AppProvider = ({ children }) => {
    * @param {string} amountSC The unscaled amount of StableCoin (e.g. for 1SC, value should be 1 * 10^SC_DECIMALS)
    * @returns future stablecoin price as result of calculateFutureScPrice function
    */
-  const getFutureScPrice = async ({ amountBC, amountSC }) =>
-    calculateFutureScPrice({
+  const getFuturePrice = async ({ amountBC, amountSC, method }) => {
+    return method({
       amountBC,
       amountSC,
       djedContract,
@@ -283,6 +306,14 @@ export const AppProvider = ({ children }) => {
       stableCoinContract: coinContracts.stableCoin,
       scDecimalScalingFactor: BigNumber.from(10).pow(decimals.scDecimals)
     });
+  };
+
+  const getFutureScPrice = async (params) =>
+    getFuturePrice({ ...params, method: calculateFutureScPrice });
+  const getFutureMinScPrice = async (params) =>
+    getFuturePrice({ ...params, method: calculateFutureMinScPrice });
+  const getFutureMaxScPrice = async (params) =>
+    getFuturePrice({ ...params, method: calculateFutureMaxScPrice });
 
   if (isLoading) {
     return <FullPageSpinner />;
@@ -299,6 +330,7 @@ export const AppProvider = ({ children }) => {
           systemParams,
           accountDetails,
           coinBudgets,
+          isShu,
           isMetamaskWalletInstalled:
             typeof window !== "undefined" ? window?.ethereum?.isMetaMask : false,
           isFlintWalletInstalled:
@@ -327,7 +359,9 @@ export const AppProvider = ({ children }) => {
           signer,
           isRatioBelowMax,
           isRatioAboveMin,
-          getFutureScPrice
+          getFutureScPrice,
+          getFutureMinScPrice,
+          getFutureMaxScPrice
         }}
       >
         {children}

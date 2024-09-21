@@ -46,6 +46,7 @@ export default function Stablecoin() {
     web3,
     isWalletConnected,
     isWrongChain,
+    isShu,
     coinsDetails,
     djedContract,
     decimals,
@@ -56,7 +57,8 @@ export default function Stablecoin() {
     systemParams,
     isRatioAboveMin,
     coinContracts,
-    getFutureScPrice
+    getFutureScPrice,
+    getFutureMaxScPrice
   } = useAppProvider();
   const { isWSCConnected } = useWSCProvider();
   const { setOpen } = useWSCModal();
@@ -89,13 +91,20 @@ export default function Stablecoin() {
         const data = await tradeDataPriceBuySc(
           djedContract,
           decimals.scDecimals,
-          amountScaled
+          amountScaled,
+          isShu ? "scMaxPrice" : "scPrice"
         );
 
-        const futureSCPrice = await getFutureScPrice({
-          amountBC: data.totalUnscaled,
-          amountSC: data.amountUnscaled
-        });
+        const futureSCPrice = isShu
+          ? await getFutureMaxScPrice({
+              amountBC: data.totalUnscaled,
+              amountSC: data.amountUnscaled
+            })
+          : await getFutureScPrice({
+              amountBC: data.totalUnscaled,
+              amountSC: data.amountUnscaled
+            });
+
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioAboveMinimum = isRatioAboveMin({
           totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc).add(
@@ -155,7 +164,8 @@ export default function Stablecoin() {
         const data = await tradeDataPriceSellSc(
           djedContract,
           decimals.scDecimals,
-          amountScaled
+          amountScaled,
+          isShu ? "scMinPrice" : "scPrice"
         );
         setTradeData(data);
         if (!isWalletConnected) {
@@ -335,9 +345,12 @@ export default function Stablecoin() {
             coinIcon="/coin-icon-one.png"
             coinName={`${process.env.REACT_APP_SC_NAME}`}
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
+            minPriceAmount={coinsDetails?.scaledMinPriceSc}
+            maxPriceAmount={coinsDetails?.scaledMaxPriceSc}
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
             tokenName="SC"
             equivalence={scConverted}
+            isShu={isShu}
           />
         </div>
         <div className="Right">

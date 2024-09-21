@@ -58,8 +58,11 @@ export default function ReserveCoin() {
     systemParams,
     isRatioBelowMax,
     isRatioAboveMin,
+    isShu,
     coinContracts,
-    getFutureScPrice
+    getFutureScPrice,
+    getFutureMinScPrice,
+    getFutureMaxScPrice
   } = useAppProvider();
   const { isWSCConnected } = useWSCProvider();
   const { setOpen } = useWSCModal();
@@ -93,10 +96,16 @@ export default function ReserveCoin() {
           decimals.rcDecimals,
           amountScaled
         );
-        const futureSCPrice = await getFutureScPrice({
-          amountBC: data.totalUnscaled,
-          amountSC: 0
-        });
+
+        const futureSCPrice = isShu
+          ? await getFutureMinScPrice({
+              amountBC: data.totalUnscaled,
+              amountSC: 0
+            })
+          : await getFutureScPrice({
+              amountBC: data.totalUnscaled,
+              amountSC: 0
+            });
 
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioBelowMaximum = isRatioBelowMax({
@@ -162,10 +171,15 @@ export default function ReserveCoin() {
           coinsDetails,
           parseFloat(data.amountScaled.replaceAll(",", ""))
         ).replaceAll(",", "");
-        const futureSCPrice = await getFutureScPrice({
-          amountBC: data.totalUnscaled,
-          amountSC: 0
-        });
+        const futureSCPrice = isShu
+          ? await getFutureMaxScPrice({
+              amountBC: data.totalUnscaled,
+              amountSC: 0
+            })
+          : await getFutureScPrice({
+              amountBC: data.totalUnscaled,
+              amountSC: 0
+            });
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioAboveMinimum = isRatioAboveMin({
           totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),

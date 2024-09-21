@@ -2,6 +2,8 @@ import Web3 from "web3";
 import djedArtifact from "../artifacts/Djed.json";
 import coinArtifact from "../artifacts/Coin.json";
 import oracleArtifact from "../artifacts/Oracle.json";
+import djedShuArtifact from "../artifacts/DjedShu.json";
+import shuOracleArtifact from "../artifacts/ShuOracle.json";
 
 import {
   buildTx,
@@ -14,11 +16,18 @@ import {
   web3Promise,
   percentageScale
 } from "./helpers";
-import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY, BC_TOKEN_DECIMALS, HIGH_PRECISION_DECIMALS, REFRESH_PERIOD_MS } from "./constants";
+import {
+  TRANSACTION_USD_LIMIT,
+  TRANSACTION_VALIDITY,
+  BC_TOKEN_DECIMALS,
+  HIGH_PRECISION_DECIMALS,
+  REFRESH_PERIOD_MS
+} from "./constants";
 import { BigNumber } from "ethers";
 
 const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
 export const DJED_ADDRESS = process.env.REACT_APP_DJED_ADDRESS;
+export const DJED_SHU_ADDRESS = process.env.REACT_APP_DJED_SHU_ADDRESS;
 const FEE_UI = process.env.REACT_APP_FEE_UI;
 export const UI = process.env.REACT_APP_UI;
 
@@ -48,12 +57,24 @@ export const getDjedContract = (web3) => {
   return djed;
 };
 
+export const getDjedShuContract = (web3) => {
+  const djed = new web3.eth.Contract(djedShuArtifact.abi, DJED_SHU_ADDRESS);
+  return djed;
+};
+
 export const getOracleAddress = async (djedContract) => {
   return await web3Promise(djedContract, "oracle");
 };
 
 export const getOracleContract = (web3, oracleAddress, msgSender) => {
   const oracle = new web3.eth.Contract(oracleArtifact.abi, oracleAddress, {
+    from: msgSender
+  });
+  return oracle;
+};
+
+export const getShuOracleContract = (web3, oracleAddress, msgSender) => {
+  const oracle = new web3.eth.Contract(shuOracleArtifact.abi, oracleAddress, {
     from: msgSender
   });
   return oracle;
@@ -123,6 +144,70 @@ export const getCoinDetails = async (
     unscaledNumberSc,
     scaledPriceSc,
     unscaledPriceSc,
+    scaledNumberRc,
+    unscaledNumberRc,
+    scaledReserveBc,
+    unscaledReserveBc,
+    percentReserveRatio,
+    scaledBuyPriceRc,
+    scaledSellPriceRc,
+    unscaledSellPriceRc,
+    scaledScExchangeRate
+  };
+};
+
+export const getShuCoinDetails = async (
+  stableCoin,
+  reserveCoin,
+  djed,
+  scDecimals,
+  rcDecimals
+) => {
+  const [
+    [scaledNumberSc, unscaledNumberSc],
+    [scaledMinPriceSc, unscaledMinPriceSc],
+    [scaledMaxPriceSc, unscaledMaxPriceSc],
+    [scaledNumberRc, unscaledNumberRc],
+    [scaledReserveBc, unscaledReserveBc],
+    scaledBuyPriceRc
+  ] = await Promise.all([
+    scaledUnscaledPromise(web3Promise(stableCoin, "totalSupply"), scDecimals),
+    scaledUnscaledPromise(web3Promise(djed, "scMinPrice", 0), BC_DECIMALS),
+    scaledUnscaledPromise(web3Promise(djed, "scMaxPrice", 0), BC_DECIMALS),
+    scaledUnscaledPromise(web3Promise(reserveCoin, "totalSupply"), rcDecimals),
+    scaledUnscaledPromise(web3Promise(djed, "R", 0), BC_DECIMALS),
+    scaledPromise(web3Promise(djed, "rcBuyingPrice", 0), BC_DECIMALS)
+  ]);
+  const emptyValue = decimalScaling("0".toString(10), BC_DECIMALS);
+  let scaledSellPriceRc = emptyValue;
+  let unscaledSellPriceRc = emptyValue;
+  let percentReserveRatio = emptyValue;
+  const scaledScExchangeRate = (
+    (parseFloat(scaledMinPriceSc) + parseFloat(scaledMaxPriceSc)) /
+    2
+  ).toString();
+
+  //Check total stablecoin supply
+  if (!BigNumber.from(unscaledNumberRc).isZero()) {
+    [scaledSellPriceRc, unscaledSellPriceRc] = await scaledUnscaledPromise(
+      web3Promise(djed, "rcTargetPrice", 0),
+      BC_DECIMALS
+    );
+  }
+  //Check total reservecoin supply
+  if (!BigNumber.from(unscaledNumberSc).isZero()) {
+    percentReserveRatio = [
+      await percentScaledPromise(web3Promise(djed, "ratioMin"), SCALING_DECIMALS),
+      await percentScaledPromise(web3Promise(djed, "ratioMax"), SCALING_DECIMALS)
+    ];
+  }
+  return {
+    scaledNumberSc,
+    unscaledNumberSc,
+    scaledMinPriceSc,
+    unscaledMinPriceSc,
+    scaledMaxPriceSc,
+    unscaledMaxPriceSc,
     scaledNumberRc,
     unscaledNumberRc,
     scaledReserveBc,
@@ -425,9 +510,9 @@ export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
  * @param {*} amountScaled Stable coin amount that user wants to buy
  * @returns
  */
-export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
+export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled, method) => {
   try {
-    const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
+    const data = await tradeDataPriceCore(djed, method, scDecimals, amountScaled);
     const { treasuryFee, fee } = await getFees(djed);
     const totalBCUnscaled = appendFees(
       data.totalUnscaled,
@@ -453,9 +538,9 @@ export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
  * @param {*} amountScaled Stable coin amount that user wants to sell
  * @returns
  */
-export const tradeDataPriceSellSc = async (djed, scDecimals, amountScaled) => {
+export const tradeDataPriceSellSc = async (djed, scDecimals, amountScaled, method) => {
   try {
-    const data = await tradeDataPriceCore(djed, "scPrice", scDecimals, amountScaled);
+    const data = await tradeDataPriceCore(djed, method, scDecimals, amountScaled);
     const { treasuryFee, fee } = await getFees(djed);
     const value = convertToBC(
       data.amountUnscaled,
@@ -566,33 +651,46 @@ export const isTxLimitReached = (amountUSD, totalSCSupply, thresholdSCSupply) =>
  * @param scDecimalScalingFactor - If stablecoin has 6 decimals, scDecimalScalingFactor will be calculated as 10^6
  * @returns future stablecoin price
  */
-export const calculateFutureScPrice = async ({
+const calculateFuturePrice = async ({
   amountBC,
   amountSC,
   djedContract,
   oracleContract,
   stableCoinContract,
-  scDecimalScalingFactor
+  scDecimalScalingFactor,
+  readPriceMethod
 }) => {
   try {
     const [scTargetPrice, scSupply, ratio] = await Promise.all([
-      web3Promise(oracleContract, "readData"),
+      web3Promise(oracleContract, readPriceMethod),
       web3Promise(stableCoinContract, "totalSupply"),
       web3Promise(djedContract, "R", 0)
     ]);
+
+    const price = readPriceMethod === "readData" ? scTargetPrice : scTargetPrice[0];
 
     const futureScSupply = BigNumber.from(scSupply).add(BigNumber.from(amountSC));
     const futureRatio = BigNumber.from(ratio).add(BigNumber.from(amountBC));
 
     if (futureScSupply.isZero()) {
-      return scTargetPrice;
+      return price;
     } else {
       const futurePrice = futureRatio.mul(scDecimalScalingFactor).div(futureScSupply);
-      return BigNumber.from(scTargetPrice).lt(futurePrice)
-        ? scTargetPrice
-        : futurePrice.toString();
+      return BigNumber.from(price).lt(futurePrice) ? price : futurePrice.toString();
     }
   } catch (error) {
-    console.log("calculateFutureScPrice error ", error);
+    console.log("calculateFuturePrice error", error);
   }
+};
+
+export const calculateFutureScPrice = (params) => {
+  return calculateFuturePrice({ ...params, readPriceMethod: "readData" });
+};
+
+export const calculateFutureMinScPrice = (params) => {
+  return calculateFuturePrice({ ...params, readPriceMethod: "readMinPrice" });
+};
+
+export const calculateFutureMaxScPrice = (params) => {
+  return calculateFuturePrice({ ...params, readPriceMethod: "readMaxPrice" });
 };

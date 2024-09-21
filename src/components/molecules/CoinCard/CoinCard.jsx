@@ -9,10 +9,13 @@ const CoinCard = ({
   coinIcon,
   coinName,
   priceAmount,
+  minPriceAmount,
+  maxPriceAmount,
   sellPriceAmount,
   circulatingAmount,
   tokenName,
-  equivalence
+  equivalence,
+  isShu
 }) => {
   // const invPrice = 1e6 / parseFloat(priceAmount?.replaceAll(",", ""));
   // const invPriceScaled = decimalScaling(invPrice.toFixed(0).toString(10), 6);
@@ -32,6 +35,22 @@ const CoinCard = ({
             {sellPriceAmount} {CHAIN_COIN}
           </h3>
         </div>
+      ) : isShu ? (
+        <>
+          <div className="PriceInfo">
+            <span>Current Minimum Price</span>
+            <h3>
+              {minPriceAmount} {CHAIN_COIN}
+            </h3>
+          </div>
+
+          <div className="PriceInfo">
+            <span>Current Maximum Price</span>
+            <h3>
+              {maxPriceAmount} {CHAIN_COIN}
+            </h3>
+          </div>
+        </>
       ) : (
         <div className="PriceInfo">
           <span>Current Price</span>

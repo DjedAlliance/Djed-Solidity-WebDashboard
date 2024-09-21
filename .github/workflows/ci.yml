@@ -38,4 +38,4 @@ jobs:
       #   run: npm run test
 
       - name: Prepare production build
-        run: npm run build:milkomeda-c1-testnet
+        run: npm run build
