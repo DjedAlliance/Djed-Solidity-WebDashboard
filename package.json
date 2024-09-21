@@ -25,9 +25,9 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "build:milkomeda-c1-testnet": "npx -y env-cmd -f ./env/milkomeda-testnet.env npm run build",
+    "build:milkomeda-testnet": "npx -y env-cmd -f ./env/milkomeda-testnet.env npm run build",
     "build:sepolia": "npx -y env-cmd -f ./env/sepolia.env npm run build",
-    "build:milkomeda-c1": "npx -y env-cmd -f ./env/milkomeda.env npm run build",
+    "build:milkomeda": "npx -y env-cmd -f ./env/milkomeda.env npm run build",
     "build:mordor": "npx -y env-cmd -f ./env/mordor.env npm run build",
     "build:ethereum-classic": "npx -y env-cmd -f ./env/ethereum-classic.env npm run build",
     "build:shu-mordor": "npx -y env-cmd -f ./env/shu-mordor.env npm run build",

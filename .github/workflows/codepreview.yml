@@ -38,7 +38,7 @@ jobs:
       # CI=false disables reporting warnings as errors
       - name: Prepare build (pr)
         if: ${{ (github.head_ref || github.ref_name) != 'main' }}
-        run: CI=false npm run build:milkomeda-c1-testnet
+        run: CI=false npm run build:milkomeda-testnet
 
       # CI=false disables reporting warnings as errors
       - name: Prepare build (pr)
@@ -53,7 +53,7 @@ jobs:
       # CI=false disables reporting warnings as errors
       - name: Prepare build (main)
         if: ${{ (github.head_ref || github.ref_name) == 'main' }}
-        run: CI=false npm run build:milkomeda-c1
+        run: CI=false npm run build:milkomeda
 
       # CI=false disables reporting warnings as errors
       - name: Prepare build (main)
