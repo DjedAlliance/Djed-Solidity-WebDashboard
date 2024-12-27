@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 //import { ArrowRightOutlined, PropertySafetyFilled } from "@ant-design/icons";
 //import { ReactComponent as Metamask } from "../images/metamask.svg";
 //import CustomButton from "../components/atoms/CustomButton/CustomButton";
@@ -51,7 +51,7 @@ export default function Protocol() {
               </a>
               . Here you can interact with a{" "}
               <a
-                href={`${process.env.REACT_APP_MILKOMEDA_C1_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
+                href={`${process.env.REACT_APP_BC==='Milkomeda' ? process.env.REACT_APP_MILKOMEDA_C1_EXPLORER : process.env.REACT_APP_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
                 target="_blank"
                 rel="noreferrer"
               >
