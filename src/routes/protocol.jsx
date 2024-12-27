@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 //import { ArrowRightOutlined, PropertySafetyFilled } from "@ant-design/icons";
 //import { ReactComponent as Metamask } from "../images/metamask.svg";
 //import CustomButton from "../components/atoms/CustomButton/CustomButton";
