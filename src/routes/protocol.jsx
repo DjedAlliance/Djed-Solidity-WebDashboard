@@ -51,7 +51,7 @@ export default function Protocol() {
               </a>
               . Here you can interact with a{" "}
               <a
-                href={`${process.env.REACT_APP_BC==='Milkomeda' ? process.env.REACT_APP_MILKOMEDA_C1_EXPLORER : process.env.REACT_APP_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
+                href={`${process.env.REACT_APP_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
                 target="_blank"
                 rel="noreferrer"
               >
