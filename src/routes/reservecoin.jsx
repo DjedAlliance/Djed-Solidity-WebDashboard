@@ -42,6 +42,7 @@ import {
 } from "milkomeda-wsc-ui-test-beta";
 import djedArtifact from "../artifacts/Djed.json";
 import { useAccount } from "wagmi";
+import { updateBuyTradeData, updateSellTradeData } from './commonTradeFunctions';
 
 export default function ReserveCoin() {
   const {
@@ -80,144 +81,14 @@ export default function ReserveCoin() {
   const txStatusRejected = txStatus === "rejected";
   const txStatusSuccess = txStatus === "success";
 
-  const updateBuyTradeData = (amountScaled) => {
-    const inputSanity = validatePositiveNumber(amountScaled);
-    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
-      setBuyValidity(inputSanity);
-      return;
-    }
-    const getTradeData = async () => {
-      try {
-        const data = await tradeDataPriceBuyRc(
-          djedContract,
-          decimals.rcDecimals,
-          amountScaled
-        );
-        const futureSCPrice = await getFutureScPrice({
-          amountBC: data.totalUnscaled,
-          amountSC: 0
-        });
-
-        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
-        const isRatioBelowMaximum = isRatioBelowMax({
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
-            BigNumber.from(data.totalUnscaled).add(f)
-          )
-        });
-        const bcUsdEquivalent = calculateBcUsdEquivalent(
-          coinsDetails,
-          parseFloat(data.totalScaled.replaceAll(",", ""))
-        ).replaceAll(",", "");
-
-        setTradeData(data);
-        if (!isWalletConnected) {
-          setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-        } else if (isWrongChain) {
-          setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (
-          isTxLimitReached(
-            bcUsdEquivalent,
-            coinsDetails.unscaledNumberSc,
-            systemParams.thresholdSupplySC
-          )
-        ) {
-          setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
-        } else if (
-          stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
-            stringToBigNumber(data.totalBCUnscaled, BC_DECIMALS)
-          )
-        ) {
-          setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
-        } else if (!isRatioBelowMaximum) {
-          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_HIGH);
-        } else {
-          checkBuyableRc(
-            djedContract,
-            data.amountUnscaled,
-            coinBudgets?.unscaledBudgetRc
-          ).then((res) => setBuyValidity(res));
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-    getTradeData();
-  };
-
-  const updateSellTradeData = (amountScaled) => {
-    const inputSanity = validatePositiveNumber(amountScaled);
-    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
-      setSellValidity(inputSanity);
-      return;
-    }
-    const getTradeData = async () => {
-      try {
-        const data = await tradeDataPriceSellRc(
-          djedContract,
-          decimals.rcDecimals,
-          amountScaled
-        );
-        const rcUsdEquivalent = calculateRcUsdEquivalent(
-          coinsDetails,
-          parseFloat(data.amountScaled.replaceAll(",", ""))
-        ).replaceAll(",", "");
-        const futureSCPrice = await getFutureScPrice({
-          amountBC: data.totalUnscaled,
-          amountSC: 0
-        });
-        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
-        const isRatioAboveMinimum = isRatioAboveMin({
-          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).sub(
-            BigNumber.from(data.totalUnscaled).sub(f)
-          )
-        });
-
-        setTradeData(data);
-        if (!isWalletConnected) {
-          setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-        } else if (isWrongChain) {
-          setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (
-          isTxLimitReached(
-            rcUsdEquivalent,
-            coinsDetails.unscaledNumberSc,
-            systemParams.thresholdSupplySC
-          )
-        ) {
-          setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
-        } else if (
-          stringToBigNumber(accountDetails.unscaledBalanceRc, decimals.rcDecimals).lt(
-            stringToBigNumber(data.amountUnscaled, decimals.rcDecimals)
-          )
-        ) {
-          setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
-        } else if (!isRatioAboveMinimum) {
-          setSellValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
-        } else {
-          checkSellableRc(
-            djedContract,
-            data.amountUnscaled,
-            accountDetails?.unscaledBalanceRc
-          ).then((res) => setSellValidity(res));
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-    getTradeData();
-  };
-
   const onChangeBuyInput = (amountScaled) => {
     setValue(amountScaled);
-    updateBuyTradeData(amountScaled);
+    updateBuyTradeData(amountScaled, djedContract, decimals, coinsDetails, systemParams, accountDetails, coinBudgets, getFutureScPrice, setBuyValidity, setTradeData, isWalletConnected, isWrongChain);
   };
 
   const onChangeSellInput = (amountScaled) => {
     setValue(amountScaled);
-    updateSellTradeData(amountScaled);
+    updateSellTradeData(amountScaled, djedContract, decimals, coinsDetails, systemParams, accountDetails, getFutureScPrice, setSellValidity, setTradeData, isWalletConnected, isWrongChain);
   };
 
   const buyRc = (total) => {
