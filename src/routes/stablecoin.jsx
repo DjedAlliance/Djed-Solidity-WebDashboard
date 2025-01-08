@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import OperationSelector from "../components/organisms/OperationSelector/OperationSelector";
@@ -9,7 +9,6 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
-import { TRANSACTION_VALIDITY } from "../utils/constants";
 import {
   getScAdaEquivalent,
   stringToBigNumber,
@@ -31,7 +30,6 @@ import {
   FEE_UI_UNSCALED,
   UI
 } from "../utils/ethereum";
-import { BigNumber, ethers } from "ethers";
 import { useAccount } from "wagmi";
 import djedArtifact from "../artifacts/Djed.json";
 import {
@@ -41,6 +39,8 @@ import {
   useWSCProvider
 } from "milkomeda-wsc-ui-test-beta";
 import { updateBuyTradeData, updateSellTradeData } from './commonTradeFunctions';
+import { TRANSACTION_VALIDITY } from '../utils/constants';
+import { ethers } from 'ethers';
 
 export default function Stablecoin() {
   const {
@@ -286,17 +286,6 @@ export default function Stablecoin() {
               <br />
               {isWalletConnected ? (
                 <>
-                  {/*value != null ? (
-                  <p className="Disclaimer">
-                    This transaction is expected to{" "}
-                    {transactionValidated ? (
-                      <strong>succeed.</strong>
-                    ) : (
-                      <strong>fail!</strong>
-                    )}
-                  </p>
-                    ) : null*/}
-
                   {isWSCConnected ? (
                     <WSCButton
                       disabled={value === null || isWrongChain || !termsAccepted}
