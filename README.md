@@ -78,6 +78,7 @@ Known deployments of this frontend can be used at:
 
 - [Milkomeda C1 - Mainnet](https://milkomeda-c1.djed.one)
 - [Milkomeda C1 - Testnet](https://milkomeda-c1-testnet.djed.one)
+- [Ethereum Classic](https://etc.djed.one)
 
 By utilizing this frontend application, users can conveniently engage with Djed deployments and explore the functionalities provided by the smart contracts.
 
