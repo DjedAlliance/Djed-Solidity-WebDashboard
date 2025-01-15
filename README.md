@@ -3,7 +3,7 @@
 
 <!-- Organization Logo -->
 <div align="center">
-  <img alt="Djed-Solidity WebDashboard" src="src/images/djedlogo.png" width="175">
+  <img alt="Djed-Solidity WebDashboard" src="src/images/djed-logo.png" width="175">
   &nbsp;
   &nbsp;
 </div>
