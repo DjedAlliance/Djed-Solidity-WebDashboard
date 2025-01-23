@@ -57,6 +57,25 @@ export const AppProvider = ({ children }) => {
   const [coinBudgets, setCoinBudgets] = useState(null);
   const [isVisible, setIsVisible] = useState(document.visibilityState === "visible");
 
+  const setUpAccountSpecificValues = async () => {
+    if (!web3 || !djedContract || !coinContracts || !decimals) return;
+    const accountDetails = await getAccountDetails(
+      account,
+      coinContracts.stableCoin,
+      coinContracts.reserveCoin,
+      decimals.scDecimals,
+      decimals.rcDecimals
+    );
+    setAccountDetails(accountDetails);
+    const coinBudgets = await getCoinBudgets(
+      account,
+      djedContract,
+      decimals.scDecimals,
+      decimals.rcDecimals
+    );
+    setCoinBudgets(coinBudgets);
+  };
+
   useEffect(() => {
     const handleVisibilityChange = () => {
       setIsVisible(document.visibilityState === "visible");
@@ -68,6 +87,7 @@ export const AppProvider = ({ children }) => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
+
   useEffect(() => {
     if (!account) return;
     const setUp = async () => {
@@ -130,26 +150,6 @@ export const AppProvider = ({ children }) => {
   };
   const redirectToNufi = () => {
     window.open("https://nu.fi/", "_blank");
-  };
-
-  const setUpAccountSpecificValues = async () => {
-    if (coinContracts == null) return;
-    const accountDetails = await getAccountDetails(
-      web3,
-      account,
-      coinContracts.stableCoin,
-      coinContracts.reserveCoin,
-      decimals.scDecimals,
-      decimals.rcDecimals
-    );
-    setAccountDetails(accountDetails);
-    const coinBudgets = await getCoinBudgets(
-      djedContract,
-      accountDetails.unscaledBalanceBc,
-      decimals.scDecimals,
-      decimals.rcDecimals
-    );
-    setCoinBudgets(coinBudgets);
   };
 
   const connectMetamask = () => {
