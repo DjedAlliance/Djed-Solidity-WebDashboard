@@ -13,8 +13,6 @@ export const TRANSACTION_VALIDITY = {
   INSUFFICIENT_BC: "Insufficient balance",
   INSUFFICIENT_SC: "Insufficient StableCoin balance",
   INSUFFICIENT_RC: "Insufficient ReserveCoin balance",
-  RESERVE_RATIO_LOW: "Reserve ratio would drop below the minimum",
-  RESERVE_RATIO_HIGH: "Reserve ratio would rise above the maximum",
   TRANSACTION_LIMIT_REACHED: "Transaction limit reached"
 };
 

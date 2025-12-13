@@ -25,13 +25,12 @@ import {
   checkSellableSc,
   verifyTx,
   BC_DECIMALS,
-  calculateTxFees,
   isTxLimitReached,
   DJED_ADDRESS,
   FEE_UI_UNSCALED,
   UI
 } from "../utils/ethereum";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import djedArtifact from "../artifacts/Djed.json";
 import {
@@ -55,10 +54,7 @@ export default function Stablecoin() {
     account,
     signer,
     systemParams,
-    isRatioAboveMin,
-    coinContracts,
-    getFutureScPrice,
-    getFutureMaxScPrice
+    coinContracts
   } = useAppProvider();
   const { isWSCConnected } = useWSCProvider();
   const { setOpen } = useWSCModal();
@@ -95,27 +91,6 @@ export default function Stablecoin() {
           isShu ? "scMaxPrice" : "scPrice"
         );
 
-        const futureSCPrice = isShu
-          ? await getFutureMaxScPrice({
-              amountBC: data.totalUnscaled,
-              amountSC: data.amountUnscaled
-            })
-          : await getFutureScPrice({
-              amountBC: data.totalUnscaled,
-              amountSC: data.amountUnscaled
-            });
-
-        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
-        const isRatioAboveMinimum = isRatioAboveMin({
-          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc).add(
-            BigNumber.from(data.amountUnscaled)
-          ),
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
-            BigNumber.from(data.totalUnscaled).add(f)
-          )
-        });
-
         setTradeData(data);
         if (!isWalletConnected) {
           setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
@@ -135,8 +110,6 @@ export default function Stablecoin() {
           )
         ) {
           setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
-        } else if (!isRatioAboveMinimum) {
-          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
         } else {
           checkBuyableSc(
             djedContract,
@@ -292,7 +265,7 @@ export default function Stablecoin() {
           <h1>StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              The StableCoin of this Djed deployment is called{" "}
+              The StableCoin of this Djed Tefnut deployment is called{" "}
               <strong>{process.env.REACT_APP_SC_NAME}</strong>. It is pegged to the USD,
               similarly to various{" "}
               <a
@@ -304,12 +277,6 @@ export default function Stablecoin() {
               </a>
               , at a ratio of 1 to 1. One Djed Stablecoin is nominally worth 1 USD. The
               peg is maintained through a reserve of {process.env.REACT_APP_CHAIN_COIN}.
-              The Djed protocol aims to maintain a reserve ratio between{" "}
-              {systemParams?.reserveRatioMin} and {systemParams?.reserveRatioMax}. This
-              means that, when the reserve ratio is in this range, every StableCoin is
-              backed by an amount of {process.env.REACT_APP_CHAIN_COIN} worth at least 4
-              USD and is able to tolerate an instantaneous{" "}
-              {process.env.REACT_APP_CHAIN_COIN} price crash of at least 75%.
             </p>
             <p>
               You are always allowed to sell back StableCoins to Djed. Djed pays 1 USD
@@ -318,11 +285,10 @@ export default function Stablecoin() {
               {process.env.REACT_APP_CHAIN_COIN} reserve and S is the StableCoin supply.
             </p>
             <p>
-              You are allowed to buy StableCoins from Djed for a price of 1 USD worth of
-              {process.env.REACT_APP_CHAIN_COIN} per StableCoin, whenever the reserve
-              ratio is above {systemParams?.reserveRatioMin}. When the reserve ratio is
-              below {systemParams?.reserveRatioMin}, the purchase of StableCoins from Djed
-              is disallowed, because it would reduce the reserve ratio further.
+              You are always allowed to buy StableCoins from Djed for a price of 1 USD worth of{" "}
+              {process.env.REACT_APP_CHAIN_COIN} per StableCoin. Djed Tefnut has no minimum
+              or maximum reserve ratio restrictions, allowing unrestricted minting and
+              redemption of StableCoins at any time.
             </p>
             <p>
               There is a limit of {process.env.REACT_APP_LIMIT_PER_TXN} USD worth of{" "}

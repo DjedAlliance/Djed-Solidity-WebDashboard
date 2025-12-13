@@ -11,8 +11,6 @@ const ReservesCard = ({
   priceAmount,
   equivalence,
   reserveRatio,
-  reserveRatioMin,
-  reserveRatioMax,
   showCurrentReserveRatio,
   isShu
 }) => (
@@ -28,8 +26,6 @@ const ReservesCard = ({
         <p>≈ {equivalence}</p>
       </div>
       <div className="ReservesRatio">
-        <NumberItem amount={reserveRatioMin} label="Minimum Reserve Ratio" />
-        <NumberItem amount={reserveRatioMax} label="Maximum Reserve Ratio" />
         {showCurrentReserveRatio && (
           <NumberItem
             amount={isShu ? `[${reserveRatio[0]} -- ${reserveRatio[1]}]` : reserveRatio}

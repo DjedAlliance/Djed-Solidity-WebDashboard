@@ -27,13 +27,12 @@ import {
   checkSellableRc,
   verifyTx,
   BC_DECIMALS,
-  calculateTxFees,
   isTxLimitReached,
   DJED_ADDRESS,
   FEE_UI_UNSCALED,
   UI
 } from "../utils/ethereum";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import {
   ConnectWSCButton,
   TransactionConfigWSCProvider,
@@ -56,13 +55,7 @@ export default function ReserveCoin() {
     account,
     signer,
     systemParams,
-    isRatioBelowMax,
-    isRatioAboveMin,
-    isShu,
-    coinContracts,
-    getFutureScPrice,
-    getFutureMinScPrice,
-    getFutureMaxScPrice
+    coinContracts
   } = useAppProvider();
   const { isWSCConnected } = useWSCProvider();
   const { setOpen } = useWSCModal();
@@ -97,23 +90,6 @@ export default function ReserveCoin() {
           amountScaled
         );
 
-        const futureSCPrice = isShu
-          ? await getFutureMinScPrice({
-              amountBC: data.totalUnscaled,
-              amountSC: 0
-            })
-          : await getFutureScPrice({
-              amountBC: data.totalUnscaled,
-              amountSC: 0
-            });
-
-        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
-        const isRatioBelowMaximum = isRatioBelowMax({
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
-            BigNumber.from(data.totalUnscaled).add(f)
-          )
-        });
         const bcUsdEquivalent = calculateBcUsdEquivalent(
           coinsDetails,
           parseFloat(data.totalScaled.replaceAll(",", ""))
@@ -138,8 +114,6 @@ export default function ReserveCoin() {
           )
         ) {
           setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
-        } else if (!isRatioBelowMaximum) {
-          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_HIGH);
         } else {
           checkBuyableRc(
             djedContract,
@@ -171,23 +145,6 @@ export default function ReserveCoin() {
           coinsDetails,
           parseFloat(data.amountScaled.replaceAll(",", ""))
         ).replaceAll(",", "");
-        const futureSCPrice = isShu
-          ? await getFutureMaxScPrice({
-              amountBC: data.totalUnscaled,
-              amountSC: 0
-            })
-          : await getFutureScPrice({
-              amountBC: data.totalUnscaled,
-              amountSC: 0
-            });
-        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
-        const isRatioAboveMinimum = isRatioAboveMin({
-          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).sub(
-            BigNumber.from(data.totalUnscaled).sub(f)
-          )
-        });
 
         setTradeData(data);
         if (!isWalletConnected) {
@@ -208,8 +165,6 @@ export default function ReserveCoin() {
           )
         ) {
           setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
-        } else if (!isRatioAboveMinimum) {
-          setSellValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
         } else {
           checkSellableRc(
             djedContract,
@@ -322,7 +277,7 @@ export default function ReserveCoin() {
           <div className="DescriptionContainer">
             <p>
               A ReserveCoin represents a portion of the surplus of the underlying reserves
-              of {process.env.REACT_APP_CHAIN_COIN} in the Djed protocol. As such,
+              of {process.env.REACT_APP_CHAIN_COIN} in the Djed Tefnut protocol. As such,
               ReserveCoins have a leveraged volatile price that increases when the price
               of {process.env.REACT_APP_CHAIN_COIN} increases and decreases when the price
               of {process.env.REACT_APP_CHAIN_COIN} decreases. Furthermore, ReserveCoin
@@ -331,15 +286,9 @@ export default function ReserveCoin() {
               surplus.
             </p>
             <p>
-              You are allowed to buy ReserveCoins, as long as the reserve ratio remains
-              below the maximum of {systemParams?.reserveRatioMax}. This prevents
-              excessive dilution of previous ReserveCoin holders. This restriction only
-              applies when the StableCoin supply is above 500000.
-            </p>
-            <p>
-              You are allowed to sell ReserveCoins, as long as the reserve ratio remains
-              above the minimum of {systemParams?.reserveRatioMin}. This aims to ensure
-              that all StableCoins remain sufficiently backed.
+              You are always allowed to buy and sell ReserveCoins. Djed Tefnut has no minimum
+              or maximum reserve ratio restrictions, allowing unrestricted minting and
+              redemption of ReserveCoins at any time.
             </p>
             <p>
               There is a limit of {process.env.REACT_APP_LIMIT_PER_TXN} USD worth of{" "}
