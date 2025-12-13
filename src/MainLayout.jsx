@@ -20,69 +20,83 @@ export default function MainLayout() {
 
   return (
     <div>
+      <a href="#main-content" className="skip-link" aria-label="Skip to main content">
+        Skip to main content
+      </a>
       <Layout className="layout">
-        <Header className="header-desktop">
+        <Header className="header-desktop" role="banner">
           <div className="logo">
-            <img src={LOGO_PATH} alt="Logo" />
+            <Link to="/" aria-label="Djed Protocol Home">
+              <img src={LOGO_PATH} alt="Djed Protocol Logo - Decentralized Stablecoin" />
+            </Link>
           </div>
-          <Menu mode="horizontal" selectedKeys={[location.pathname]}>
-            <Menu.Item key="/audit">
-              <Link
-                to={{
-                  pathname:
-                    "//github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed-2.pdf"
-                }}
-                target="_blank"
-              >
-                Audit
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="/whitepaper">
-              <Link
-                to={{
-                  pathname: "//eprint.iacr.org/2021/1069"
-                }}
-                target="_blank"
-              >
-                Whitepaper
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="/">
-              <Link to="/">Protocol</Link>
-            </Menu.Item>
-            <Menu.Item key="/sc">
-              <Link to="/sc">StableCoin</Link>
-            </Menu.Item>
-            <Menu.Item key="/rc">
-              <Link to="/rc">ReserveCoin</Link>
-            </Menu.Item>
-            <Menu.Item key="/docs">
-              <Link
-                to={{
-                  pathname: "//docs.stability.nexus/djed-stablecoin-protocols/djed-overview"
-                }}
-                target="_blank"
-              >
-                Docs
-              </Link>
-            </Menu.Item>
-          </Menu>
-          <div className="WalletConfig">
+          <nav aria-label="Main navigation">
+            <Menu mode="horizontal" selectedKeys={[location.pathname]}>
+              <Menu.Item key="/audit">
+                <Link
+                  to={{
+                    pathname:
+                      "//github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed-2.pdf"
+                  }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="View security audit report (opens in new tab)"
+                >
+                  Audit
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="/whitepaper">
+                <Link
+                  to={{
+                    pathname: "//eprint.iacr.org/2021/1069"
+                  }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Read Djed whitepaper (opens in new tab)"
+                >
+                  Whitepaper
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="/">
+                <Link to="/" aria-label="View protocol status and overview">Protocol</Link>
+              </Menu.Item>
+              <Menu.Item key="/sc">
+                <Link to="/sc" aria-label="Buy and sell StableCoins">StableCoin</Link>
+              </Menu.Item>
+              <Menu.Item key="/rc">
+                <Link to="/rc" aria-label="Buy and sell ReserveCoins">ReserveCoin</Link>
+              </Menu.Item>
+              <Menu.Item key="/docs">
+                <Link
+                  to={{
+                    pathname: "//docs.stability.nexus/djed-stablecoin-protocols/djed-overview"
+                  }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="View documentation (opens in new tab)"
+                >
+                  Docs
+                </Link>
+              </Menu.Item>
+            </Menu>
+          </nav>
+          <div className="WalletConfig" role="complementary" aria-label="Wallet actions">
             <CustomButton
               text="Balance"
               onClick={() => navigate("/my-balance")}
               disabled={!isWalletConnected}
               iconWallet={
-                isWalletConnected && <WalletOutlined style={{ color: "white" }} />
+                isWalletConnected && <WalletOutlined style={{ color: "white" }} aria-hidden="true" />
               }
               variant="tertiary"
+              aria-label="View your balance"
             />
 
             <WalletConnectButton />
           </div>
         </Header>
         <HeaderMobileMenu isWalletConnected={isWalletConnected} />
-        <Content>
+        <Content id="main-content" role="main" tabIndex="-1">
           <div className="site-layout-content">
             <Outlet />
           </div>
@@ -91,6 +105,8 @@ export default function MainLayout() {
     </div>
   );
 }
+
+
 
 const HeaderMobileMenu = ({ isWalletConnected }) => {
   const location = useLocation();
@@ -101,9 +117,11 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
   };
 
   return (
-    <div className="header-mobile">
+    <nav className="header-mobile" aria-label="Mobile navigation">
       <div className="logo">
-        <img src={LOGO_PATH} alt="Logo" />
+        <Link to="/" aria-label="Djed Protocol Home">
+          <img src={LOGO_PATH} alt="Djed Protocol Logo" />
+        </Link>
       </div>
       <Dropdown
         overlayClassName="menu-mobile-dropdown"
@@ -114,39 +132,44 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
             mode="vertical"
             selectedKeys={[location.pathname]}
             onClick={() => setMenuOpen(false)}
+            role="menubar"
           >
-            <Menu.Item key="/audit">
+            <Menu.Item key="/audit" role="menuitem">
               <Link
                 to={{
                   pathname:
                     "//github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed-2.pdf"
                 }}
                 target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View security audit report (opens in new tab)"
               >
                 Audit
               </Link>
             </Menu.Item>
-            <Menu.Item key="/whitepaper">
+            <Menu.Item key="/whitepaper" role="menuitem">
               <Link
                 to={{
                   pathname: "//eprint.iacr.org/2021/1069"
                 }}
                 target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Read Djed whitepaper (opens in new tab)"
               >
                 Whitepaper
               </Link>
             </Menu.Item>
-            <Menu.Item key="/">
-              <Link to="/">Protocol</Link>
+            <Menu.Item key="/" role="menuitem">
+              <Link to="/" aria-label="View protocol status">Protocol</Link>
             </Menu.Item>
-            <Menu.Item key="/sc">
-              <Link to="/sc">Djed StableCoin</Link>
+            <Menu.Item key="/sc" role="menuitem">
+              <Link to="/sc" aria-label="Trade Djed StableCoins">Djed StableCoin</Link>
             </Menu.Item>
-            <Menu.Item key="/rc">
-              <Link to="/rc">Djed ReserveCoin</Link>
+            <Menu.Item key="/rc" role="menuitem">
+              <Link to="/rc" aria-label="Trade Djed ReserveCoins">Djed ReserveCoin</Link>
             </Menu.Item>
-            <Menu.Item key="/my-balance" disabled={!isWalletConnected}>
-              <Link to="/my-balance">Balance</Link>
+            <Menu.Item key="/my-balance" disabled={!isWalletConnected} role="menuitem">
+              <Link to="/my-balance" aria-label="View your wallet balance">Balance</Link>
             </Menu.Item>
             <div className="WalletConfig">
               <WalletConnectButton />
@@ -159,8 +182,13 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
           style={{ fontSize: 22 }}
           className="menu-mobile-icon"
           onClick={() => setMenuOpen(!isMenuOpen)}
+          aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={isMenuOpen}
+          role="button"
+          tabIndex="0"
         />
       </Dropdown>
-    </div>
+    </nav>
   );
 };
+

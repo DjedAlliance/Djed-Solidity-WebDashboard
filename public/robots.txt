@@ -1,3 +1,14 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Allow: /sc
+Allow: /rc
+Allow: /my-balance
+Allow: /terms-of-use
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /*?*
+
+# Primary sitemap
+Sitemap: https://djed.one/sitemap.xml
+
