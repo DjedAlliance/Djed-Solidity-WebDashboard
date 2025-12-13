@@ -15,7 +15,7 @@ import {
 } from "../utils/helpers";
 
 export default function Protocol() {
-  const { coinsDetails, isShu, systemParams } = useAppProvider();
+  const { coinsDetails, isShu } = useAppProvider();
 
   const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
@@ -31,13 +31,13 @@ export default function Protocol() {
       <div className="ProtocolSection">
         <div className="Left">
           <h1>
-            <strong>Djed on {process.env.REACT_APP_BC}</strong>
+            <strong>Djed Tefnut on {process.env.REACT_APP_BC}</strong>
           </h1>
           <div className="DescriptionContainer">
             <p>
-              Djed is a formally verified crypto-backed autonomous stablecoin protocol. It
-              has been researched since Q2 2020, its whitepaper has been released in
-              August 2021, and it has multiple{" "}
+              Djed Tefnut is a simplified version of the Djed protocol - a formally verified 
+              crypto-backed autonomous stablecoin protocol. It has been researched since Q2 2020, 
+              its whitepaper has been released in August 2021, and it has multiple{" "}
               <a href="https://github.com/DjedAlliance" target="_blank" rel="noreferrer">
                 implementations
               </a>{" "}
@@ -49,7 +49,11 @@ export default function Protocol() {
               >
                 deployments
               </a>
-              . Here you can interact with a{" "}
+              . Djed Tefnut simplifies the original Djed by removing minimum and maximum 
+              reserve ratio restrictions, allowing unrestricted minting and redemption at any time.
+            </p>
+            <p>
+              Here you can interact with a{" "}
               <a
                 href={`${process.env.REACT_APP_EXPLORER}/address/${
                   isShu
@@ -60,14 +64,6 @@ export default function Protocol() {
                 rel="noreferrer"
               >
                 deployment
-              </a>{" "}
-              that uses{" "}
-              <a
-                href="https://github.com/DjedAlliance/Djed-Solidity/commits/Belus"
-                target="_blank"
-                rel="noreferrer"
-              >
-                these smart contracts
               </a>{" "}
               on {process.env.REACT_APP_BC}.
             </p>
@@ -117,8 +113,6 @@ export default function Protocol() {
               coinIcon="/coin-icon-three.png"
               coinName="Reserves"
               reserveRatio={coinsDetails?.percentReserveRatio}
-              reserveRatioMin={systemParams?.reserveRatioMin}
-              reserveRatioMax={systemParams?.reserveRatioMax}
               showCurrentReserveRatio={Number(coinsDetails?.unscaledNumberSc) > 0}
               isShu={isShu}
             />

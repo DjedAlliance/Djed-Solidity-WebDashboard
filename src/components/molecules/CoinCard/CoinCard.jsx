@@ -38,14 +38,14 @@ const CoinCard = ({
       ) : isShu ? (
         <>
           <div className="PriceInfo">
-            <span>Current Minimum Price</span>
+            <span>Sell Price (Min)</span>
             <h3>
               {minPriceAmount} {CHAIN_COIN}
             </h3>
           </div>
 
           <div className="PriceInfo">
-            <span>Current Maximum Price</span>
+            <span>Buy Price (Max)</span>
             <h3>
               {maxPriceAmount} {CHAIN_COIN}
             </h3>

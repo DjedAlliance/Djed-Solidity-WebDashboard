@@ -14,21 +14,15 @@ import {
   getSystemParams,
   getAccountDetails,
   getCoinBudgets,
-  calculateIsRatioBelowMax,
-  calculateIsRatioAboveMin,
-  calculateFutureScPrice,
   getDjedShuContract,
   getShuOracleContract,
-  getShuCoinDetails,
-  calculateFutureMinScPrice,
-  calculateFutureMaxScPrice
+  getShuCoinDetails
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
   ACCOUNT_DETAILS_REQUEST_INTERVAL,
   COIN_DETAILS_REQUEST_INTERVAL
 } from "../utils/constants";
-import { BigNumber } from "ethers";
 
 import {
   flintWalletConnector,
@@ -261,60 +255,6 @@ export const AppProvider = ({ children }) => {
     isWalletConnected && isVisible ? COIN_DETAILS_REQUEST_INTERVAL : null
   );
 
-  const isRatioBelowMax = ({ scPrice, reserveBc }) => {
-    const scDecimals = BigNumber.from(decimals.scDecimals);
-    const totalScSupply = BigNumber.from(coinsDetails?.unscaledNumberSc);
-    const reserveRatioMax = BigNumber.from(systemParams?.reserveRatioMaxUnscaled);
-    const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
-    const thresholdSupplySC = BigNumber.from(systemParams.thresholdSupplySC);
-    return calculateIsRatioBelowMax({
-      scPrice,
-      reserveBc,
-      totalScSupply,
-      reserveRatioMax,
-      scDecimalScalingFactor,
-      thresholdSupplySC
-    });
-  };
-
-  const isRatioAboveMin = ({ scPrice, totalScSupply, reserveBc }) => {
-    const scDecimals = BigNumber.from(decimals.scDecimals);
-    const reserveRatioMin = BigNumber.from(systemParams?.reserveRatioMinUnscaled);
-    const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
-
-    return calculateIsRatioAboveMin({
-      scPrice,
-      reserveBc,
-      totalScSupply,
-      reserveRatioMin,
-      scDecimalScalingFactor
-    });
-  };
-
-  /**
-   * This function should prepare parameters for calculating future stableCoin price
-   * @param {string} amountBC The unscaled amount of BC (e.g. for 1BC, value should be 1 * 10^BC_DECIMALS)
-   * @param {string} amountSC The unscaled amount of StableCoin (e.g. for 1SC, value should be 1 * 10^SC_DECIMALS)
-   * @returns future stablecoin price as result of calculateFutureScPrice function
-   */
-  const getFuturePrice = async ({ amountBC, amountSC, method }) => {
-    return method({
-      amountBC,
-      amountSC,
-      djedContract,
-      oracleContract,
-      stableCoinContract: coinContracts.stableCoin,
-      scDecimalScalingFactor: BigNumber.from(10).pow(decimals.scDecimals)
-    });
-  };
-
-  const getFutureScPrice = async (params) =>
-    getFuturePrice({ ...params, method: calculateFutureScPrice });
-  const getFutureMinScPrice = async (params) =>
-    getFuturePrice({ ...params, method: calculateFutureMinScPrice });
-  const getFutureMaxScPrice = async (params) =>
-    getFuturePrice({ ...params, method: calculateFutureMaxScPrice });
-
   if (isLoading) {
     return <FullPageSpinner />;
   } else {
@@ -356,12 +296,7 @@ export const AppProvider = ({ children }) => {
           redirectToNufi,
           activeConnector,
           account,
-          signer,
-          isRatioBelowMax,
-          isRatioAboveMin,
-          getFutureScPrice,
-          getFutureMinScPrice,
-          getFutureMaxScPrice
+          signer
         }}
       >
         {children}

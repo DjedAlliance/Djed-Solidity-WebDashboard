@@ -2,7 +2,7 @@ import Web3 from "web3";
 import djedArtifact from "../artifacts/Djed.json";
 import coinArtifact from "../artifacts/Coin.json";
 import oracleArtifact from "../artifacts/Oracle.json";
-import djedShuArtifact from "../artifacts/DjedShu.json";
+import djedTefnutArtifact from "../artifacts/DjedTefnut.json";
 import shuOracleArtifact from "../artifacts/ShuOracle.json";
 
 import {
@@ -58,7 +58,13 @@ export const getDjedContract = (web3) => {
 };
 
 export const getDjedShuContract = (web3) => {
-  const djed = new web3.eth.Contract(djedShuArtifact.abi, DJED_SHU_ADDRESS);
+  // Using DjedTefnut artifact for Tefnut deployment (simplified Djed)
+  const djed = new web3.eth.Contract(djedTefnutArtifact.abi, DJED_SHU_ADDRESS);
+  return djed;
+};
+
+export const getDjedTefnutContract = (web3) => {
+  const djed = new web3.eth.Contract(djedTefnutArtifact.abi, DJED_SHU_ADDRESS);
   return djed;
 };
 
@@ -156,6 +162,7 @@ export const getCoinDetails = async (
   };
 };
 
+// Tefnut coin details - simplified version without reserve ratio limits
 export const getShuCoinDetails = async (
   stableCoin,
   reserveCoin,
@@ -181,26 +188,34 @@ export const getShuCoinDetails = async (
   const emptyValue = decimalScaling("0".toString(10), BC_DECIMALS);
   let scaledSellPriceRc = emptyValue;
   let unscaledSellPriceRc = emptyValue;
-  let percentReserveRatio = emptyValue;
+  // Tefnut has no reserve ratio limits - just calculate current ratio if there's SC supply
+  let percentReserveRatio = "N/A";
   const scaledScExchangeRate = (
     (parseFloat(scaledMinPriceSc) + parseFloat(scaledMaxPriceSc)) /
     2
   ).toString();
 
-  //Check total stablecoin supply
+  //Check total reservecoin supply for RC sell price
   if (!BigNumber.from(unscaledNumberRc).isZero()) {
     [scaledSellPriceRc, unscaledSellPriceRc] = await scaledUnscaledPromise(
       web3Promise(djed, "rcTargetPrice", 0),
       BC_DECIMALS
     );
   }
-  //Check total reservecoin supply
+  
+  // Tefnut: Calculate current reserve ratio from ratio() if SC supply exists
   if (!BigNumber.from(unscaledNumberSc).isZero()) {
-    percentReserveRatio = [
-      await percentScaledPromise(web3Promise(djed, "ratioMin"), SCALING_DECIMALS),
-      await percentScaledPromise(web3Promise(djed, "ratioMax"), SCALING_DECIMALS)
-    ];
+    try {
+      percentReserveRatio = await percentScaledPromise(
+        web3Promise(djed, "ratio"),
+        SCALING_DECIMALS
+      );
+    } catch (e) {
+      // ratio() might not exist, use N/A
+      percentReserveRatio = "N/A";
+    }
   }
+  
   return {
     scaledNumberSc,
     unscaledNumberSc,
@@ -220,26 +235,27 @@ export const getShuCoinDetails = async (
   };
 };
 
+// Get system params - supports both Tefnut (uppercase) and legacy (lowercase) method names
 export const getSystemParams = async (djed) => {
-  const [
-    reserveRatioMinUnscaled,
-    reserveRatioMaxUnscaled,
-    feeUnscaled,
-    treasuryFee,
-    thresholdSupplySC
-  ] = await Promise.all([
-    web3Promise(djed, "reserveRatioMin"),
-    web3Promise(djed, "reserveRatioMax"),
-    web3Promise(djed, "fee"),
-    percentScaledPromise(web3Promise(djed, "treasuryFee"), SCALING_DECIMALS),
-    web3Promise(djed, "thresholdSupplySC")
-  ]);
+  let feeUnscaled, treasuryFee, thresholdSupplySC;
+  
+  try {
+    // Try Tefnut uppercase constant names first
+    [feeUnscaled, treasuryFee, thresholdSupplySC] = await Promise.all([
+      web3Promise(djed, "FEE"),
+      percentScaledPromise(web3Promise(djed, "TREASURY_FEE"), SCALING_DECIMALS),
+      web3Promise(djed, "THRESHOLD_SUPPLY_SC")
+    ]);
+  } catch (e) {
+    // Fallback to legacy lowercase method names
+    [feeUnscaled, treasuryFee, thresholdSupplySC] = await Promise.all([
+      web3Promise(djed, "fee"),
+      percentScaledPromise(web3Promise(djed, "treasuryFee"), SCALING_DECIMALS),
+      web3Promise(djed, "thresholdSupplySC")
+    ]);
+  }
 
   return {
-    reserveRatioMin: percentageScale(reserveRatioMinUnscaled, SCALING_DECIMALS, true),
-    reserveRatioMax: percentageScale(reserveRatioMaxUnscaled, SCALING_DECIMALS, true),
-    reserveRatioMinUnscaled,
-    reserveRatioMaxUnscaled,
     fee: percentageScale(feeUnscaled, SCALING_DECIMALS, true),
     feeUnscaled,
     treasuryFee,
@@ -577,57 +593,6 @@ export const checkBuyableSc = (djed, unscaledAmountSc, unscaledBudgetSc) => {
 
 export const checkSellableSc = (unscaledAmountSc, unscaledBalanceSc) => {
   return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
-};
-
-/**
- * Calculate if the transaction will reach the maximum reserve ratio
- * @param scPrice - Unscaled stablecoin price
- * @param reserveBc - Unscaled reserve of base coin with appended potential transaction amount.
- * Example: If user wants to buy 1RC, the reserveBc param will be calculated as sum of current reserve of BC and desired RC amount converted in BC
- * @param totalScSupply - Unscaled total stablecoin supply
- * @param reserveRatioMax - Unscaled maximum reserve ratio
- * @param scDecimalScalingFactor - If stablecoin has 6 decimals, scDecimalScalingFactor will be calculated as 10^6
- * @param thresholdSupplySC - Unscaled threshold SC supply
- * @returns
- */
-export const calculateIsRatioBelowMax = ({
-  scPrice,
-  reserveBc,
-  totalScSupply,
-  reserveRatioMax,
-  scDecimalScalingFactor,
-  thresholdSupplySC
-}) => {
-  return (
-    reserveBc
-      .mul(BigNumber.from(scalingFactor))
-      .mul(scDecimalScalingFactor)
-      .lt(totalScSupply.mul(scPrice).mul(reserveRatioMax)) ||
-    totalScSupply.lte(thresholdSupplySC)
-  );
-};
-
-/**
- * Calculate if the transaction will reach the minimum reserve ratio
- * @param scPrice - Unscaled stablecoin price
- * @param reserveBc - Unscaled reserve of base coin with calculated potential transaction amount.
- * Example: If user wants to buy 1SC, the reserveBc param will be calculated as sum of current reserve of BC and desired SC amount converted in BC
- * @param totalScSupply - Unscaled total stablecoin supply
- * @param reserveRatioMin - Unscaled minimum reserve ratio
- * @param scDecimalScalingFactor - If stablecoin has 6 decimals, scDecimalScalingFactor will be calculated as 10^6
- * @returns
- */
-export const calculateIsRatioAboveMin = ({
-  scPrice,
-  reserveBc,
-  totalScSupply,
-  reserveRatioMin,
-  scDecimalScalingFactor
-}) => {
-  return reserveBc
-    .mul(BigNumber.from(scalingFactor))
-    .mul(scDecimalScalingFactor)
-    .gt(totalScSupply.mul(scPrice).mul(reserveRatioMin));
 };
 
 /**
