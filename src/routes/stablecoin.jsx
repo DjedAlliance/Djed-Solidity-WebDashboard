@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import OperationSelector from "../components/organisms/OperationSelector/OperationSelector";
@@ -78,12 +78,20 @@ export default function Stablecoin() {
   const txStatusRejected = txStatus === "rejected";
   const txStatusSuccess = txStatus === "success";
 
+  // Race condition guards: track calculation IDs to ignore stale async results
+  const buyCalcIdRef = useRef(0);
+  const sellCalcIdRef = useRef(0);
+
   const updateBuyTradeData = (amountScaled) => {
     const inputSanity = validatePositiveNumber(amountScaled);
     if (inputSanity !== TRANSACTION_VALIDITY.OK) {
       setBuyValidity(inputSanity);
       return;
     }
+    // Increment calc ID to invalidate any in-flight calculations
+    buyCalcIdRef.current += 1;
+    const currentCalcId = buyCalcIdRef.current;
+
     const getTradeData = async () => {
       try {
         const data = await tradeDataPriceBuySc(
@@ -106,6 +114,9 @@ export default function Stablecoin() {
             BigNumber.from(data.totalUnscaled).add(f)
           )
         });
+
+        // Guard: only update state if this is still the latest calculation
+        if (currentCalcId !== buyCalcIdRef.current) return;
 
         setTradeData(data);
         if (!isWalletConnected) {
@@ -134,7 +145,10 @@ export default function Stablecoin() {
             data.amountUnscaled,
             coinBudgets?.unscaledBudgetSc
           ).then((res) => {
-            setBuyValidity(res);
+            // Guard: only update validity if this is still the latest calculation
+            if (currentCalcId === buyCalcIdRef.current) {
+              setBuyValidity(res);
+            }
           });
         }
       } catch (error) {
@@ -150,6 +164,10 @@ export default function Stablecoin() {
       setSellValidity(inputSanity);
       return;
     }
+    // Increment calc ID to invalidate any in-flight calculations
+    sellCalcIdRef.current += 1;
+    const currentCalcId = sellCalcIdRef.current;
+
     const getTradeData = async () => {
       try {
         const data = await tradeDataPriceSellSc(
@@ -157,6 +175,10 @@ export default function Stablecoin() {
           decimals.scDecimals,
           amountScaled
         );
+
+        // Guard: only update state if this is still the latest calculation
+        if (currentCalcId !== sellCalcIdRef.current) return;
+
         setTradeData(data);
         if (!isWalletConnected) {
           setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
@@ -178,7 +200,12 @@ export default function Stablecoin() {
           setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_SC);
         } else {
           checkSellableSc(data.amountUnscaled, accountDetails?.unscaledBalanceSc).then(
-            (res) => setSellValidity(res)
+            (res) => {
+              // Guard: only update validity if this is still the latest calculation
+              if (currentCalcId === sellCalcIdRef.current) {
+                setSellValidity(res);
+              }
+            }
           );
         }
       } catch (error) {
