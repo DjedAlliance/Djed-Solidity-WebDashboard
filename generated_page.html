@@ -1,0 +1,524 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Djed Tefnut | Financial Protocol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Lora:ital,wght@0,400;0,500;0,600;1,400&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --font-heading: 'Lora', serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+        
+        body {
+            font-family: var(--font-body);
+        }
+        
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: var(--font-heading);
+        }
+
+        .font-mono {
+            font-family: var(--font-mono);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Animations */
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        /* Custom Inputs */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Gauge Transition */
+        .gauge-path {
+            transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 antialiased flex h-screen overflow-hidden selection:bg-orange-100 selection:text-orange-900">
+
+    <!-- Sidebar Navigation -->
+    <nav class="hidden md:flex w-20 h-full bg-white/80 backdrop-blur-md border-r border-gray-200 flex-col items-center py-8 z-50 flex-shrink-0">
+        <!-- Logo -->
+        <div class="mb-12 cursor-pointer group">
+            <div class="w-10 h-10 bg-slate-900 text-white flex items-center justify-center rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                <span class="font-heading font-medium text-lg tracking-tighter">D.</span>
+            </div>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="flex flex-col gap-8 w-full items-center">
+            <button class="text-orange-600 hover:text-orange-700 transition-colors p-2 rounded-lg bg-orange-50 relative group">
+                <iconify-icon icon="lucide:layout-dashboard" width="24" stroke-width="1.5"></iconify-icon>
+                <span class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Dashboard</span>
+            </button>
+            <button class="text-slate-400 hover:text-slate-900 transition-colors p-2 relative group">
+                <iconify-icon icon="lucide:arrow-left-right" width="24" stroke-width="1.5"></iconify-icon>
+                <span class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Swap</span>
+            </button>
+            <button class="text-slate-400 hover:text-slate-900 transition-colors p-2 relative group">
+                <iconify-icon icon="lucide:pie-chart" width="24" stroke-width="1.5"></iconify-icon>
+                <span class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Analytics</span>
+            </button>
+            <button class="text-slate-400 hover:text-slate-900 transition-colors p-2 relative group">
+                <iconify-icon icon="lucide:history" width="24" stroke-width="1.5"></iconify-icon>
+            </button>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="mt-auto flex flex-col gap-6 items-center">
+            <button class="text-slate-400 hover:text-slate-900 transition-colors">
+                <iconify-icon icon="lucide:settings-2" width="24" stroke-width="1.5"></iconify-icon>
+            </button>
+            <!-- Wallet Status -->
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-400 to-orange-600 border-2 border-white shadow-sm flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-orange-200 transition-all">
+                <span class="w-2 h-2 bg-white rounded-full"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 h-full overflow-y-auto relative scroll-smooth bg-gray-50">
+        
+        <!-- Header Section -->
+        <header class="w-full bg-white border-b border-gray-200 pt-12 pb-8 px-8 lg:px-12 sticky top-0 z-40 bg-white/90 backdrop-blur-sm">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest border border-slate-200">Sepolia Testnet</span>
+                        <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-green-600">
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                            Operational
+                        </span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-heading font-normal text-slate-900 tracking-tight">
+                        Algorithmic <span class="italic text-slate-400 font-serif">Stability.</span>
+                    </h1>
+                </div>
+                
+                <!-- Wallet Connection (Top Right for mobile visibility) -->
+                <button id="connect-wallet-btn" class="group flex items-center gap-3 px-5 py-2.5 bg-slate-900 text-white rounded-lg shadow-md hover:bg-slate-800 hover:shadow-lg transition-all active:scale-95">
+                    <span class="text-sm font-medium">Connect Wallet</span>
+                    <iconify-icon icon="lucide:wallet" width="16" class="text-slate-400 group-hover:text-white transition-colors"></iconify-icon>
+                </button>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-8 lg:px-12 py-12 flex flex-col gap-12">
+
+            <!-- Market Stats Row -->
+            <section class="animate-slide-up">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- ETH Card -->
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow group cursor-default">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600">
+                                    <iconify-icon icon="lucide:gem" width="20"></iconify-icon>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Base Asset</div>
+                                    <div class="text-sm font-medium text-slate-900">Ethereum</div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-mono text-green-600 bg-green-50 px-2 py-1 rounded">+1.2%</span>
+                        </div>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-2xl font-heading text-slate-900">$<span id="price-eth">2,042.50</span></span>
+                        </div>
+                    </div>
+
+                    <!-- DJED Card -->
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow group cursor-default relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-4 -mt-4 z-0"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                                        <span class="font-heading font-bold">D</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-orange-600/70 uppercase tracking-widest font-semibold">Stablecoin</div>
+                                        <div class="text-sm font-medium text-slate-900">Djed</div>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded">PEG</span>
+                            </div>
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-2xl font-heading text-slate-900">$<span id="price-djed">1.00</span></span>
+                                <span class="text-xs text-slate-400 font-normal">Target</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SHEN Card -->
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow group cursor-default">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                                    <span class="font-heading font-bold">S</span>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-purple-600/70 uppercase tracking-widest font-semibold">Reserve</div>
+                                    <div class="text-sm font-medium text-slate-900">Shen</div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-mono text-green-600 bg-green-50 px-2 py-1 rounded">+3.4%</span>
+                        </div>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-2xl font-heading text-slate-900">$<span id="price-shen">2.45</span></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Interface Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pb-20">
+                
+                <!-- Left: Protocol Health & Info (5 Cols) -->
+                <div class="lg:col-span-5 space-y-8 animate-slide-up delay-100">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 relative overflow-hidden">
+                        <div class="absolute bottom-0 right-0 p-32 bg-orange-50/50 rounded-full blur-3xl -mr-16 -mb-16 pointer-events-none"></div>
+                        
+                        <div class="flex flex-col items-center text-center relative z-10">
+                            <h3 class="text-lg font-heading text-slate-900 mb-6">Protocol Health</h3>
+                            
+                            <!-- Custom SVG Gauge -->
+                            <div class="relative w-56 h-32 mb-4 overflow-hidden">
+                                <svg viewBox="0 0 200 110" class="w-full h-full transform">
+                                    <!-- Track -->
+                                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e2e8f0" stroke-width="12" stroke-linecap="round"></path>
+                                    <!-- Progress -->
+                                    <path id="health-gauge" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#f97316" stroke-width="12" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="125" class="gauge-path"></path>
+                                </svg>
+                                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-center mb-1">
+                                    <div class="text-4xl font-heading text-slate-900" id="ratio-display">546%</div>
+                                    <div class="text-xs text-slate-400 uppercase tracking-widest mt-1">Reserve Ratio</div>
+                                </div>
+                            </div>
+
+                            <div class="w-full space-y-4">
+                                <div class="flex justify-between items-center text-sm border-b border-gray-100 pb-3">
+                                    <span class="text-slate-500">Minimum Ratio</span>
+                                    <span class="font-mono text-slate-900">400%</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm border-b border-gray-100 pb-3">
+                                    <span class="text-slate-500">Maximum Ratio</span>
+                                    <span class="font-mono text-slate-900">800%</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-slate-500">Stability Status</span>
+                                    <span class="text-orange-600 font-medium bg-orange-50 px-2 py-0.5 rounded text-xs uppercase tracking-wide">Optimal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Info -->
+                    <div class="bg-slate-900 text-slate-300 rounded-2xl p-8 shadow-xl">
+                        <h3 class="text-white font-heading text-xl mb-4">The Peg Mechanism</h3>
+                        <p class="text-sm leading-relaxed opacity-80 mb-6">
+                            Djed maintains its peg to the dollar by buying and selling Shen reserve coins. When the reserve ratio is sufficient, the contract buys and sells Djed.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="text-xs uppercase tracking-widest font-bold text-white hover:text-orange-400 transition-colors flex items-center gap-2">
+                                Read Whitepaper <iconify-icon icon="lucide:arrow-right" width="14"></iconify-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Interaction Bank (7 Cols) -->
+                <div class="lg:col-span-7 animate-slide-up delay-200">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
+                        
+                        <!-- Tabs -->
+                        <div class="flex border-b border-gray-200">
+                            <button onclick="switchTab('mint')" id="tab-mint" class="flex-1 py-5 text-sm font-medium text-orange-600 border-b-2 border-orange-500 bg-orange-50/50 transition-all flex items-center justify-center gap-2">
+                                <iconify-icon icon="lucide:plus-circle" width="18"></iconify-icon> Mint
+                            </button>
+                            <button onclick="switchTab('redeem')" id="tab-redeem" class="flex-1 py-5 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-gray-50 transition-all flex items-center justify-center gap-2 border-b-2 border-transparent">
+                                <iconify-icon icon="lucide:minus-circle" width="18"></iconify-icon> Redeem
+                            </button>
+                        </div>
+
+                        <div class="p-8 lg:p-10 space-y-8">
+                            
+                            <!-- Asset Selection -->
+                            <div>
+                                <label class="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-4 block">Select Asset</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <label class="cursor-pointer group">
+                                        <input type="radio" name="token" value="DJED" class="peer sr-only" checked="" onchange="updateCalculation()">
+                                        <div class="p-4 rounded-xl border border-gray-200 bg-white hover:border-orange-300 peer-checked:border-orange-500 peer-checked:ring-1 peer-checked:ring-orange-500 peer-checked:bg-orange-50/30 transition-all flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-heading font-bold shadow-sm">D</div>
+                                            <div>
+                                                <div class="text-sm font-bold text-slate-900">DJED</div>
+                                                <div class="text-[10px] text-slate-500">Stablecoin</div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer group">
+                                        <input type="radio" name="token" value="SHEN" class="peer sr-only" onchange="updateCalculation()">
+                                        <div class="p-4 rounded-xl border border-gray-200 bg-white hover:border-purple-300 peer-checked:border-purple-500 peer-checked:ring-1 peer-checked:ring-purple-500 peer-checked:bg-purple-50/30 transition-all flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-heading font-bold shadow-sm">S</div>
+                                            <div>
+                                                <div class="text-sm font-bold text-slate-900">SHEN</div>
+                                                <div class="text-[10px] text-slate-500">Reserve Coin</div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Input Section -->
+                            <div class="space-y-6">
+                                <div class="relative">
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-xs font-semibold text-slate-500 uppercase" id="input-label">You Pay</label>
+                                        <span class="text-xs text-orange-600 cursor-pointer hover:underline font-medium">Balance: 4.2 ETH</span>
+                                    </div>
+                                    <div class="relative group">
+                                        <input type="number" id="amount-in" placeholder="0.00" class="w-full bg-white border border-gray-200 rounded-lg pl-4 pr-24 py-4 text-xl font-mono text-slate-900 placeholder-slate-300 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-sm" oninput="updateCalculation()">
+                                        <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                                            <span class="text-xs text-slate-400">|</span>
+                                            <span class="text-sm font-bold text-slate-700" id="ticker-in">ETH</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-center -my-3 relative z-10">
+                                    <div class="w-8 h-8 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-slate-400 shadow-sm">
+                                        <iconify-icon icon="lucide:arrow-down" width="16"></iconify-icon>
+                                    </div>
+                                </div>
+
+                                <div class="relative">
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-xs font-semibold text-slate-500 uppercase" id="output-label">You Receive</label>
+                                        <span class="text-xs text-slate-400">Est. Slippage &lt; 0.01%</span>
+                                    </div>
+                                    <div class="relative group">
+                                        <input type="text" id="amount-out" placeholder="0.00" readonly="" class="w-full bg-gray-50 border border-gray-200 rounded-lg pl-4 pr-24 py-4 text-xl font-mono text-slate-600 focus:outline-none cursor-default">
+                                        <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                                            <span class="text-xs text-slate-400">|</span>
+                                            <span class="text-sm font-bold text-slate-700" id="ticker-out">DJED</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Summary -->
+                            <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 space-y-3">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-slate-500">Exchange Rate</span>
+                                    <span class="text-slate-700 font-mono" id="rate-display">1 ETH = 2042.50 DJED</span>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-slate-500">Platform Fee</span>
+                                    <span class="text-slate-700 font-mono">1.5%</span>
+                                </div>
+                                <div class="border-t border-gray-200 pt-3 flex justify-between text-sm font-medium">
+                                    <span class="text-slate-700">Total Cost</span>
+                                    <span class="text-slate-900 font-mono">~$12.40</span>
+                                </div>
+                            </div>
+
+                            <!-- Action Button -->
+                            <button id="action-btn" class="w-full py-4 bg-slate-900 text-white text-sm font-medium uppercase tracking-widest rounded-lg shadow-lg hover:bg-slate-800 hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                                Connect Wallet
+                                <iconify-icon icon="lucide:arrow-right" width="16"></iconify-icon>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-200 py-12 px-8 lg:px-12 bg-white">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-slate-400 text-xs font-medium">
+                <p>© 2024 Djed Tefnut Protocol. Testnet Build.</p>
+                <div class="flex gap-8 mt-4 md:mt-0">
+                    <span class="cursor-pointer hover:text-orange-600 transition-colors">Documentation</span>
+                    <span class="cursor-pointer hover:text-orange-600 transition-colors">Audit Report</span>
+                    <span class="cursor-pointer hover:text-orange-600 transition-colors">GitHub</span>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- Bank Logic ---
+        
+        // Constants
+        const PRICES = {
+            ETH: 2042.50,
+            DJED: 1.00,
+            SHEN: 2.45
+        };
+        const FEES = 0.015; // 1.5%
+
+        // State
+        let currentTab = 'mint';
+        let currentToken = 'DJED';
+
+        // Elements
+        const elAmountIn = document.getElementById('amount-in');
+        const elAmountOut = document.getElementById('amount-out');
+        const elTickerIn = document.getElementById('ticker-in');
+        const elTickerOut = document.getElementById('ticker-out');
+        const elRateDisplay = document.getElementById('rate-display');
+        const elActionBtn = document.getElementById('action-btn');
+        const elInputLabel = document.getElementById('input-label');
+        const elOutputLabel = document.getElementById('output-label');
+        const btnMint = document.getElementById('tab-mint');
+        const btnRedeem = document.getElementById('tab-redeem');
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Style Updates
+            if(tab === 'mint') {
+                btnMint.classList.remove('text-slate-500', 'border-transparent', 'hover:bg-gray-50');
+                btnMint.classList.add('text-orange-600', 'border-orange-500', 'bg-orange-50/50');
+                
+                btnRedeem.classList.add('text-slate-500', 'border-transparent', 'hover:bg-gray-50');
+                btnRedeem.classList.remove('text-orange-600', 'border-orange-500', 'bg-orange-50/50');
+                
+                elActionBtn.innerHTML = `Connect Wallet to Mint <iconify-icon icon="lucide:arrow-right" width="16"></iconify-icon>`;
+                elInputLabel.innerText = "You Pay";
+            } else {
+                btnRedeem.classList.remove('text-slate-500', 'border-transparent', 'hover:bg-gray-50');
+                btnRedeem.classList.add('text-orange-600', 'border-orange-500', 'bg-orange-50/50');
+                
+                btnMint.classList.add('text-slate-500', 'border-transparent', 'hover:bg-gray-50');
+                btnMint.classList.remove('text-orange-600', 'border-orange-500', 'bg-orange-50/50');
+                
+                elActionBtn.innerHTML = `Connect Wallet to Redeem <iconify-icon icon="lucide:arrow-right" width="16"></iconify-icon>`;
+                elInputLabel.innerText = "You Burn";
+            }
+            
+            updateLabels();
+            updateCalculation();
+        }
+
+        function updateLabels() {
+            const radios = document.getElementsByName('token');
+            for (let radio of radios) {
+                if (radio.checked) currentToken = radio.value;
+            }
+
+            if (currentTab === 'mint') {
+                elTickerIn.innerText = "ETH";
+                elTickerOut.innerText = currentToken;
+            } else {
+                elTickerIn.innerText = currentToken;
+                elTickerOut.innerText = "ETH";
+            }
+        }
+
+        function updateCalculation() {
+            updateLabels();
+            const val = parseFloat(elAmountIn.value);
+            
+            if (isNaN(val) || val <= 0) {
+                elAmountOut.value = "";
+                elRateDisplay.innerText = "-";
+                return;
+            }
+
+            let result = 0;
+            let rateText = "";
+
+            if (currentTab === 'mint') {
+                // ETH -> Token
+                const ethValue = val * PRICES.ETH;
+                const tokenPrice = PRICES[currentToken];
+                const rawAmount = ethValue / tokenPrice;
+                const finalAmount = rawAmount * (1 - FEES);
+                
+                result = finalAmount;
+                rateText = `1 ETH = ${(PRICES.ETH / tokenPrice).toFixed(2)} ${currentToken}`;
+
+            } else {
+                // Token -> ETH
+                const tokenValue = val * PRICES[currentToken];
+                const rawEth = tokenValue / PRICES.ETH;
+                const finalEth = rawEth * (1 - FEES);
+
+                result = finalEth;
+                rateText = `1 ${currentToken} = ${(PRICES[currentToken] / PRICES.ETH).toFixed(6)} ETH`;
+            }
+
+            elAmountOut.value = result.toFixed(4);
+            elRateDisplay.innerText = rateText;
+        }
+
+        // --- Gauge Animation ---
+        const gaugePath = document.getElementById('health-gauge');
+        const ratioDisplay = document.getElementById('ratio-display');
+        let currentRatio = 546;
+
+        setInterval(() => {
+            const change = (Math.random() - 0.5) * 8; 
+            currentRatio = Math.max(400, Math.min(800, currentRatio + change));
+            
+            ratioDisplay.innerText = Math.floor(currentRatio) + "%";
+            
+            // Max dasharray is approx 251 (2 * PI * 40 - partial circle logic)
+            // Let's approximate the stroke-dashoffset logic for the SVG path
+            // Range 400% to 800%
+            const percentage = (currentRatio - 400) / 400; // 0 to 1
+            // Invert logic for dashoffset: 251 is empty, 0 is full (roughly)
+            const offset = 251 - (200 * percentage); 
+            
+            gaugePath.style.strokeDashoffset = offset;
+            
+            // Visual warning color
+            if(currentRatio < 420) {
+                gaugePath.setAttribute('stroke', '#ef4444'); // Red warning
+            } else {
+                gaugePath.setAttribute('stroke', '#f97316'); // Orange normal
+            }
+        }, 3000);
+
+    </script>
+
+</body></html>
