@@ -1,0 +1,36 @@
+.wsc-button {
+  background: linear-gradient(91.41deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
+  border: 2px solid #5f606e;
+  transition: 0.3s;
+  color: #ffffff;
+  cursor: pointer;
+  width: 100%;
+  padding: 0.5em 1.25em;
+  border-radius: 8px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  outline: none;
+  .text {
+    margin: 0 14px;
+    font-weight: 600;
+  }
+  &:hover {
+    background: #474853;
+    border: 2px solid #474853;
+    color: #ffffff;
+  }
+  &:disabled {
+    border: 2px solid #5f606e;
+    background: transparent;
+    opacity: 0.8;
+    color: #bbbbbb;
+    cursor: initial;
+  }
+}
+
+.step-1-content{}
+.step-2-content{}
+.step-3-content{}
+.step-4-content{}

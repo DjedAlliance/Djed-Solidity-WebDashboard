@@ -10403,21 +10403,11 @@
   "ast": {
     "absolutePath": "project:/src/Coin.sol",
     "exportedSymbols": {
-      "Coin": [
-        874
-      ],
-      "Context": [
-        710
-      ],
-      "ERC20": [
-        585
-      ],
-      "IERC20": [
-        663
-      ],
-      "IERC20Metadata": [
-        688
-      ]
+      "Coin": [874],
+      "Context": [710],
+      "ERC20": [585],
+      "IERC20": [663],
+      "IERC20Metadata": [688]
     },
     "id": 875,
     "license": "AFEL",
@@ -10425,12 +10415,7 @@
     "nodes": [
       {
         "id": 800,
-        "literals": [
-          "solidity",
-          "^",
-          "0.8",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.8", ".0"],
         "nodeType": "PragmaDirective",
         "src": "33:23:5"
       },
@@ -10467,13 +10452,7 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 874,
-        "linearizedBaseContracts": [
-          874,
-          585,
-          688,
-          663,
-          710
-        ],
+        "linearizedBaseContracts": [874, 585, 688, 663, 710],
         "name": "Coin",
         "nameLocation": "124:4:5",
         "nodeType": "ContractDefinition",
@@ -10602,10 +10581,7 @@
                       "id": 807,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "194:7:5",
                       "typeDescriptions": {
@@ -10839,9 +10815,7 @@
             "visibility": "public"
           },
           {
-            "baseFunctions": [
-              74
-            ],
+            "baseFunctions": [74],
             "body": {
               "id": 842,
               "nodeType": "Block",

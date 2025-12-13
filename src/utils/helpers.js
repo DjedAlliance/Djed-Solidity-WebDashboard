@@ -2,18 +2,24 @@
 
 import { BN } from "web3-utils";
 import { TRANSACTION_VALIDITY } from "./constants";
+import { ethers } from "ethers";
 
 export function web3Promise(contract, method, ...args) {
   return contract.methods[method](...args).call();
 }
 
-export function buildTx(from_, to_, value_, data_) {
-  return {
+// TODO: change setGasLimit to false by default
+export function buildTx(from_, to_, value_, data_, setGasLimit = true) {
+  const tx = {
     to: to_,
     from: from_,
     value: "0x" + new BN(value_).toString(16),
     data: data_
   };
+  if (setGasLimit) {
+    tx.gasLimit = 500_000;
+  }
+  return tx;
 }
 
 export function convertInt(promise) {
@@ -33,12 +39,14 @@ function intersperseCommas(s) {
   }
 }
 
-export function decimalScaling(unscaledString, decimals, show = 3) {
+export function decimalScaling(unscaledString, decimals, show = 6) {
   if (decimals <= 0) {
     return unscaledString + "0".repeat(-decimals);
   }
+
   let prefix;
   let suffix;
+
   if (unscaledString.length <= decimals) {
     prefix = "0";
     suffix = "0".repeat(decimals - unscaledString.length) + unscaledString;
@@ -46,9 +54,17 @@ export function decimalScaling(unscaledString, decimals, show = 3) {
     prefix = unscaledString.slice(0, -decimals);
     suffix = unscaledString.slice(-decimals);
   }
+
   suffix = suffix.slice(0, show);
   suffix = intersperseCommas(suffix);
+
+  if (show <= decimals) {
+    // Remove commas after the decimal point
+    suffix = suffix.replace(/,/g, "");
+  }
+
   prefix = reverseString(intersperseCommas(reverseString(prefix)));
+
   return prefix + "." + suffix;
 }
 
@@ -74,12 +90,16 @@ export function scaledUnscaledPromise(promise, scaling) {
   return promise.then((value) => [decimalScaling(value.toString(10), scaling), value]);
 }
 
-export function percentageScale(value, scaling) {
-  return decimalScaling(value.toString(10), scaling - 2, 2);
+export function percentageScale(value, scaling, showSymbol = false) {
+  const calculatedValue = decimalScaling(value.toString(10), scaling - 2, 2);
+  if (showSymbol) {
+    return calculatedValue + "%";
+  }
+  return calculatedValue;
 }
 
 export function percentScaledPromise(promise, scaling) {
-  return promise.then((value) => percentageScale(value, scaling) + "%");
+  return promise.then((value) => percentageScale(value, scaling, true));
 }
 
 // currency conversions:
@@ -106,7 +126,7 @@ export function getRcUsdEquivalent(coinsDetails, amountFloat) {
 export function getScAdaEquivalent(coinsDetails, amountFloat) {
   const adaPerSc = parseFloat(coinsDetails?.scaledPriceSc.replaceAll(",", ""));
   const eqPrice = 1e6 * amountFloat * adaPerSc;
-  return decimalScaling(eqPrice.toFixed(0).toString(10), 6) + " milktADA";
+  return decimalScaling(eqPrice.toFixed(0).toString(10), 6);
 }
 
 export function validatePositiveNumber(amountScaled) {
@@ -123,4 +143,8 @@ export function validatePositiveNumber(amountScaled) {
   } else {
     return TRANSACTION_VALIDITY.OK;
   }
+}
+
+export function stringToBigNumber(value, decimals) {
+  return ethers.utils.parseUnits(value, decimals);
 }

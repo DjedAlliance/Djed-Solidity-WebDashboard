@@ -1,7 +1,9 @@
 import React from "react";
 import CoinIndicator from "../../atoms/CoinIndictor/CoinIndicator";
 import "./_CoinCard.scss";
-import { decimalScaling } from "../../../utils/helpers";
+// import { decimalScaling } from "../../../utils/helpers";
+
+const CHAIN_COIN = process.env.REACT_APP_CHAIN_COIN;
 
 const CoinCard = ({
   coinIcon,
@@ -12,8 +14,8 @@ const CoinCard = ({
   tokenName,
   equivalence
 }) => {
-  const invPrice = 1e6 / parseFloat(priceAmount?.replaceAll(",", ""));
-  const invPriceScaled = decimalScaling(invPrice.toFixed(0).toString(10), 6);
+  // const invPrice = 1e6 / parseFloat(priceAmount?.replaceAll(",", ""));
+  // const invPriceScaled = decimalScaling(invPrice.toFixed(0).toString(10), 6);
 
   return (
     <div className="CoinCard">
@@ -22,14 +24,20 @@ const CoinCard = ({
       {sellPriceAmount && priceAmount !== sellPriceAmount ? (
         <div className="PriceInfo">
           <span>Current Buy Price</span>
-          <h3>{priceAmount} milktADA</h3>
+          <h3>
+            {priceAmount} {CHAIN_COIN}
+          </h3>
           <span>Current Sell Price</span>
-          <h3>{sellPriceAmount} milktADA</h3>
+          <h3>
+            {sellPriceAmount} {CHAIN_COIN}
+          </h3>
         </div>
       ) : (
         <div className="PriceInfo">
           <span>Current Price</span>
-          <h3>{priceAmount} milktADA</h3>
+          <h3>
+            {priceAmount} {CHAIN_COIN}
+          </h3>
         </div>
       )}
       <div className="AdditionalInfo">
@@ -39,12 +47,6 @@ const CoinCard = ({
             {circulatingAmount} {tokenName}
           </p>
           {equivalence ? <p>≈ {equivalence}</p> : null}
-        </div>
-        <div className="InfoItem">
-          <span>Current Ratio</span>
-          <p>
-            1 milktADA = {invPriceScaled} {tokenName}
-          </p>
         </div>
       </div>
     </div>

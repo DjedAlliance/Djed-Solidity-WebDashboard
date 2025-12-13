@@ -9,8 +9,12 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
-import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY } from "../utils/constants";
-import { getScAdaEquivalent, validatePositiveNumber } from "../utils/helpers";
+import { TRANSACTION_VALIDITY } from "../utils/constants";
+import {
+  getScAdaEquivalent,
+  stringToBigNumber,
+  validatePositiveNumber
+} from "../utils/helpers";
 import {
   buyScTx,
   promiseTx,
@@ -19,8 +23,23 @@ import {
   tradeDataPriceSellSc,
   checkBuyableSc,
   checkSellableSc,
-  verifyTx
+  verifyTx,
+  BC_DECIMALS,
+  calculateTxFees,
+  isTxLimitReached,
+  DJED_ADDRESS,
+  FEE_UI_UNSCALED,
+  UI
 } from "../utils/ethereum";
+import { BigNumber, ethers } from "ethers";
+import { useAccount } from "wagmi";
+import djedArtifact from "../artifacts/Djed.json";
+import {
+  ConnectWSCButton,
+  TransactionConfigWSCProvider,
+  useModal as useWSCModal,
+  useWSCProvider
+} from "milkomeda-wsc-ui-test-beta";
 
 export default function Stablecoin() {
   const {
@@ -32,12 +51,20 @@ export default function Stablecoin() {
     decimals,
     accountDetails,
     coinBudgets,
-    accounts,
-    systemParams
+    account,
+    signer,
+    systemParams,
+    isRatioAboveMin,
+    coinContracts,
+    getFutureScPrice
   } = useAppProvider();
+  const { isWSCConnected } = useWSCProvider();
+  const { setOpen } = useWSCModal();
+
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [txError, setTxError] = useState(null);
   const [txStatus, setTxStatus] = useState("idle");
   const [buyValidity, setBuyValidity] = useState(
@@ -65,13 +92,42 @@ export default function Stablecoin() {
           amountScaled
         );
 
+        const futureSCPrice = await getFutureScPrice({
+          amountBC: data.totalUnscaled,
+          amountSC: data.amountUnscaled
+        });
+        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
+        const isRatioAboveMinimum = isRatioAboveMin({
+          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc).add(
+            BigNumber.from(data.amountUnscaled)
+          ),
+          scPrice: BigNumber.from(futureSCPrice),
+          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
+            BigNumber.from(data.totalUnscaled).add(f)
+          )
+        });
+
         setTradeData(data);
         if (!isWalletConnected) {
           setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (amountScaled >= TRANSACTION_USD_LIMIT) {
+        } else if (
+          isTxLimitReached(
+            amountScaled,
+            coinsDetails.unscaledNumberSc,
+            systemParams.thresholdSupplySC
+          )
+        ) {
           setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
+        } else if (
+          stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
+            stringToBigNumber(data.totalBCUnscaled, BC_DECIMALS)
+          )
+        ) {
+          setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
+        } else if (!isRatioAboveMinimum) {
+          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
         } else {
           checkBuyableSc(
             djedContract,
@@ -106,8 +162,20 @@ export default function Stablecoin() {
           setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
         } else if (isWrongChain) {
           setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (amountScaled >= TRANSACTION_USD_LIMIT) {
+        } else if (
+          isTxLimitReached(
+            amountScaled,
+            coinsDetails.unscaledNumberSc,
+            systemParams.thresholdSupplySC
+          )
+        ) {
           setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
+        } else if (
+          stringToBigNumber(accountDetails.unscaledBalanceSc, decimals.scDecimals).lt(
+            stringToBigNumber(data.amountUnscaled, decimals.scDecimals)
+          )
+        ) {
+          setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_SC);
         } else {
           checkSellableSc(data.amountUnscaled, accountDetails?.unscaledBalanceSc).then(
             (res) => setSellValidity(res)
@@ -132,8 +200,8 @@ export default function Stablecoin() {
   const buySc = (total) => {
     console.log("Attempting to buy SC for", total);
     setTxStatus("pending");
-    promiseTx(accounts, buyScTx(djedContract, accounts[0], total))
-      .then((hash) => {
+    promiseTx(isWalletConnected, buyScTx(djedContract, account, total), signer)
+      .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
           if (res) {
             console.log("Buy SC success!");
@@ -155,8 +223,8 @@ export default function Stablecoin() {
   const sellSc = (amount) => {
     console.log("Attempting to sell SC in amount", amount);
     setTxStatus("pending");
-    promiseTx(accounts, sellScTx(djedContract, accounts[0], amount))
-      .then((hash) => {
+    promiseTx(isWalletConnected, sellScTx(djedContract, account, amount), signer)
+      .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
           if (res) {
             console.log("Sell SC success!");
@@ -175,15 +243,34 @@ export default function Stablecoin() {
       });
   };
 
+  const currentAmount = isBuyActive
+    ? tradeData.totalBCUnscaled
+    : tradeData.amountUnscaled;
+
   const tradeFxn = isBuyActive
     ? buySc.bind(null, tradeData.totalBCUnscaled)
     : sellSc.bind(null, tradeData.amountUnscaled);
+
+  const onSubmit = (e) => {
+    if (!isWalletConnected) return;
+    if (!termsAccepted) return;
+    e.preventDefault();
+    if (isWSCConnected) {
+      setOpen(true);
+      return;
+    }
+    tradeFxn();
+  };
 
   const transactionValidated = isBuyActive
     ? buyValidity === TRANSACTION_VALIDITY.OK
     : sellValidity === TRANSACTION_VALIDITY.OK;
 
-  const buttonDisabled = value === null || isWrongChain || !transactionValidated;
+  const buttonDisabled =
+    isNaN(parseFloat(value)) ||
+    parseFloat(value) === 0 ||
+    isWrongChain ||
+    !transactionValidated;
 
   const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
@@ -192,29 +279,64 @@ export default function Stablecoin() {
     <main style={{ padding: "1rem 0" }}>
       <div className="StablecoinSection">
         <div className="Left">
-          <h1>StableDjed {/*<strong>Name</strong>*/}</h1>
+          <h1>StableCoin {/*<strong>Name</strong>*/}</h1>
           <div className="DescriptionContainer">
             <p>
-              StableDjed is the USD-pegged stablecoin which is part of the Djed protocol.
-              Each StableDjed is backed by 400-600% collateral of testnet milkADA. As
-              such, each StableDjed is able to maintain this peg without a centralized
-              monetary policy based on the collateral requirements. This peg is
-              automatically maintained with price fluctuations up and until the price of
-              ADA dips so low that the collateral value decreases to under 100%.
+              The StableCoin of this Djed deployment is called{" "}
+              <strong>{process.env.REACT_APP_SC_NAME}</strong>. It is pegged to the USD,
+              similarly to various{" "}
+              <a
+                href="https://en.wikipedia.org/wiki/List_of_circulating_fixed_exchange_rate_currencies"
+                target="_blank"
+                rel="noreferrer"
+              >
+                fixed exchange rate national currencies
+              </a>
+              , at a ratio of 1 to 1. One Djed Stablecoin is nominally worth 1 USD. The
+              peg is maintained through a reserve of {process.env.REACT_APP_CHAIN_COIN}.
+              The Djed protocol aims to maintain a reserve ratio between{" "}
+              {systemParams?.reserveRatioMin} and {systemParams?.reserveRatioMax}. This
+              means that, when the reserve ratio is in this range, every StableCoin is
+              backed by an amount of {process.env.REACT_APP_CHAIN_COIN} worth at least 4
+              USD and is able to tolerate an instantaneous{" "}
+              {process.env.REACT_APP_CHAIN_COIN} price crash of at least 75%.
             </p>
             <p>
-              The Djed protocol allows users who own StableDjed to always sell their
-              tokens back to the protocol in order to withdraw an equivalent value of
-              testnet milkADA. As such, StableDjed is aimed for users who want to maintain
-              stability of value in their assets.
+              You are always allowed to sell back StableCoins to Djed. Djed pays 1 USD
+              worth of {process.env.REACT_APP_CHAIN_COIN} per StableCoin if the reserve
+              ratio is above 100% or R/S per StableCoin otherwise, where R is Djed's total{" "}
+              {process.env.REACT_APP_CHAIN_COIN} reserve and S is the StableCoin supply.
+            </p>
+            <p>
+              You are allowed to buy StableCoins from Djed for a price of 1 USD worth of
+              {process.env.REACT_APP_CHAIN_COIN} per StableCoin, whenever the reserve
+              ratio is above {systemParams?.reserveRatioMin}. When the reserve ratio is
+              below {systemParams?.reserveRatioMin}, the purchase of StableCoins from Djed
+              is disallowed, because it would reduce the reserve ratio further.
+            </p>
+            <p>
+              There is a limit of {process.env.REACT_APP_LIMIT_PER_TXN} USD worth of{" "}
+              {process.env.REACT_APP_CHAIN_COIN} per transaction.
+            </p>
+            <p>
+              StableCoins are implemented as a standard ERC-20 token contract and the
+              contract's address is{" "}
+              <a
+                href={`${process.env.REACT_APP_EXPLORER}address/${coinContracts?.stableCoin._address}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {coinContracts?.stableCoin._address}
+              </a>
+              .
             </p>
           </div>
           <CoinCard
             coinIcon="/coin-icon-one.png"
-            coinName="StableDjed"
+            coinName={`${process.env.REACT_APP_SC_NAME}`}
             priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
             circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
-            tokenName="StableDjed"
+            tokenName="SC"
             equivalence={scConverted}
           />
         </div>
@@ -223,34 +345,50 @@ export default function Stablecoin() {
             <strong>
               Buy <>&amp;</> Sell
             </strong>{" "}
-            StableDjed
+            {process.env.REACT_APP_SC_NAME}
           </h2>
-          <div className="PurchaseContainer">
-            <OperationSelector
-              coinName="StableDjed"
-              selectionCallback={() => {
-                setBuyOrSell();
-                setValue(null);
-                setBuyValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
-                setSellValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
-              }}
-              onChangeBuyInput={onChangeBuyInput}
-              onChangeSellInput={onChangeSellInput}
-              tradeData={tradeData}
-              inputValue={value}
-              scaledCoinBalance={accountDetails?.scaledBalanceSc}
-              scaledBaseBalance={accountDetails?.scaledBalanceBc}
-              fee={systemParams?.fee}
-              treasuryFee={systemParams?.treasuryFee}
-              buyValidity={buyValidity}
-              sellValidity={sellValidity}
+          <form onSubmit={onSubmit}>
+            <div className="PurchaseContainer">
+              <OperationSelector
+                coinName={`${process.env.REACT_APP_SC_SYMBOL}`}
+                selectionCallback={() => {
+                  setBuyOrSell();
+                  setValue(null);
+                  setBuyValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
+                  setSellValidity(TRANSACTION_VALIDITY.ZERO_INPUT);
+                }}
+                onChangeBuyInput={onChangeBuyInput}
+                onChangeSellInput={onChangeSellInput}
+                tradeData={tradeData}
+                inputValue={value}
+                scaledCoinBalance={accountDetails?.scaledBalanceSc}
+                scaledBaseBalance={accountDetails?.scaledBalanceBc}
+                fee={systemParams?.fee}
+                treasuryFee={systemParams?.treasuryFee}
+                buyValidity={buyValidity}
+                sellValidity={sellValidity}
+                isSellDisabled={Number(coinsDetails?.unscaledNumberSc) === 0}
+              />
+            </div>
+            <input
+              type="checkbox"
+              name="accept-terms"
+              onChange={() => setTermsAccepted(!termsAccepted)}
+              checked={termsAccepted}
+              required
             />
-          </div>
-          <div className="ConnectWallet">
-            <br />
-            {isWalletConnected ? (
-              <>
-                {/*value != null ? (
+            <label htmlFor="accept-terms" className="accept-terms">
+              I agree to the{" "}
+              <a href="/terms-of-use" target="_blank" rel="noreferrer">
+                Terms of Use
+              </a>
+              .
+            </label>
+            <div className="ConnectWallet">
+              <br />
+              {isWalletConnected ? (
+                <>
+                  {/*value != null ? (
                   <p className="Disclaimer">
                     This transaction is expected to{" "}
                     {transactionValidated ? (
@@ -260,22 +398,34 @@ export default function Stablecoin() {
                     )}
                   </p>
                     ) : null*/}
-                <BuySellButton
-                  disabled={buttonDisabled}
-                  onClick={tradeFxn}
-                  buyOrSell={buyOrSell}
-                  currencyName="StableDjed"
-                />
-              </>
-            ) : (
-              <>
-                <p className="Disclaimer">
-                  In order to operate you need to connect your wallet
-                </p>
-                <MetamaskConnectButton />
-              </>
-            )}
-          </div>
+
+                  {isWSCConnected ? (
+                    <WSCButton
+                      disabled={value === null || isWrongChain || !termsAccepted}
+                      currentAmount={currentAmount}
+                      stepTxDirection={isBuyActive ? "buy" : "sell"}
+                      unwrapAmount={
+                        isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
+                      }
+                    />
+                  ) : (
+                    <BuySellButton
+                      disabled={buttonDisabled}
+                      buyOrSell={buyOrSell}
+                      currencyName={`${process.env.REACT_APP_SC_NAME}`}
+                    />
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="Disclaimer">
+                    In order to interact, you need to connect your wallet.
+                  </p>
+                  <MetamaskConnectButton />
+                </>
+              )}
+            </div>
+          </form>
           {txStatusRejected && (
             <ModalTransaction
               transactionType="Failed Transaction"
@@ -304,3 +454,59 @@ export default function Stablecoin() {
     </main>
   );
 }
+
+const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
+  const { address: account } = useAccount();
+
+  const buyOptions = {
+    defaultWrapToken: {
+      unit: "lovelace",
+      amount: currentAmount // amountUnscaled
+    },
+    defaultUnwrapToken: {
+      unit: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
+      amount: unwrapAmount // amountUnscaled
+    },
+    titleModal: "Buy SC with WSC",
+    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
+    evmContractRequest: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "buyStableCoins", //account, FEE_UI_UNSCALED, UI
+      args: [account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: ethers.BigNumber.from(currentAmount ?? "0")
+      }
+    }
+  };
+
+  const sellOptions = {
+    defaultWrapToken: {
+      unit: process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS,
+      amount: currentAmount
+    },
+    defaultUnwrapToken: {
+      unit: "",
+      amount: unwrapAmount // totalBCUnscaled
+    },
+    titleModal: "Sell SC with WSC",
+    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
+    evmContractRequest: {
+      address: DJED_ADDRESS,
+      abi: djedArtifact.abi,
+      functionName: "sellStableCoins", //amount, account, FEE_UI_UNSCALED, UI
+      args: [currentAmount, account, FEE_UI_UNSCALED, UI],
+      overrides: {
+        value: ethers.BigNumber.from("0")
+      }
+    }
+  };
+
+  return (
+    <TransactionConfigWSCProvider
+      options={stepTxDirection === "buy" ? buyOptions : sellOptions}
+    >
+      <ConnectWSCButton disabled={disabled} />
+    </TransactionConfigWSCProvider>
+  );
+};

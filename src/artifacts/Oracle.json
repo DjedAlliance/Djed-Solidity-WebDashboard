@@ -14,14 +14,9 @@
           "type": "string"
         },
         {
-          "internalType": "uint256",
-          "name": "_lockingPeriod",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_baseFee",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "_termsOfService",
+          "type": "string"
         }
       ],
       "stateMutability": "nonpayable",
@@ -33,137 +28,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "writes",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "reads",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "fee",
-          "type": "uint256"
-        }
-      ],
-      "name": "BaseFeeAdjusted",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "CreditDeposited",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "CreditWithdrawn",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "weight",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
           "name": "data",
-          "type": "uint256"
-        }
-      ],
-      "name": "DataRead",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "data",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "cost",
           "type": "uint256"
         }
       ],
       "name": "DataWritten",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "maxFee",
-          "type": "uint256"
-        }
-      ],
-      "name": "MaxFeeAdjusted",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "maxFeeTimelock",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "maxFeeNext",
-          "type": "uint256"
-        }
-      ],
-      "name": "MaxFeeAdjustmentScheduled",
       "type": "event"
     },
     {
@@ -235,44 +104,6 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "cost",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "revenue",
-          "type": "uint256"
-        }
-      ],
-      "name": "Reset",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "receiver",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "RevenueWithdrawn",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
           "internalType": "address",
           "name": "a",
           "type": "address"
@@ -307,48 +138,30 @@
       "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "weight",
-          "type": "uint256"
-        }
-      ],
-      "name": "WeightAdjusted",
-      "type": "event"
+      "inputs": [],
+      "name": "acceptTermsOfService",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
     {
-      "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
           "internalType": "address",
-          "name": "consumer",
+          "name": "",
           "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "weightTimelock",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "weightNext",
-          "type": "uint256"
         }
       ],
-      "name": "WeightAdjustmentScheduled",
-      "type": "event"
+      "name": "acceptedTermsOfService",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "inputs": [
@@ -365,20 +178,6 @@
     },
     {
       "inputs": [],
-      "name": "baseFee",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [],
       "name": "description",
       "outputs": [
         {
@@ -388,12 +187,11 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
-      "name": "latestCost",
+      "name": "numOwners",
       "outputs": [
         {
           "internalType": "uint256",
@@ -402,78 +200,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [],
-      "name": "latestWrite",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [],
-      "name": "lockingPeriod",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [],
-      "name": "maxFee",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [],
-      "name": "maxFeeNext",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [],
-      "name": "maxFeeTimelock",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -492,18 +219,59 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "a",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
           "type": "address"
         }
       ],
-      "name": "remove",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "name": "opposers",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "scaling",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "opposing",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "oppositionCounter",
       "outputs": [
         {
           "internalType": "uint256",
@@ -512,8 +280,52 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "readData",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "a",
+          "type": "address"
+        }
+      ],
+      "name": "remove",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
     {
       "inputs": [
@@ -529,8 +341,14 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "totalCredit",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "supportCounter",
       "outputs": [
         {
           "internalType": "uint256",
@@ -539,8 +357,68 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "supporters",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "supporting",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "termsOfService",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "inputs": [
@@ -574,211 +452,9 @@
           "internalType": "uint256",
           "name": "_data",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "cost",
-          "type": "uint256"
         }
       ],
       "name": "writeData",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "readData",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "inspectData",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        }
-      ],
-      "name": "creditOf",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        }
-      ],
-      "name": "weightOf",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        }
-      ],
-      "name": "feeOf",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_weightNext",
-          "type": "uint256"
-        }
-      ],
-      "name": "scheduleWeightAdjustment",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        }
-      ],
-      "name": "adjustWeight",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_maxFeeNext",
-          "type": "uint256"
-        }
-      ],
-      "name": "scheduleMaxFeeAdjustment",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "adjustMaxFee",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "adjustBaseFee",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "consumer",
-          "type": "address"
-        }
-      ],
-      "name": "depositCredit",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function",
-      "payable": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "withdrawCredit",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "receiver",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "withdraw",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "resetCostAndRevenue",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -14422,12 +14098,8 @@
   "ast": {
     "absolutePath": "project:/contracts/Oracle.sol",
     "exportedSymbols": {
-      "MultiOwnable": [
-        558
-      ],
-      "Oracle": [
-        1237
-      ]
+      "MultiOwnable": [558],
+      "Oracle": [1237]
     },
     "id": 1238,
     "license": "UNLICENSED",
@@ -14435,11 +14107,7 @@
     "nodes": [
       {
         "id": 560,
-        "literals": [
-          "solidity",
-          "0.8",
-          ".16"
-        ],
+        "literals": ["solidity", "0.8", ".16"],
         "nodeType": "PragmaDirective",
         "src": "40:23:2"
       },
@@ -14462,9 +14130,7 @@
             "baseName": {
               "id": 562,
               "name": "MultiOwnable",
-              "nameLocations": [
-                "118:12:2"
-              ],
+              "nameLocations": ["118:12:2"],
               "nodeType": "IdentifierPath",
               "referencedDeclaration": 558,
               "src": "118:12:2"
@@ -14479,10 +14145,7 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 1237,
-        "linearizedBaseContracts": [
-          1237,
-          558
-        ],
+        "linearizedBaseContracts": [1237, 558],
         "name": "Oracle",
         "nameLocation": "108:6:2",
         "nodeType": "ContractDefinition",
@@ -16320,9 +15983,7 @@
                 "modifierName": {
                   "id": 699,
                   "name": "MultiOwnable",
-                  "nameLocations": [
-                    "2849:12:2"
-                  ],
+                  "nameLocations": ["2849:12:2"],
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 558,
                   "src": "2849:12:2"
@@ -16742,9 +16403,7 @@
                 "modifierName": {
                   "id": 728,
                   "name": "onlyOwner",
-                  "nameLocations": [
-                    "3122:9:2"
-                  ],
+                  "nameLocations": ["3122:9:2"],
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 114,
                   "src": "3122:9:2"
@@ -16836,9 +16495,7 @@
               "src": "3344:432:2",
               "statements": [
                 {
-                  "assignments": [
-                    760
-                  ],
+                  "assignments": [760],
                   "declarations": [
                     {
                       "constant": false,
@@ -16937,9 +16594,7 @@
                   "src": "3355:29:2"
                 },
                 {
-                  "assignments": [
-                    767
-                  ],
+                  "assignments": [767],
                   "declarations": [
                     {
                       "constant": false,
@@ -17026,10 +16681,7 @@
                       "id": 768,
                       "name": "feeOf",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        866,
-                        888
-                      ],
+                      "overloadedDeclarations": [866, 888],
                       "referencedDeclaration": 888,
                       "src": "3404:5:2",
                       "typeDescriptions": {
@@ -17172,10 +16824,7 @@
                       "id": 774,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "3435:7:2",
                       "typeDescriptions": {
@@ -17683,9 +17332,7 @@
                 "modifierName": {
                   "id": 819,
                   "name": "onlyOwner",
-                  "nameLocations": [
-                    "3821:9:2"
-                  ],
+                  "nameLocations": ["3821:9:2"],
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 114,
                   "src": "3821:9:2"
@@ -18096,10 +17743,7 @@
                       "id": 858,
                       "name": "feeOf",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        866,
-                        888
-                      ],
+                      "overloadedDeclarations": [866, 888],
                       "referencedDeclaration": 888,
                       "src": "4221:5:2",
                       "typeDescriptions": {
@@ -18497,9 +18141,7 @@
               "src": "4670:210:2",
               "statements": [
                 {
-                  "assignments": [
-                    898
-                  ],
+                  "assignments": [898],
                   "declarations": [
                     {
                       "constant": false,
@@ -18825,9 +18467,7 @@
                 "modifierName": {
                   "id": 894,
                   "name": "onlyOwner",
-                  "nameLocations": [
-                    "4660:9:2"
-                  ],
+                  "nameLocations": ["4660:9:2"],
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 114,
                   "src": "4660:9:2"
@@ -19035,10 +18675,7 @@
                       "id": 930,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "4958:7:2",
                       "typeDescriptions": {
@@ -19067,9 +18704,7 @@
                   "src": "4958:82:2"
                 },
                 {
-                  "assignments": [
-                    941
-                  ],
+                  "assignments": [941],
                   "declarations": [
                     {
                       "constant": false,
@@ -19291,9 +18926,7 @@
                 "modifierName": {
                   "id": 927,
                   "name": "onlyOwner",
-                  "nameLocations": [
-                    "4937:9:2"
-                  ],
+                  "nameLocations": ["4937:9:2"],
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 114,
                   "src": "4937:9:2"
@@ -19572,9 +19205,7 @@
                 "modifierName": {
                   "id": 962,
                   "name": "onlyOwner",
-                  "nameLocations": [
-                    "5231:9:2"
-                  ],
+                  "nameLocations": ["5231:9:2"],
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 114,
                   "src": "5231:9:2"
@@ -19729,10 +19360,7 @@
                       "id": 987,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "5474:7:2",
                       "typeDescriptions": {
@@ -19870,9 +19498,7 @@
                 "modifierName": {
                   "id": 984,
                   "name": "onlyOwner",
-                  "nameLocations": [
-                    "5453:9:2"
-                  ],
+                  "nameLocations": ["5453:9:2"],
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 114,
                   "src": "5453:9:2"
@@ -20889,10 +20515,7 @@
                       "id": 1075,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "6647:7:2",
                       "typeDescriptions": {
@@ -21489,10 +21112,7 @@
                       "id": 1121,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "7082:7:2",
                       "typeDescriptions": {
@@ -21718,9 +21338,7 @@
                 "modifierName": {
                   "id": 1118,
                   "name": "onlyOwner",
-                  "nameLocations": [
-                    "7061:9:2"
-                  ],
+                  "nameLocations": ["7061:9:2"],
                   "nodeType": "IdentifierPath",
                   "referencedDeclaration": 114,
                   "src": "7061:9:2"

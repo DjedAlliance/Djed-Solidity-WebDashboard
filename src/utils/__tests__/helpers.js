@@ -106,7 +106,7 @@ describe("Currency conversions", () => {
 
   it("Calculate stable coin to USD equivalent", () => {
     const amount = 1.734;
-    expect(getScAdaEquivalent(coinsDetails, amount)).toEqual("17.340 milktADA");
+    expect(getScAdaEquivalent(coinsDetails, amount)).toEqual("17.340 mADA");
   });
 });
 

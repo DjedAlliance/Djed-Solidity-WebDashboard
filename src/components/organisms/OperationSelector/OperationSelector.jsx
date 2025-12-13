@@ -18,7 +18,8 @@ const OperationSelector = ({
   fee,
   treasuryFee,
   buyValidity,
-  sellValidity
+  sellValidity,
+  isSellDisabled
 }) => (
   <div className="OperationSelector">
     <Tabs defaultActiveKey={BUY_SELL_OPTIONS.BUY} onChange={selectionCallback}>
@@ -45,6 +46,7 @@ const OperationSelector = ({
       <TabPane
         tab={<div className="custom-tab tab-sell">Sell</div>}
         key={BUY_SELL_OPTIONS.SELL}
+        disabled={isSellDisabled}
       >
         <BuySellCoin
           buyOrSell="Sell"
