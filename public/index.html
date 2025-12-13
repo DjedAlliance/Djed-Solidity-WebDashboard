@@ -22,7 +22,7 @@
     content="Official Djed frontend enabling interaction with the Djed stablecoin protocol." />
   <meta property="og:url" content="<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_DEPLOYMENT_URL %>" />
   <meta property="og:image"
-    content="<%= htmlWebpackPlugin.options.templateParameters.PUBLIC_URL %>/<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_LOGO_PATH %>" />
+    content="<%= (htmlWebpackPlugin.options.templateParameters.PUBLIC_URL || '').replace(/\/$/, '') %>/<%= (htmlWebpackPlugin.options.templateParameters.REACT_APP_LOGO_PATH || '').replace(/^\//, '') %>" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -30,11 +30,11 @@
   <meta name="twitter:title" content="Djed – Stablecoin Protocol" />
   <meta name="twitter:description" content="Official Djed frontend." />
   <meta name="twitter:image"
-    content="<%= htmlWebpackPlugin.options.templateParameters.PUBLIC_URL %>/<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_LOGO_PATH %>" />
+    content="<%= (htmlWebpackPlugin.options.templateParameters.PUBLIC_URL || '').replace(/\/$/, '') %>/<%= (htmlWebpackPlugin.options.templateParameters.REACT_APP_LOGO_PATH || '').replace(/^\//, '') %>" />
 
   <!-- App identity -->
   <link rel="icon"
-    href="<%= htmlWebpackPlugin.options.templateParameters.PUBLIC_URL %>/<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_LOGO_PATH %>" />
+    href="<%= (htmlWebpackPlugin.options.templateParameters.PUBLIC_URL || '').replace(/\/$/, '') %>/<%= (htmlWebpackPlugin.options.templateParameters.REACT_APP_LOGO_PATH || '').replace(/^\//, '') %>" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -44,7 +44,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
 
   <!-- PWA -->
-  <link rel="manifest" href="<%= htmlWebpackPlugin.options.templateParameters.PUBLIC_URL %>/manifest.json" />
+  <link rel="manifest"
+    href="<%= (htmlWebpackPlugin.options.templateParameters.PUBLIC_URL || '').replace(/\/$/, '') %>/manifest.json" />
 </head>
 
 

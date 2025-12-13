@@ -46,7 +46,7 @@ module.exports = {
       );
 
       if (htmlWebpackPlugin) {
-        htmlWebpackPlugin.userOptions.templateParameters = {
+        htmlWebpackPlugin.options.templateParameters = {
           PUBLIC_URL: process.env.PUBLIC_URL || "",
           REACT_APP_DEPLOYMENT_URL: process.env.REACT_APP_DEPLOYMENT_URL || "",
           REACT_APP_LOGO_PATH: process.env.REACT_APP_LOGO_PATH || ""
