@@ -167,6 +167,15 @@ export default function ReserveCoin() {
           amountSC: 0
         });
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
+
+        // Check if CURRENT reserve ratio is already below minimum
+        const isCurrentRatioAboveMinimum = isRatioAboveMin({
+          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
+          scPrice: BigNumber.from(coinsDetails?.unscaledPriceSc),
+          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc)
+        });
+
+        // Check if FUTURE reserve ratio (after transaction) would be below minimum
         const isRatioAboveMinimum = isRatioAboveMin({
           totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
           scPrice: BigNumber.from(futureSCPrice),
@@ -194,8 +203,10 @@ export default function ReserveCoin() {
           )
         ) {
           setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
+        } else if (!isCurrentRatioAboveMinimum) {
+          setSellValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_ALREADY_LOW);
         } else if (!isRatioAboveMinimum) {
-          setSellValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
+          setSellValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_WOULD_DROP_LOW);
         } else {
           checkSellableRc(
             djedContract,
