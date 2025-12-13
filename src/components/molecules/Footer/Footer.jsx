@@ -14,22 +14,25 @@ const FOOTER_LINKS = [
         label: 'GitHub',
         href: 'https://github.com/DjedAlliance/Djed-Solidity',
     },
-    // TODO: Replace placeholder '#' links with actual social media URLs before production
-    {
-        label: 'Discord',
-        href: '#', // Replace with actual Discord invite link
-    },
-    {
-        label: 'X',
-        href: '#', // Replace with actual X/Twitter profile
-    },
-    {
-        label: 'LinkedIn',
-        href: '#', // Replace with actual LinkedIn page
-    },
+    // Placeholder links - uncomment and add real URLs when available
+    // {
+    //     label: 'Discord',
+    //     href: 'https://discord.gg/your-invite-link',
+    // },
+    // {
+    //     label: 'X',
+    //     href: 'https://x.com/your-profile',
+    // },
+    // {
+    //     label: 'LinkedIn',
+    //     href: 'https://linkedin.com/company/your-page',
+    // },
 ];
 
 export default function Footer() {
+    // Filter out any placeholder or invalid links
+    const validLinks = FOOTER_LINKS.filter(link => link.href && link.href !== '#' && link.href.startsWith('http'));
+
     return (
         <footer className={styles.footer} aria-label="Site footer">
             <div className={styles.container}>
@@ -37,7 +40,7 @@ export default function Footer() {
                     © 2025 The Stable Order
                 </div>
                 <nav className={styles.links} aria-label="Footer navigation">
-                    {FOOTER_LINKS.map((link, index) => (
+                    {validLinks.map((link, index) => (
                         <React.Fragment key={link.label}>
                             {index > 0 && <span className={styles.separator} aria-hidden="true">·</span>}
                             <a
