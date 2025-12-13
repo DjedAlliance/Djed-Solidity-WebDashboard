@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Layout, Menu, Dropdown } from "antd";
 import WalletConnectButton from "./components/molecules/MetamaskStatusButton/WalletConnectButton";
+import Footer from "./components/molecules/Footer/Footer";
 
 import "antd/dist/antd.css";
 import "./App.scss";
@@ -87,6 +88,7 @@ export default function MainLayout() {
             <Outlet />
           </div>
         </Content>
+        <Footer />
       </Layout>
     </div>
   );
