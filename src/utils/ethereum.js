@@ -14,7 +14,13 @@ import {
   web3Promise,
   percentageScale
 } from "./helpers";
-import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY, BC_TOKEN_DECIMALS, HIGH_PRECISION_DECIMALS, REFRESH_PERIOD_MS } from "./constants";
+import {
+  TRANSACTION_USD_LIMIT,
+  TRANSACTION_VALIDITY,
+  BC_TOKEN_DECIMALS,
+  HIGH_PRECISION_DECIMALS,
+  REFRESH_PERIOD_MS
+} from "./constants";
 import { BigNumber } from "ethers";
 
 const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
@@ -288,9 +294,7 @@ const getFees = async (djed) => {
       treasuryFee,
       fee
     };
-  } catch (error) {
-    console.log("error", error);
-  }
+  } catch (error) {}
 };
 
 /**
@@ -362,9 +366,7 @@ export const tradeDataPriceBuyRc = async (djed, rcDecimals, amountScaled) => {
       totalBCScaled: decimalScaling(totalBCUnscaled, BC_DECIMALS),
       totalBCUnscaled
     };
-  } catch (error) {
-    console.log("error", error);
-  }
+  } catch (error) {}
 };
 
 export const tradeDataPriceSellRc = async (djed, rcDecimals, amountScaled) => {
@@ -390,9 +392,7 @@ export const tradeDataPriceSellRc = async (djed, rcDecimals, amountScaled) => {
       totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS),
       totalBCUnscaled: totalBCAmount.toString()
     };
-  } catch (error) {
-    console.log("error", error);
-  }
+  } catch (error) {}
 };
 
 export const buyRcTx = (djed, account, value) => {
@@ -441,9 +441,7 @@ export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
       totalBCScaled: decimalScaling(totalBCUnscaled, BC_DECIMALS),
       totalBCUnscaled
     };
-  } catch (error) {
-    console.log("error", error);
-  }
+  } catch (error) {}
 };
 
 /**
@@ -469,9 +467,7 @@ export const tradeDataPriceSellSc = async (djed, scDecimals, amountScaled) => {
       ...data,
       totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS)
     };
-  } catch (error) {
-    console.log("error", error);
-  }
+  } catch (error) {}
 };
 
 export const buyScTx = (djed, account, value) => {
@@ -592,7 +588,5 @@ export const calculateFutureScPrice = async ({
         ? scTargetPrice
         : futurePrice.toString();
     }
-  } catch (error) {
-    console.log("calculateFutureScPrice error ", error);
-  }
+  } catch (error) {}
 };

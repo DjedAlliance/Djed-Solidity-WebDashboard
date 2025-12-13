@@ -138,9 +138,7 @@ export default function ReserveCoin() {
             coinBudgets?.unscaledBudgetRc
           ).then((res) => setBuyValidity(res));
         }
-      } catch (error) {
-        console.log("error", error);
-      }
+      } catch (error) {}
     };
     getTradeData();
   };
@@ -203,9 +201,7 @@ export default function ReserveCoin() {
             accountDetails?.unscaledBalanceRc
           ).then((res) => setSellValidity(res));
         }
-      } catch (error) {
-        console.log("error", error);
-      }
+      } catch (error) {}
     };
     getTradeData();
   };
@@ -221,17 +217,14 @@ export default function ReserveCoin() {
   };
 
   const buyRc = (total) => {
-    console.log("Attempting to buy RC for", total);
     setTxStatus("pending");
     // TODO: pass to buyRcTx a parameter to enforce gasLimit if we are using WSC
     promiseTx(isWalletConnected, buyRcTx(djedContract, account, total), signer)
       .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
           if (res) {
-            console.log("Buy RC success!");
             setTxStatus("success");
           } else {
-            console.log("Buy RC reverted!");
             setTxError("The transaction reverted.");
             setTxStatus("rejected");
           }
@@ -245,17 +238,13 @@ export default function ReserveCoin() {
   };
 
   const sellRc = (amount) => {
-    console.log("Attempting to sell RC in amount", amount);
     setTxStatus("pending");
     promiseTx(isWalletConnected, sellRcTx(djedContract, account, amount), signer)
       .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
-          console.log(hash, "hash");
           if (res) {
-            console.log("Sell RC success!", hash);
             setTxStatus("success");
           } else {
-            console.log("Sell RC reverted!");
             setTxError("The transaction reverted.");
             setTxStatus("rejected");
           }

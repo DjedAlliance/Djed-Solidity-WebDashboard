@@ -137,9 +137,7 @@ export default function Stablecoin() {
             setBuyValidity(res);
           });
         }
-      } catch (error) {
-        console.log("error", error);
-      }
+      } catch (error) {}
     };
     getTradeData();
   };
@@ -181,9 +179,7 @@ export default function Stablecoin() {
             (res) => setSellValidity(res)
           );
         }
-      } catch (error) {
-        console.log("error", error);
-      }
+      } catch (error) {}
     };
     getTradeData();
   };
@@ -198,16 +194,13 @@ export default function Stablecoin() {
   };
 
   const buySc = (total) => {
-    console.log("Attempting to buy SC for", total);
     setTxStatus("pending");
     promiseTx(isWalletConnected, buyScTx(djedContract, account, total), signer)
       .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
           if (res) {
-            console.log("Buy SC success!");
             setTxStatus("success");
           } else {
-            console.log("Buy SC reverted!");
             setTxError("The transaction reverted.");
             setTxStatus("rejected");
           }
@@ -221,16 +214,13 @@ export default function Stablecoin() {
   };
 
   const sellSc = (amount) => {
-    console.log("Attempting to sell SC in amount", amount);
     setTxStatus("pending");
     promiseTx(isWalletConnected, sellScTx(djedContract, account, amount), signer)
       .then(({ hash }) => {
         verifyTx(web3, hash).then((res) => {
           if (res) {
-            console.log("Sell SC success!");
             setTxStatus("success");
           } else {
-            console.log("Sell SC reverted!");
             setTxError("The transaction reverted.");
             setTxStatus("rejected");
           }

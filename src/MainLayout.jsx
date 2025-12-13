@@ -59,7 +59,8 @@ export default function MainLayout() {
             <Menu.Item key="/docs">
               <Link
                 to={{
-                  pathname: "//docs.stability.nexus/djed-stablecoin-protocols/djed-overview"
+                  pathname:
+                    "//docs.stability.nexus/djed-stablecoin-protocols/djed-overview"
                 }}
                 target="_blank"
               >
