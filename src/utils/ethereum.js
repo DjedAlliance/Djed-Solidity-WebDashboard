@@ -447,25 +447,31 @@ export const sellRcTx = (djed, account, amount) => {
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
-// TODO: Implement reserve ratio checks before enabling RC buy
+/**
+ * Validates RC buy transaction amount against available budget.
+ * Note: Reserve ratio validation is performed in the UI layer (reservecoin.jsx)
+ * using isRatioBelowMax to ensure ratio stays below maximum.
+ */
 export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
   return new Promise((resolve) => {
     if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBudgetRc))) {
       resolve(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
     } else {
-      // TODO: Add reserve ratio validation before merge
       resolve(TRANSACTION_VALIDITY.OK);
     }
   });
 };
 
-// TODO: Implement reserve ratio checks before enabling RC sell
+/**
+ * Validates RC sell transaction amount against user's balance.
+ * Note: Reserve ratio validation is performed in the UI layer (reservecoin.jsx)
+ * using isRatioAboveMin to ensure ratio stays above minimum.
+ */
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
   return new Promise((resolve) => {
     if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBalanceRc))) {
       resolve(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
     } else {
-      // TODO: Add reserve ratio validation before merge
       resolve(TRANSACTION_VALIDITY.OK);
     }
   });
