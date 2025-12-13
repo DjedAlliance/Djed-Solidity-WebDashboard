@@ -8,8 +8,9 @@ import TermsOfUse from "./routes/terms-of-use";
 import { AppProvider } from "./context/AppProvider";
 import { client } from "./utils/web3/wagmi";
 import { WagmiConfig } from "wagmi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ConnectWSCProvider } from "milkomeda-wsc-ui-test-beta";
+import KYAModal from "./components/organisms/Modals/KYAModal";
 
 const wscCustomTheme = {
   "--wsc-body-background": "#100901",
@@ -41,7 +42,12 @@ const wscCustomTheme = {
   "--wsc-connectbutton-active-background": "#2c2f3e",
   "--wsc-connectbutton-active-color": "white"
 };
+
+const KYA_ACCEPTED_KEY = "kya_accepted";
+
 export default function App() {
+  const [showKYAModal, setShowKYAModal] = useState(false);
+
   useEffect(() => {
     document.title = `Djed on ${process.env.REACT_APP_BC}`;
 
@@ -57,13 +63,46 @@ export default function App() {
     // Update color
     const color = getComputedStyle(root).getPropertyValue(`--${colorTheme}`);
     root.style.setProperty("--gold-dark", color);
+
+    // Check if user has already accepted KYA
+    try {
+      const kyaAccepted = localStorage.getItem(KYA_ACCEPTED_KEY);
+      if (!kyaAccepted) {
+        setShowKYAModal(true);
+      }
+    } catch (error) {
+      // localStorage might be unavailable (private browsing, disabled)
+      console.warn('Unable to check KYA acceptance status:', error);
+      setShowKYAModal(true);
+    }
   }, []);
+
+  const handleKYAAccept = () => {
+    try {
+      localStorage.setItem(KYA_ACCEPTED_KEY, "true");
+    } catch (error) {
+      console.warn('Unable to save KYA acceptance:', error);
+      // User accepted but we can't persist it - they'll see modal again next visit
+    }
+    setShowKYAModal(false);
+  };
+
+  const handleKYAClose = () => {
+    // Allow closing but don't save acceptance
+    // Modal will show again on next visit
+    setShowKYAModal(false);
+  };
 
   return (
     <BrowserRouter>
       <WagmiConfig client={client}>
         <AppProvider>
           <ConnectWSCProvider customTheme={wscCustomTheme}>
+            <KYAModal
+              visible={showKYAModal}
+              onClose={handleKYAClose}
+              onAccept={handleKYAAccept}
+            />
             <Routes>
               <Route path="/" element={<MainLayout />}>
                 <Route path="" element={<Protocol />} />
