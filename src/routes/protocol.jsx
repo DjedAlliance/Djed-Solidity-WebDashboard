@@ -31,7 +31,7 @@ export default function Protocol() {
       <div className="ProtocolSection">
         <div className="Left">
           <h1>
-            <strong>Djed on Milkomeda{process.env.REACT_APP_BC}</strong>
+            <strong>Djed on Milkomeda {process.env.REACT_APP_BC}</strong>
           </h1>
           <div className="DescriptionContainer">
             <p>
