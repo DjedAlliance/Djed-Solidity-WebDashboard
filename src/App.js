@@ -65,17 +65,25 @@ export default function App() {
     root.style.setProperty("--gold-dark", color);
 
     // Check if user has already accepted KYA
-    // Use setTimeout to ensure modal shows properly after initial render
-    setTimeout(() => {
+    try {
       const kyaAccepted = localStorage.getItem(KYA_ACCEPTED_KEY);
       if (!kyaAccepted) {
         setShowKYAModal(true);
       }
-    }, 100);
+    } catch (error) {
+      // localStorage might be unavailable (private browsing, disabled)
+      console.warn('Unable to check KYA acceptance status:', error);
+      setShowKYAModal(true);
+    }
   }, []);
 
   const handleKYAAccept = () => {
-    localStorage.setItem(KYA_ACCEPTED_KEY, "true");
+    try {
+      localStorage.setItem(KYA_ACCEPTED_KEY, "true");
+    } catch (error) {
+      console.warn('Unable to save KYA acceptance:', error);
+      // User accepted but we can't persist it - they'll see modal again next visit
+    }
     setShowKYAModal(false);
   };
 

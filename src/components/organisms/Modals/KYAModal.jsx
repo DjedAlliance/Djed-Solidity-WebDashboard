@@ -104,6 +104,7 @@ export default function KYAModal({ visible, onClose, onAccept }) {
 
                 <div className={styles.footer}>
                     <button
+                        type="button"
                         className={styles.acceptButton}
                         onClick={handleAccept}
                     >

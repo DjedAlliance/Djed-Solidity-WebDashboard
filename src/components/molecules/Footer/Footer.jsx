@@ -14,6 +14,7 @@ const FOOTER_LINKS = [
         label: 'GitHub',
         href: 'https://github.com/DjedAlliance/Djed-Solidity',
     },
+    // TODO: Replace placeholder '#' links with actual social media URLs before production
     {
         label: 'Discord',
         href: '#', // Replace with actual Discord invite link
