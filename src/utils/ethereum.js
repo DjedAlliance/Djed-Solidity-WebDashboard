@@ -191,12 +191,52 @@ export const getAccountDetails = async (
 };
 
 export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDecimals) => {
-  return {
-    scaledBudgetSc: null,
-    unscaledBudgetSc: null,
-    scaledBudgetRc: null,
-    unscaledBudgetRc: null
-  };
+  try {
+    const [scPrice, rcPrice] = await Promise.all([
+      web3Promise(djed, "scPrice", 0),
+      web3Promise(djed, "rcBuyingPrice", 0)
+    ]);
+    const { treasuryFee, fee } = await getFees(djed);
+
+    const totalFees = BigNumber.from(fee)
+      .add(BigNumber.from(treasuryFee))
+      .add(BigNumber.from(FEE_UI_UNSCALED));
+    const scalingFactorBN = BigNumber.from(scalingFactor);
+    const substractedFees = scalingFactorBN.sub(totalFees);
+
+    const balance = BigNumber.from(unscaledBalanceBc);
+    const usableBalance = balance.mul(substractedFees).div(scalingFactorBN);
+
+    const scDecimalScaling = BigNumber.from(10).pow(scDecimals);
+    const rcDecimalScaling = BigNumber.from(10).pow(rcDecimals);
+
+    const unscaledBudgetScBN = usableBalance
+      .mul(scDecimalScaling)
+      .div(BigNumber.from(scPrice));
+    const unscaledBudgetRcBN = usableBalance
+      .mul(rcDecimalScaling)
+      .div(BigNumber.from(rcPrice));
+
+    const unscaledBudgetSc = unscaledBudgetScBN.toString();
+    const unscaledBudgetRc = unscaledBudgetRcBN.toString();
+    const scaledBudgetSc = decimalScaling(unscaledBudgetSc, scDecimals);
+    const scaledBudgetRc = decimalScaling(unscaledBudgetRc, rcDecimals);
+
+    return {
+      scaledBudgetSc,
+      unscaledBudgetSc,
+      scaledBudgetRc,
+      unscaledBudgetRc
+    };
+  } catch (error) {
+    console.error("getCoinBudgets error", error);
+    return {
+      scaledBudgetSc: "0",
+      unscaledBudgetSc: "0",
+      scaledBudgetRc: "0",
+      unscaledBudgetRc: "0"
+    };
+  }
 };
 
 export const promiseTx = (isWalletConnected, tx, signer) => {
@@ -407,14 +447,30 @@ export const sellRcTx = (djed, account, amount) => {
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
-// TODO: Check reserve ratio!
+// TODO: Implement reserve ratio checks before enabling RC buy
 export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
-  return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
+  return new Promise((resolve) => {
+    if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBudgetRc))) {
+      resolve(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
+    } else {
+      // Explicitly fail-safe until reserve-ratio logic is implemented
+      resolve(TRANSACTION_VALIDITY.INVALID);
+    }
+  });
 };
 
+// TODO: Implement reserve ratio checks before enabling RC sell
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
-  return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
+  return new Promise((resolve) => {
+    if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBalanceRc))) {
+      resolve(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
+    } else {
+      // Explicitly fail-safe until reserve-ratio logic is implemented
+      resolve(TRANSACTION_VALIDITY.INVALID);
+    }
+  });
 };
+
 
 // stablecoin
 
