@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import OperationSelector from "../components/organisms/OperationSelector/OperationSelector";
@@ -80,12 +80,20 @@ export default function ReserveCoin() {
   const txStatusRejected = txStatus === "rejected";
   const txStatusSuccess = txStatus === "success";
 
+  // Race condition guards: track calculation IDs to ignore stale async results
+  const buyCalcIdRef = useRef(0);
+  const sellCalcIdRef = useRef(0);
+
   const updateBuyTradeData = (amountScaled) => {
     const inputSanity = validatePositiveNumber(amountScaled);
     if (inputSanity !== TRANSACTION_VALIDITY.OK) {
       setBuyValidity(inputSanity);
       return;
     }
+    // Increment calc ID to invalidate any in-flight calculations
+    buyCalcIdRef.current += 1;
+    const currentCalcId = buyCalcIdRef.current;
+
     const getTradeData = async () => {
       try {
         const data = await tradeDataPriceBuyRc(
@@ -109,6 +117,9 @@ export default function ReserveCoin() {
           coinsDetails,
           parseFloat(data.totalScaled.replaceAll(",", ""))
         ).replaceAll(",", "");
+
+        // Guard: only update state if this is still the latest calculation
+        if (currentCalcId !== buyCalcIdRef.current) return;
 
         setTradeData(data);
         if (!isWalletConnected) {
@@ -136,7 +147,12 @@ export default function ReserveCoin() {
             djedContract,
             data.amountUnscaled,
             coinBudgets?.unscaledBudgetRc
-          ).then((res) => setBuyValidity(res));
+          ).then((res) => {
+            // Guard: only update validity if this is still the latest calculation
+            if (currentCalcId === buyCalcIdRef.current) {
+              setBuyValidity(res);
+            }
+          });
         }
       } catch (error) {
         console.log("error", error);
@@ -151,6 +167,10 @@ export default function ReserveCoin() {
       setSellValidity(inputSanity);
       return;
     }
+    // Increment calc ID to invalidate any in-flight calculations
+    sellCalcIdRef.current += 1;
+    const currentCalcId = sellCalcIdRef.current;
+
     const getTradeData = async () => {
       try {
         const data = await tradeDataPriceSellRc(
@@ -174,6 +194,9 @@ export default function ReserveCoin() {
             BigNumber.from(data.totalUnscaled).sub(f)
           )
         });
+
+        // Guard: only update state if this is still the latest calculation
+        if (currentCalcId !== sellCalcIdRef.current) return;
 
         setTradeData(data);
         if (!isWalletConnected) {
@@ -201,7 +224,12 @@ export default function ReserveCoin() {
             djedContract,
             data.amountUnscaled,
             accountDetails?.unscaledBalanceRc
-          ).then((res) => setSellValidity(res));
+          ).then((res) => {
+            // Guard: only update validity if this is still the latest calculation
+            if (currentCalcId === sellCalcIdRef.current) {
+              setSellValidity(res);
+            }
+          });
         }
       } catch (error) {
         console.log("error", error);
