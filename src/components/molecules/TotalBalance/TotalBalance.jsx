@@ -11,7 +11,6 @@ const TotalBalance = ({ coinIcon, coinName, balanceAmount, balanceEquivalent }) 
 </a>*/}
     {/* </div> */}
     <div className="ContentInfo">
-      <img className="CoinIcon" src={coinIcon} alt="" />
       <div className="Cointext">
         <p className="CoinTitle">{coinName}</p>
         <h4 className="CoinAmount">{balanceAmount}</h4>

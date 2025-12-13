@@ -1,47 +1,84 @@
 import React, { useState } from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Layout, Menu, Dropdown } from "antd";
-import MetamaskStatusButton, {
-  DisconnectButton
-} from "./components/molecules/MetamaskStatusButton/MetamaskStatusButton";
-
-import { ReactComponent as Logo } from "./images/mdjed_testnet_white.svg";
+import WalletConnectButton from "./components/molecules/MetamaskStatusButton/WalletConnectButton";
 
 import "antd/dist/antd.css";
 import "./App.scss";
 import { useAppProvider } from "./context/AppProvider";
-import { CloseOutlined, MenuOutlined } from "@ant-design/icons";
+import { CloseOutlined, MenuOutlined, WalletOutlined } from "@ant-design/icons";
+import CustomButton from "./components/atoms/CustomButton/CustomButton";
 
 const { Header, Content } = Layout;
+
+const LOGO_PATH = process.env.REACT_APP_LOGO_PATH || "Logo_symbol.png";
 
 export default function MainLayout() {
   const { isWalletConnected } = useAppProvider();
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div>
       <Layout className="layout">
         <Header className="header-desktop">
           <div className="logo">
-            <Logo />
+            <img src={LOGO_PATH} alt="Logo" />
           </div>
           <Menu mode="horizontal" selectedKeys={[location.pathname]}>
+            <Menu.Item key="/audit">
+              <Link
+                to={{
+                  pathname:
+                    "//github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed-2.pdf"
+                }}
+                target="_blank"
+              >
+                Audit
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/whitepaper">
+              <Link
+                to={{
+                  pathname: "//eprint.iacr.org/2021/1069"
+                }}
+                target="_blank"
+              >
+                Whitepaper
+              </Link>
+            </Menu.Item>
             <Menu.Item key="/">
               <Link to="/">Protocol</Link>
             </Menu.Item>
-            <Menu.Item key="/stabledjed">
-              <Link to="/stabledjed">StableDjed</Link>
+            <Menu.Item key="/sc">
+              <Link to="/sc">StableCoin</Link>
             </Menu.Item>
-            <Menu.Item key="/reservedjed">
-              <Link to="/reservedjed">ReserveDjed</Link>
+            <Menu.Item key="/rc">
+              <Link to="/rc">ReserveCoin</Link>
             </Menu.Item>
-            <Menu.Item key="/my-balance" disabled={!isWalletConnected}>
-              <Link to="/my-balance">My Balance</Link>
+            <Menu.Item key="/docs">
+              <Link
+                to={{
+                  pathname: "//docs.stability.nexus/djed-stablecoin-protocols/djed-overview"
+                }}
+                target="_blank"
+              >
+                Docs
+              </Link>
             </Menu.Item>
           </Menu>
           <div className="WalletConfig">
-            {isWalletConnected ? <DisconnectButton /> : null}
-            <MetamaskStatusButton />
+            <CustomButton
+              text="Balance"
+              onClick={() => navigate("/my-balance")}
+              disabled={!isWalletConnected}
+              iconWallet={
+                isWalletConnected && <WalletOutlined style={{ color: "white" }} />
+              }
+              variant="tertiary"
+            />
+
+            <WalletConnectButton />
           </div>
         </Header>
         <HeaderMobileMenu isWalletConnected={isWalletConnected} />
@@ -66,7 +103,7 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
   return (
     <div className="header-mobile">
       <div className="logo">
-        <Logo />
+        <img src={LOGO_PATH} alt="Logo" />
       </div>
       <Dropdown
         overlayClassName="menu-mobile-dropdown"
@@ -78,21 +115,41 @@ const HeaderMobileMenu = ({ isWalletConnected }) => {
             selectedKeys={[location.pathname]}
             onClick={() => setMenuOpen(false)}
           >
+            <Menu.Item key="/audit">
+              <Link
+                to={{
+                  pathname:
+                    "//github.com/DjedAlliance/Djed-Solidity/blob/main/audits/PeckShield-Audit-Report-Djed-2.pdf"
+                }}
+                target="_blank"
+              >
+                Audit
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/whitepaper">
+              <Link
+                to={{
+                  pathname: "//eprint.iacr.org/2021/1069"
+                }}
+                target="_blank"
+              >
+                Whitepaper
+              </Link>
+            </Menu.Item>
             <Menu.Item key="/">
               <Link to="/">Protocol</Link>
             </Menu.Item>
-            <Menu.Item key="/stabledjed">
-              <Link to="/stabledjed">StableDjed</Link>
+            <Menu.Item key="/sc">
+              <Link to="/sc">Djed StableCoin</Link>
             </Menu.Item>
-            <Menu.Item key="/reservedjed">
-              <Link to="/reservedjed">ReserveDjed</Link>
+            <Menu.Item key="/rc">
+              <Link to="/rc">Djed ReserveCoin</Link>
             </Menu.Item>
             <Menu.Item key="/my-balance" disabled={!isWalletConnected}>
-              <Link to="/my-balance">My Balance</Link>
+              <Link to="/my-balance">Balance</Link>
             </Menu.Item>
             <div className="WalletConfig">
-              {isWalletConnected ? <DisconnectButton /> : null}
-              <MetamaskStatusButton />
+              <WalletConnectButton />
             </div>
           </Menu>
         }

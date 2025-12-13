@@ -4,11 +4,19 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
+iframe {
+  display: none !important;
+}
+
 .logo {
   display: flex;
   align-items: center;
   margin-right: 2em;
   max-width: 180px;
+
+  img {
+    width: 50px;
+  }
 }
 
 .site-layout-content {
@@ -16,7 +24,7 @@ body {
 }
 
 .ant-layout {
-  background: $gradient-theme-1;
+  background: var(--gradient-theme-5);
   padding-top: 2em;
   height: 100vh;
   overflow-y: auto;
@@ -36,9 +44,6 @@ body {
 
   .WalletConfig {
     display: flex;
-    button {
-      width: max-content;
-    }
   }
 
   &.header-desktop {
@@ -67,14 +72,14 @@ body {
   background: #222433;
 }
 
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-active,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-open,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected {
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item:hover,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-submenu:hover,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item-active,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-submenu-active,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item-open,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-submenu-open,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item-selected,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-submenu-selected {
   color: white;
 }
 
@@ -84,44 +89,48 @@ body {
 .ant-dropdown-menu-item-disabled a {
   color: $grey-5 !important;
 }
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-active::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-open::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected::after {
-  border-bottom: 2px solid white;
+
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item:hover::after,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-submenu:hover::after,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item-active::after,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-submenu-active::after,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item-open::after,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-submenu-open::after,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-item-selected::after,
+.ant-menu-horizontal:not(.ant-menu-dark)>.ant-menu-submenu-selected::after {
+  border-bottom: 2px solid var(--gold-dark);
 }
 
-.ant-menu-horizontal > .ant-menu-item a {
+.ant-menu-horizontal>.ant-menu-item a {
   color: white;
 }
 
-.ant-menu-horizontal > .ant-menu-item a:hover {
+.ant-menu-horizontal>.ant-menu-item a:hover,
+.ant-menu-horizontal>.ant-menu-item a:active,
+.ant-menu-horizontal>.ant-menu-item a:focus,
+.ant-menu-horizontal>.ant-menu-item-selected a {
+  color: var(--gold-dark);
+}
+
+.ant-menu-horizontal>.ant-menu-submenu>.ant-menu-submenu-title {
   color: white;
 }
 
-.ant-menu-horizontal > .ant-menu-submenu > .ant-menu-submenu-title {
-  color: white;
-}
-
-.ant-tabs > .ant-tabs-nav,
-.ant-tabs > div > .ant-tabs-nav {
+.ant-tabs>.ant-tabs-nav,
+.ant-tabs>div>.ant-tabs-nav {
   background: $black-2;
   border-radius: 40px;
 }
 
-.ant-tabs-top > .ant-tabs-nav::before,
-.ant-tabs-bottom > .ant-tabs-nav::before,
-.ant-tabs-top > div > .ant-tabs-nav::before,
-.ant-tabs-bottom > div > .ant-tabs-nav::before {
+.ant-tabs-top>.ant-tabs-nav::before,
+.ant-tabs-bottom>.ant-tabs-nav::before,
+.ant-tabs-top>div>.ant-tabs-nav::before,
+.ant-tabs-bottom>div>.ant-tabs-nav::before {
   border-bottom: none;
 }
 
-.ant-tabs > .ant-tabs-nav .ant-tabs-nav-list,
-.ant-tabs > div > .ant-tabs-nav .ant-tabs-nav-list {
+.ant-tabs>.ant-tabs-nav .ant-tabs-nav-list,
+.ant-tabs>div>.ant-tabs-nav .ant-tabs-nav-list {
   width: 100%;
 }
 
@@ -148,7 +157,7 @@ body {
   border-radius: 8px;
 }
 
-.ant-input-affix-wrapper > input.ant-input {
+.ant-input-affix-wrapper>input.ant-input {
   background: transparent;
   @include number-text($numbers, $white, 400);
 }
@@ -171,7 +180,7 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
-.ant-table-thead > tr > th {
+.ant-table-thead>tr>th {
   background: transparent;
   border-bottom: transparent;
   color: $grey-5;
@@ -183,12 +192,12 @@ body {
   background: transparent;
 }
 
-.ant-table-tbody > tr.ant-table-row:hover > td,
-.ant-table-tbody > tr > td.ant-table-cell-row-hover {
+.ant-table-tbody>tr.ant-table-row:hover>td,
+.ant-table-tbody>tr>td.ant-table-cell-row-hover {
   background: transparent;
 }
 
-.ant-table-tbody > tr > td {
+.ant-table-tbody>tr>td {
   border-bottom: transparent;
 }
 
@@ -204,6 +213,24 @@ body {
 .ant-tag-has-color .anticon-close,
 .ant-tag-has-color .anticon-close:hover {
   color: $black-1;
+}
+
+.ant-popover-arrow-content,
+.ant-popover-arrow-content::before {
+  background: $black-2;
+}
+.ant-popover-inner-content {
+  background: $black-2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  button.CustomButton {
+    width: 100%;
+    justify-content: start;
+    margin: 0 !important;
+
+  }
+
 }
 
 @media only screen and (max-width: 425px) {
@@ -226,7 +253,7 @@ body {
     overflow: hidden;
     .ant-dropdown-menu {
       padding-top: 20px;
-      background: $gradient-theme-1;
+      background: var(--gradient-theme-5);
       border: 1px solid #5f606e;
       .ant-dropdown-menu-item {
         color: $white;
@@ -266,4 +293,18 @@ body {
       width: 100%;
     }
   }
+}
+.ant-message {
+  z-index: 1100;
+}
+
+.ant-message-info .anticon,
+.ant-message-loading .anticon {
+  color: #d07d2c;
+}
+
+.ant-message-notice-content {
+  background: #ffffff;
+  color: #100901;
+  font-weight: 600;
 }

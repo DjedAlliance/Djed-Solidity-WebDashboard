@@ -11,15 +11,15 @@ const OperationSelector = ({
   selectionCallback,
   onChangeBuyInput,
   onChangeSellInput,
-  onMaxBuy,
-  onMaxSell,
   tradeData,
   inputValue,
   scaledCoinBalance,
   scaledBaseBalance,
   fee,
+  treasuryFee,
   buyValidity,
-  sellValidity
+  sellValidity,
+  isSellDisabled
 }) => (
   <div className="OperationSelector">
     <Tabs defaultActiveKey={BUY_SELL_OPTIONS.BUY} onChange={selectionCallback}>
@@ -32,10 +32,10 @@ const OperationSelector = ({
           coinName={coinName}
           priceAmount="0.000"
           fee={fee}
-          totalAmount={tradeData.totalScaled}
+          treasuryFee={treasuryFee}
+          totalAmount={tradeData.totalBCScaled}
           payOrReceive="receive"
           payOrGet="pay"
-          onMaxClick={onMaxBuy}
           onChangeInput={onChangeBuyInput}
           inputValue={inputValue}
           scaledCoinBalance={scaledCoinBalance}
@@ -46,14 +46,15 @@ const OperationSelector = ({
       <TabPane
         tab={<div className="custom-tab tab-sell">Sell</div>}
         key={BUY_SELL_OPTIONS.SELL}
+        disabled={isSellDisabled}
       >
         <BuySellCoin
           buyOrSell="Sell"
           coinName={coinName}
           priceAmount="0.000"
           fee={fee}
-          totalAmount={tradeData.totalScaled}
-          onMaxClick={onMaxSell}
+          treasuryFee={treasuryFee}
+          totalAmount={tradeData.totalBCScaled}
           payOrReceive="pay"
           payOrGet="get"
           onChangeInput={onChangeSellInput}

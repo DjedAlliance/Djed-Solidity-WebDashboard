@@ -2,7 +2,7 @@ import React from "react";
 //import { ArrowRightOutlined, PropertySafetyFilled } from "@ant-design/icons";
 //import { ReactComponent as Metamask } from "../images/metamask.svg";
 //import CustomButton from "../components/atoms/CustomButton/CustomButton";
-import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
+//import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 
 import "./_protocol.scss";
@@ -31,71 +31,77 @@ export default function Protocol() {
       <div className="ProtocolSection">
         <div className="Left">
           <h1>
-            <strong>Milkomeda Djed</strong>
+            <strong>Djed on {process.env.REACT_APP_BC}</strong>
           </h1>
           <div className="DescriptionContainer">
             <p>
-              Milkomeda Djed is an implementation of Minimal Djed on the Milkomeda C1
-              Testnet. Djed is a novel collateral-backed stablecoin protocol which has
-              garnered attention since the release of its{" "}
-              <a
-                href="https://iohk.io/en/research/library/papers/djeda-formally-verified-crypto-backed-pegged-algorithmic-stablecoin/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                whitepaper
+              Djed is a formally verified crypto-backed autonomous stablecoin protocol. It
+              has been researched since Q2 2020, its whitepaper has been released in
+              August 2021, and it has multiple{" "}
+              <a href="https://github.com/DjedAlliance" target="_blank" rel="noreferrer">
+                implementations
               </a>{" "}
-              in August 2021.
+              and{" "}
+              <a
+                href="https://docs.djed.one/implementations-and-deployments/deployments"
+                target="_blank"
+                rel="noreferrer"
+              >
+                deployments
+              </a>
+              . Here you can interact with a{" "}
+              <a
+                href={`${process.env.REACT_APP_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                deployment
+              </a>{" "}
+              that uses{" "}
+              <a
+                href="https://github.com/DjedAlliance/Djed-Solidity/commits/Belus"
+                target="_blank"
+                rel="noreferrer"
+              >
+                these smart contracts
+              </a>{" "}
+              on {process.env.REACT_APP_BC}.
             </p>
             <p>
-              Milkomeda Djed is the very first publicly accessible implementation of Djed,
-              thereby providing users the perfect opportunity to get a new taste of the
-              latest and greatest in DeFi, however without any of the risk. All assets are
-              100% testnet assets, meaning that users can learn the risks and upsides of
-              the protocol in practice but with no real money on the line.
+              {process.env.REACT_APP_PROTOCOL_CHAIN_DESCRIPTION}. This asset is used by
+              the Djed protocol to back <a href="/sc">StableCoins</a> and{" "}
+              <a href="/rc">ReserveCoins</a> and it is needed to buy any of these coins
+              and to pay for transaction fees on {process.env.REACT_APP_BC}.
             </p>
             <p>
-              You can learn more about the Milkomeda Djed implementation{" "}
-              <a
-                href="https://medium.com/@milkomedafoundation/djed-stablecoin-live-on-milkomeda-c1-testnet-ff93710b0881"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                in this blog post
-              </a>{" "}
-              or{" "}
-              <a
-                href="https://medium.com/@milkomedafoundation/getting-started-with-milkomeda-djed-on-c1-testnet-d335ebf65305"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                follow this guide
-              </a>{" "}
-              to get started testing the dApp immediately.
+              This deployment is immutable, unstoppable, fully autonomous and
+              zero-governance. No one is able to change the deployed code or the
+              parameters of the deployment. No one is operating it. No one controls your
+              funds. Treat it as a foreign non-territorial self-sovereign autonomous
+              monetary authority whose currency follows a self-driving monetary policy.
             </p>
           </div>
-          <MetamaskConnectButton />
         </div>
         <div className="Right">
           <h2 className="SubtTitle">
-            <strong>Protocol Coins</strong> Detail
+            <strong>Protocol</strong> Status
           </h2>
           <div className="CoinsContainer">
             <CoinCard
               coinIcon="/coin-icon-one.png"
-              coinName="StableDjed"
+              coinName={`${process.env.REACT_APP_SC_NAME}`}
               priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
               circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
-              tokenName="StableDjed"
-              equivalence={scConverted}
+              tokenName={`${process.env.REACT_APP_SC_SYMBOL}`}
+              equivalence={`${scConverted} ${process.env.REACT_APP_CHAIN_COIN}`}
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
-              coinName="ReserveDjed"
+              coinName={`${process.env.REACT_APP_RC_NAME}`}
               priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
               sellPriceAmount={coinsDetails?.scaledSellPriceRc}
               circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
-              tokenName="ReserveDjed"
+              tokenName={`${process.env.REACT_APP_RC_SYMBOL}`}
               equivalence={rcConverted}
             />
             <ReservesCard
@@ -106,6 +112,7 @@ export default function Protocol() {
               reserveRatio={coinsDetails?.percentReserveRatio}
               reserveRatioMin={systemParams?.reserveRatioMin}
               reserveRatioMax={systemParams?.reserveRatioMax}
+              showCurrentReserveRatio={Number(coinsDetails?.unscaledNumberSc) > 0}
             />
           </div>
         </div>

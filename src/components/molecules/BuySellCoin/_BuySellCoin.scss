@@ -7,10 +7,10 @@
   .AmountInput {
     margin: 1em 0;
     .ant-input-affix-wrapper-lg {
-      border: 2px solid #2a2c3e;
+      border: 2px solid #100901;
     }
     .ant-input-affix-wrapper-status-error {
-      background-color: #2a2c3e !important;
+      background-color: #100901 !important;
       border: 2px solid #ff4d4f;
     }
   }
@@ -44,18 +44,6 @@
     margin: 0.5em 0;
     p {
       @include number-text($label, $grey-2, 400);
-    }
-  }
-
-  .MaxButton {
-    cursor: pointer;
-    margin-left: 14px;
-    background: #0f1227;
-    color: $white;
-    border-radius: 4px;
-    border: 0;
-    &:hover {
-      background: $black-3;
     }
   }
 }

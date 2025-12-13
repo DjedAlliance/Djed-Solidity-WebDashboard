@@ -1,3 +1,5 @@
+// TODO: Hot reload doesn't automatically reload the page
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { FullPageSpinner } from "../components/atoms/LoadingIcon/LoadingIcon";
 import {
@@ -12,22 +14,39 @@ import {
   getSystemParams,
   getAccountDetails,
   getCoinBudgets,
-  CHAIN_ID
+  calculateIsRatioBelowMax,
+  calculateIsRatioAboveMin,
+  calculateFutureScPrice
 } from "../utils/ethereum";
 import useInterval from "../utils/hooks/useInterval";
 import {
   ACCOUNT_DETAILS_REQUEST_INTERVAL,
   COIN_DETAILS_REQUEST_INTERVAL
 } from "../utils/constants";
-import { useLocalStorage } from "../utils/hooks/useLocalStorage";
+import { BigNumber } from "ethers";
+
+import {
+  flintWalletConnector,
+  metamaskConnector,
+  supportedChain
+} from "../utils/web3/wagmi";
+import { useConnect, useAccount, useNetwork, useSigner } from "wagmi";
 
 const AppContext = createContext();
+export const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID);
 
 export const AppProvider = ({ children }) => {
+  const { connect, connectors } = useConnect();
+  const {
+    connector: activeConnector,
+    isConnected: isWalletConnected,
+    address: account
+  } = useAccount();
+  const { chain } = useNetwork();
+  const { data: signer } = useSigner();
+
   const [isLoading, setIsLoading] = useState(false);
   const [web3, setWeb3] = useState(null);
-  const [accounts, setAccounts] = useState([]);
-  const [storedAccounts, setStoredAccounts] = useLocalStorage("accounts", []);
   const [djedContract, setDjedContract] = useState(null);
   const [oracleContract, setOracleContract] = useState(null);
   const [coinContracts, setCoinContracts] = useState(null);
@@ -36,14 +55,28 @@ export const AppProvider = ({ children }) => {
   const [systemParams, setSystemParams] = useState(null);
   const [accountDetails, setAccountDetails] = useState(null);
   const [coinBudgets, setCoinBudgets] = useState(null);
-  const [isWrongChain, setIsWrongChain] = useState(false);
+  const [isVisible, setIsVisible] = useState(document.visibilityState === "visible");
 
   useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(document.visibilityState === "visible");
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+  useEffect(() => {
+    if (!account) return;
     const setUp = async () => {
       await setUpAccountSpecificValues();
     };
     setUp();
-  }, [accounts]);
+    // TODO: React Hook useEffect has a missing dependency: 'setUpAccountSpecificValues'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+    // eslint-disable-next-line
+  }, [account]);
 
   useEffect(() => {
     const init = async () => {
@@ -51,7 +84,7 @@ export const AppProvider = ({ children }) => {
         const web3 = await getWeb3();
         const djed = getDjedContract(web3);
         const oracle = await getOracleAddress(djed).then((addr) =>
-          getOracleContract(web3, addr)
+          getOracleContract(web3, addr, djed._address)
         );
         const coinContracts = await getCoinContracts(djed, web3);
         const decimals = await getDecimals(
@@ -63,8 +96,7 @@ export const AppProvider = ({ children }) => {
           coinContracts.reserveCoin,
           djed,
           decimals.scDecimals,
-          decimals.rcDecimals,
-          oracle
+          decimals.rcDecimals
         );
         const systemParams = await getSystemParams(djed);
         setWeb3(web3);
@@ -74,58 +106,37 @@ export const AppProvider = ({ children }) => {
         setDecimals(decimals);
         setCoinsDetails(coinsDetails);
         setSystemParams(systemParams);
-        if (storedAccounts.length > 0) {
-          const newAccounts = await window.ethereum.request({
-            method: "eth_requestAccounts"
-          });
-          if (
-            storedAccounts.length !== newAccounts.length ||
-            storedAccounts[0] !== newAccounts[0]
-          ) {
-            setAccounts(accounts);
-            setStoredAccounts(accounts);
-          } else {
-            setAccounts(storedAccounts);
-          }
-        }
       } catch (e) {
         console.error(e);
       } finally {
         setIsLoading(false);
       }
-      //console.log("Accs:", accounts);
     };
     setIsLoading(true);
     init();
   }, []);
 
-  const isWalletInstalled = web3 && djedContract && oracleContract;
-  const isWalletConnected = isWalletInstalled && accounts.length > 0;
-
   const redirectToMetamask = () => {
     window.open("https://metamask.io/", "_blank");
   };
-
-  const handleChain = (chainId) => {
-    if (chainId !== CHAIN_ID) {
-      setIsWrongChain(true);
-      console.log("Wrong chain:", chainId, "rather than", CHAIN_ID);
-    } else {
-      setIsWrongChain(false);
-      console.log("Correct chain:", chainId);
-    }
+  const redirectToFlint = () => {
+    window.open("https://flint-wallet.com/", "_blank");
+  };
+  const redirectToEternl = () => {
+    window.open("https://eternl.io/", "_blank");
+  };
+  const redirectToNami = () => {
+    window.open("https://namiwallet.io/", "_blank");
+  };
+  const redirectToNufi = () => {
+    window.open("https://nu.fi/", "_blank");
   };
 
   const setUpAccountSpecificValues = async () => {
-    if (accounts.length === 0) {
-      return;
-    }
-    window.ethereum
-      .request({ method: "eth_chainId" })
-      .then((chainId) => handleChain(parseInt(chainId)));
+    if (coinContracts == null) return;
     const accountDetails = await getAccountDetails(
       web3,
-      accounts[0],
+      account,
       coinContracts.stableCoin,
       coinContracts.reserveCoin,
       decimals.scDecimals,
@@ -141,23 +152,59 @@ export const AppProvider = ({ children }) => {
     setCoinBudgets(coinBudgets);
   };
 
-  const connectMetamask = async () => {
-    try {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts"
-      });
-      setAccounts(accounts);
-      setStoredAccounts(accounts);
-    } catch (e) {
-      console.error(e);
-    }
+  const connectMetamask = () => {
+    connect({
+      connector: metamaskConnector,
+      chainId: supportedChain.id
+    });
+  };
+  const connectToEternlWSC = () => {
+    const etrnalWSCConnector = connectors.find(
+      (connector) => connector.id === "eternl-wsc"
+    );
+    if (!etrnalWSCConnector) return;
+    connect({
+      connector: etrnalWSCConnector
+    });
+  };
+
+  const connectToNamiWSC = () => {
+    const namiWSCConnector = connectors.find((connector) => connector.id === "nami-wsc");
+    if (!namiWSCConnector) return;
+    connect({
+      connector: namiWSCConnector
+    });
+  };
+
+  const connectToNufiWSC = () => {
+    const nufiWSCConnector = connectors.find((connector) => connector.id === "nufi-wsc");
+    if (!nufiWSCConnector) return;
+    connect({
+      connector: nufiWSCConnector
+    });
+  };
+
+  const connectFlintWallet = () => {
+    // flint doesn't support switchNetwork at the time being
+    connect({
+      connector: flintWalletConnector
+    });
+  };
+  const connectToFlintWSC = async () => {
+    const flintWSCConnector = connectors.find(
+      (connector) => connector.id === "flint-wsc"
+    );
+    connect({
+      connector: flintWSCConnector
+    });
   };
 
   useInterval(
     async () => {
+      if (coinContracts == null || !isVisible) return;
       const accountDetails = await getAccountDetails(
         web3,
-        accounts[0],
+        account,
         coinContracts.stableCoin,
         coinContracts.reserveCoin,
         decimals.scDecimals,
@@ -172,11 +219,12 @@ export const AppProvider = ({ children }) => {
       );
       setCoinBudgets(coinBudgets);
     },
-    isWalletConnected ? ACCOUNT_DETAILS_REQUEST_INTERVAL : null
+    isWalletConnected && isVisible ? ACCOUNT_DETAILS_REQUEST_INTERVAL : null
   );
 
   useInterval(
     async () => {
+      if (coinContracts == null || !isVisible) return;
       const coinsDetails = await getCoinDetails(
         coinContracts.stableCoin,
         coinContracts.reserveCoin,
@@ -187,8 +235,54 @@ export const AppProvider = ({ children }) => {
       );
       setCoinsDetails(coinsDetails);
     },
-    isWalletConnected ? COIN_DETAILS_REQUEST_INTERVAL : null
+    isWalletConnected && isVisible ? COIN_DETAILS_REQUEST_INTERVAL : null
   );
+
+  const isRatioBelowMax = ({ scPrice, reserveBc }) => {
+    const scDecimals = BigNumber.from(decimals.scDecimals);
+    const totalScSupply = BigNumber.from(coinsDetails?.unscaledNumberSc);
+    const reserveRatioMax = BigNumber.from(systemParams?.reserveRatioMaxUnscaled);
+    const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
+    const thresholdSupplySC = BigNumber.from(systemParams.thresholdSupplySC);
+    return calculateIsRatioBelowMax({
+      scPrice,
+      reserveBc,
+      totalScSupply,
+      reserveRatioMax,
+      scDecimalScalingFactor,
+      thresholdSupplySC
+    });
+  };
+
+  const isRatioAboveMin = ({ scPrice, totalScSupply, reserveBc }) => {
+    const scDecimals = BigNumber.from(decimals.scDecimals);
+    const reserveRatioMin = BigNumber.from(systemParams?.reserveRatioMinUnscaled);
+    const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
+
+    return calculateIsRatioAboveMin({
+      scPrice,
+      reserveBc,
+      totalScSupply,
+      reserveRatioMin,
+      scDecimalScalingFactor
+    });
+  };
+
+  /**
+   * This function should prepare parameters for calculating future stableCoin price
+   * @param {string} amountBC The unscaled amount of BC (e.g. for 1BC, value should be 1 * 10^BC_DECIMALS)
+   * @param {string} amountSC The unscaled amount of StableCoin (e.g. for 1SC, value should be 1 * 10^SC_DECIMALS)
+   * @returns future stablecoin price as result of calculateFutureScPrice function
+   */
+  const getFutureScPrice = async ({ amountBC, amountSC }) =>
+    calculateFutureScPrice({
+      amountBC,
+      amountSC,
+      djedContract,
+      oracleContract,
+      stableCoinContract: coinContracts.stableCoin,
+      scDecimalScalingFactor: BigNumber.from(10).pow(decimals.scDecimals)
+    });
 
   if (isLoading) {
     return <FullPageSpinner />;
@@ -205,14 +299,35 @@ export const AppProvider = ({ children }) => {
           systemParams,
           accountDetails,
           coinBudgets,
-          isWalletInstalled,
+          isMetamaskWalletInstalled:
+            typeof window !== "undefined" ? window?.ethereum?.isMetaMask : false,
+          isFlintWalletInstalled:
+            typeof window !== "undefined" ? window?.evmproviders?.flint?.isFlint : false,
+          isEternlWalletInstalled:
+            typeof window !== "undefined" ? window?.cardano?.eternl : false,
+          isNamiWalletInstalled:
+            typeof window !== "undefined" ? window?.cardano?.nami : false,
+          isNufiWalletInstalled:
+            typeof window !== "undefined" ? window?.cardano?.nufi : false,
           isWalletConnected,
-          isWrongChain,
+          isWrongChain: isWalletConnected && chain?.id !== CHAIN_ID,
           connectMetamask,
+          connectFlintWallet,
+          connectToNamiWSC,
+          connectToNufiWSC,
+          connectToEternlWSC,
+          connectToFlintWSC,
           redirectToMetamask,
-          accounts,
-          setAccounts,
-          setStoredAccounts
+          redirectToFlint,
+          redirectToEternl,
+          redirectToNami,
+          redirectToNufi,
+          activeConnector,
+          account,
+          signer,
+          isRatioBelowMax,
+          isRatioAboveMin,
+          getFutureScPrice
         }}
       >
         {children}

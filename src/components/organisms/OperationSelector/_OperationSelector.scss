@@ -7,15 +7,18 @@
     height: -webkit-fill-available;
     border-radius: 30px;
     color: $white;
-    background: #4962fc;
+    background: var(--gold-dark);
   }
   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn .custom-tab.tab-sell {
     height: -webkit-fill-available;
     border-radius: 30px;
     color: $white;
-    background: #e8006f;
+    background: var(--gold-dark);
   }
   .ant-tabs-tab:hover {
     color: $white;
+  }
+  .ant-tabs-tab.ant-tabs-tab-disabled {
+    color: $grey-5;
   }
 }

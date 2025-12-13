@@ -1,70 +1,139 @@
-# Getting Started with Create React App
+<!-- Don't delete it -->
+<div id="readme-top"></div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<!-- Organization Logo -->
+<div align="center">
+  <img alt="Djed-Solidity WebDashboard" src="src/images/djedlogo.png" width="175">
+  &nbsp;
+  &nbsp;
+</div>
 
-## Available Scripts
+&nbsp;
 
-In the project directory, you can run:
+<!-- Project Name -->
+<div align="center">
+  <h1>Djed-Solidity WebDashboard</h1>
+</div>
 
-### `npm start`
+&nbsp;
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+<!-- Project Social Handles -->
+<p align="center">
+<!-- X (formerly Twitter) -->
+<a href="https://x.com/DjedStablecoin">
+  <img src="https://img.shields.io/twitter/follow/DjedStablecoin" alt="X (formerly Twitter) Badge"/>
+</a>
+&nbsp;&nbsp;
+<!-- Discord -->
+<a href="https://discord.gg/9SXM4jka">
+  <img src="https://img.shields.io/discord/995968619034984528?style=flat&logo=discord&logoColor=white&logoSize=auto&label=Discord&labelColor=5865F2&color=57F287" alt="Discord Badge"/>
+</a>
+&nbsp;&nbsp;
+<!-- Medium -->
+<a href="https://medium.com/djed-alliance">
+  <img src="https://img.shields.io/badge/Medium-black?style=flat&logo=medium&logoColor=white&logoSize=auto&color=black" alt="Medium Badge"/>
+</a>
+&nbsp;&nbsp;
+<!-- LinkedIn -->
+<a href="https://www.linkedin.com/company/djed-alliance/">
+  <img src="https://img.shields.io/badge/LinkedIn-black?style=flat&logo=LinkedIn&logoColor=blue&logoSize=auto&color=0A66C2" alt="LinkedIn Badge"/>
+</a>
+&nbsp;&nbsp;
+</p>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+&nbsp;
 
-### `npm test`
+<!-- Project core values and objective -->
+<p align="center">
+  <strong>
+  Djed is a formally verified crypto-backed autonomous stablecoin protocol. This repository contains the complete source code for a frontend application designed to facilitate user interaction with deployments of a Solidity implementation of the Djed protocol.
+  </strong>
+</p>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+<!-- Table of Contents -->
+<details>
+  <summary>Table of Contents</summary>
+  <ul>
+    <li><a href="#about"> ➤ About</a></li>
+    <li><a href="#known-deployments"> ➤ Known Deployments</a></li>
+    <li><a href="#installation"> ➤ Installation</a></li>
+    <li><a href="#usage"> ➤ Usage</a></li>
+    <li><a href="#contributing"> ➤ Contributing</a></li>
+  </ul>
+</details>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+<!-- Project Description (Start from here) -->
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# About
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Djed is a formally verified crypto-backed autonomous stablecoin protocol. This repository contains the complete source code for a frontend application designed to facilitate user interaction with deployments of a Solidity implementation of the Djed protocol. 
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Known Deployments
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Known deployments of this frontend can be used at:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- [Milkomeda C1 - Mainnet](https://milkomeda-c1.djed.one)
+- [Milkomeda C1 - Testnet](https://milkomeda-c1-testnet.djed.one)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+By utilizing this frontend application, users can conveniently engage with Djed deployments and explore the functionalities provided by the smart contracts.
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Installation
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+We use **nvm** to handle the Node version. If you don't use nvm, the Node version can be taken from the `.nvmrc` file.
 
-### Code Splitting
+1. **Clone the repository:**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+git clone https://github.com/username/djed-solidity-web-dashboard.git
+cd djed-solidity-web-dashboard
+```
+2. **Install Node version and dependencies:**
+```bash
+nvm install
+npm install
+```
 
-### Analyzing the Bundle Size
+ # Usage
+Start the development server:
+```bash
+npm start
+```
+Open http://localhost:3000 to view it in your browser.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Run tests:
+```bash
+npm test
+```
+Format code with Prettier:
+```bash
+npm run format
+```
+Build for production:
+```bash
+npm run build
+```
+# Contributing
+We welcome contributions from the community!
 
-### Making a Progressive Web App
+1. Fork the project.
+2. Create your feature branch (git checkout -b feature/AmazingFeature).
+3. Commit your changes (git commit -m 'Add amazing feature').
+4. Push to the branch (git push origin feature/AmazingFeature).
+5. Open a pull request.
+6. For major changes, please open an issue first to discuss what you'd like to change.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+# 📬 Contact
 
-### Advanced Configuration
+- **Discord:** [@Stability Nexus](https://discord.gg/9SXM4jka)
+- **Twitter/X:** [@DjedStablecoin](https://x.com/DjedStablecoin)  
+- **Medium:** [Djed-Alliance](https://medium.com/djed-alliance)
+- **LinkedIn:** [Djed-Alliance](https://www.linkedin.com/company/djed-alliance/)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+<div align="right"><kbd><a href="#readme-top">↑ Back to top ↑</a></kbd></div>
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
