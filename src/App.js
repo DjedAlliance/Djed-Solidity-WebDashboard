@@ -43,7 +43,7 @@ const wscCustomTheme = {
 };
 export default function App() {
   useEffect(() => {
-    document.title = `Djed on Milkomeda ${process.env.REACT_APP_BC}`;
+    document.title = `Djed on ${process.env.REACT_APP_BC}`;
 
     const gradientTheme = process.env.REACT_APP_GRADIENT_THEME || "gradient-theme-5";
     const colorTheme = process.env.REACT_APP_COLOR_THEME || "gold-dark";

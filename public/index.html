@@ -8,7 +8,7 @@
   <meta name="robots" content="index, follow" />
 
   <!-- Canonical: deployment-scoped -->
-  <link rel="canonical" href="%REACT_APP_DEPLOYMENT_URL%" />
+  <link rel="canonical" href="<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_DEPLOYMENT_URL %>" />
 
   <!-- Primary SEO -->
   <title>Djed – Stablecoin Protocol</title>
@@ -20,18 +20,21 @@
   <meta property="og:title" content="Djed – Stablecoin Protocol" />
   <meta property="og:description"
     content="Official Djed frontend enabling interaction with the Djed stablecoin protocol." />
-  <meta property="og:url" content="%REACT_APP_DEPLOYMENT_URL%" />
-  <meta property="og:image" content="%PUBLIC_URL%/%REACT_APP_LOGO_PATH%" />
+  <meta property="og:url" content="<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_DEPLOYMENT_URL %>" />
+  <meta property="og:image"
+    content="<%= htmlWebpackPlugin.options.templateParameters.PUBLIC_URL %>/<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_LOGO_PATH %>" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="%REACT_APP_DEPLOYMENT_URL%" />
+  <meta name="twitter:url" content="<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_DEPLOYMENT_URL %>" />
   <meta name="twitter:title" content="Djed – Stablecoin Protocol" />
   <meta name="twitter:description" content="Official Djed frontend." />
-  <meta name="twitter:image" content="%PUBLIC_URL%/%REACT_APP_LOGO_PATH%" />
+  <meta name="twitter:image"
+    content="<%= htmlWebpackPlugin.options.templateParameters.PUBLIC_URL %>/<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_LOGO_PATH %>" />
 
   <!-- App identity -->
-  <link rel="icon" href="%PUBLIC_URL%/%REACT_APP_LOGO_PATH%" />
+  <link rel="icon"
+    href="<%= htmlWebpackPlugin.options.templateParameters.PUBLIC_URL %>/<%= htmlWebpackPlugin.options.templateParameters.REACT_APP_LOGO_PATH %>" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -41,7 +44,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
 
   <!-- PWA -->
-  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <link rel="manifest" href="<%= htmlWebpackPlugin.options.templateParameters.PUBLIC_URL %>/manifest.json" />
 </head>
 
 
