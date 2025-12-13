@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { Layout, Menu, Dropdown } from "antd";
 import WalletConnectButton from "./components/molecules/MetamaskStatusButton/WalletConnectButton";
@@ -8,6 +8,7 @@ import "./App.scss";
 import { useAppProvider } from "./context/AppProvider";
 import { CloseOutlined, MenuOutlined, WalletOutlined } from "@ant-design/icons";
 import CustomButton from "./components/atoms/CustomButton/CustomButton";
+import { updateSEO } from "./utils/SEO";
 
 const { Header, Content } = Layout;
 
@@ -17,6 +18,11 @@ export default function MainLayout() {
   const { isWalletConnected } = useAppProvider();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Update SEO meta tags when route changes
+  useEffect(() => {
+    updateSEO(location.pathname);
+  }, [location.pathname]);
 
   return (
     <div>
