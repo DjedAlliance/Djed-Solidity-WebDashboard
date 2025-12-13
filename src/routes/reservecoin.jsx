@@ -138,7 +138,10 @@ export default function ReserveCoin() {
             coinBudgets?.unscaledBudgetRc
           ).then((res) => setBuyValidity(res));
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error("Failed to update buy trade data:", error.message);
+        setBuyValidity(TRANSACTION_VALIDITY.UNKNOWN_ERROR);
+      }
     };
     getTradeData();
   };
@@ -201,7 +204,10 @@ export default function ReserveCoin() {
             accountDetails?.unscaledBalanceRc
           ).then((res) => setSellValidity(res));
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error("Failed to update sell trade data:", error.message);
+        setSellValidity(TRANSACTION_VALIDITY.UNKNOWN_ERROR);
+      }
     };
     getTradeData();
   };
