@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import OperationSelector from "../components/organisms/OperationSelector/OperationSelector";
@@ -8,38 +8,20 @@ import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
-import useBuyOrSell from "../utils/hooks/useBuyOrSell";
 import { TRANSACTION_VALIDITY } from "../utils/constants";
-import {
-  getScAdaEquivalent,
-  stringToBigNumber,
-  validatePositiveNumber
-} from "../utils/helpers";
+import { getScAdaEquivalent } from "../utils/helpers";
 import {
   buyScTx,
-  promiseTx,
   sellScTx,
   tradeDataPriceBuySc,
   tradeDataPriceSellSc,
   checkBuyableSc,
   checkSellableSc,
-  verifyTx,
-  BC_DECIMALS,
-  calculateTxFees,
-  isTxLimitReached,
-  DJED_ADDRESS,
-  FEE_UI_UNSCALED,
-  UI
+  BC_DECIMALS
 } from "../utils/ethereum";
-import { BigNumber, ethers } from "ethers";
-import { useAccount } from "wagmi";
-import djedArtifact from "../artifacts/Djed.json";
-import {
-  ConnectWSCButton,
-  TransactionConfigWSCProvider,
-  useModal as useWSCModal,
-  useWSCProvider
-} from "milkomeda-wsc-ui-test-beta";
+import WSCButton from "./CoinWSCButton";
+import { useWSCProvider } from "milkomeda-wsc-ui-test-beta";
+import useCoinTrade from "./useCoinTrade";
 
 export default function Stablecoin() {
   const {
@@ -58,219 +40,57 @@ export default function Stablecoin() {
     coinContracts,
     getFutureScPrice
   } = useAppProvider();
-  const { isWSCConnected } = useWSCProvider();
-  const { setOpen } = useWSCModal();
 
-  const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
-  const [tradeData, setTradeData] = useState({});
-  const [value, setValue] = useState(null);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [txError, setTxError] = useState(null);
-  const [txStatus, setTxStatus] = useState("idle");
-  const [buyValidity, setBuyValidity] = useState(
-    TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
-  );
-  const [sellValidity, setSellValidity] = useState(
-    TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
-  );
-
-  const txStatusPending = txStatus === "pending";
-  const txStatusRejected = txStatus === "rejected";
-  const txStatusSuccess = txStatus === "success";
-
-  const updateBuyTradeData = (amountScaled) => {
-    const inputSanity = validatePositiveNumber(amountScaled);
-    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
-      setBuyValidity(inputSanity);
-      return;
+  const {
+    tradeData,
+    value,
+    termsAccepted,
+    txError,
+    txStatus,
+    buyValidity,
+    sellValidity,
+    txStatusPending,
+    txStatusRejected,
+    txStatusSuccess,
+    buyFunction,
+    sellFunction,
+    tradeFxn,
+    currentAmount,
+    onChangeBuyInput,
+    onChangeSellInput,
+    onSubmit,
+    transactionValidated,
+    buttonDisabled,
+    setValue,
+    setTermsAccepted,
+    setBuyOrSell,
+    setBuyValidity,
+    setSellValidity,
+    isBuyActive,
+    isWSCConnected
+  } = useCoinTrade({
+    createBuyOptions: {
+      tradeDataPriceBuy: tradeDataPriceBuySc,
+      decimalsValue: decimals.scDecimals,
+      checkBuyable: checkBuyableSc,
+      bcDecimals: BC_DECIMALS,
+      amountForLimitFn: (amountScaled) => amountScaled,
+      isRatioOkFn: ({ totalScSupply, scPrice, reserveBc }) =>
+        isRatioAboveMin({ totalScSupply, scPrice, reserveBc }),
+      budgetUnscaled: coinBudgets?.unscaledBudgetSc,
+      buyTx: buyScTx
+    },
+    createSellOptions: {
+      tradeDataPriceSell: tradeDataPriceSellSc,
+      decimalsValue: decimals.scDecimals,
+      checkSellable: checkSellableSc,
+      bcDecimals: decimals.scDecimals,
+      amountForLimitFn: (amountScaled) => amountScaled,
+      isRatioOkFn: ({ totalScSupply, scPrice, reserveBc }) =>
+        isRatioAboveMin({ totalScSupply, scPrice, reserveBc }),
+      sellTx: sellScTx
     }
-    const getTradeData = async () => {
-      try {
-        const data = await tradeDataPriceBuySc(
-          djedContract,
-          decimals.scDecimals,
-          amountScaled
-        );
-
-        const futureSCPrice = await getFutureScPrice({
-          amountBC: data.totalUnscaled,
-          amountSC: data.amountUnscaled
-        });
-        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
-        const isRatioAboveMinimum = isRatioAboveMin({
-          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc).add(
-            BigNumber.from(data.amountUnscaled)
-          ),
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
-            BigNumber.from(data.totalUnscaled).add(f)
-          )
-        });
-
-        setTradeData(data);
-        if (!isWalletConnected) {
-          setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-        } else if (isWrongChain) {
-          setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (
-          isTxLimitReached(
-            amountScaled,
-            coinsDetails.unscaledNumberSc,
-            systemParams.thresholdSupplySC
-          )
-        ) {
-          setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
-        } else if (
-          stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
-            stringToBigNumber(data.totalBCUnscaled, BC_DECIMALS)
-          )
-        ) {
-          setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
-        } else if (!isRatioAboveMinimum) {
-          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
-        } else {
-          checkBuyableSc(
-            djedContract,
-            data.amountUnscaled,
-            coinBudgets?.unscaledBudgetSc
-          ).then((res) => {
-            setBuyValidity(res);
-          });
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-    getTradeData();
-  };
-
-  const updateSellTradeData = (amountScaled) => {
-    const inputSanity = validatePositiveNumber(amountScaled);
-    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
-      setSellValidity(inputSanity);
-      return;
-    }
-    const getTradeData = async () => {
-      try {
-        const data = await tradeDataPriceSellSc(
-          djedContract,
-          decimals.scDecimals,
-          amountScaled
-        );
-        setTradeData(data);
-        if (!isWalletConnected) {
-          setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-        } else if (isWrongChain) {
-          setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (
-          isTxLimitReached(
-            amountScaled,
-            coinsDetails.unscaledNumberSc,
-            systemParams.thresholdSupplySC
-          )
-        ) {
-          setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
-        } else if (
-          stringToBigNumber(accountDetails.unscaledBalanceSc, decimals.scDecimals).lt(
-            stringToBigNumber(data.amountUnscaled, decimals.scDecimals)
-          )
-        ) {
-          setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_SC);
-        } else {
-          checkSellableSc(data.amountUnscaled, accountDetails?.unscaledBalanceSc).then(
-            (res) => setSellValidity(res)
-          );
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-    getTradeData();
-  };
-
-  const onChangeBuyInput = (amountScaled) => {
-    setValue(amountScaled);
-    updateBuyTradeData(amountScaled);
-  };
-  const onChangeSellInput = (amountScaled) => {
-    setValue(amountScaled);
-    updateSellTradeData(amountScaled);
-  };
-
-  const buySc = (total) => {
-    console.log("Attempting to buy SC for", total);
-    setTxStatus("pending");
-    promiseTx(isWalletConnected, buyScTx(djedContract, account, total), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          if (res) {
-            console.log("Buy SC success!");
-            setTxStatus("success");
-          } else {
-            console.log("Buy SC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Buy SC error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
-
-  const sellSc = (amount) => {
-    console.log("Attempting to sell SC in amount", amount);
-    setTxStatus("pending");
-    promiseTx(isWalletConnected, sellScTx(djedContract, account, amount), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          if (res) {
-            console.log("Sell SC success!");
-            setTxStatus("success");
-          } else {
-            console.log("Sell SC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Sell SC error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
-
-  const currentAmount = isBuyActive
-    ? tradeData.totalBCUnscaled
-    : tradeData.amountUnscaled;
-
-  const tradeFxn = isBuyActive
-    ? buySc.bind(null, tradeData.totalBCUnscaled)
-    : sellSc.bind(null, tradeData.amountUnscaled);
-
-  const onSubmit = (e) => {
-    if (!isWalletConnected) return;
-    if (!termsAccepted) return;
-    e.preventDefault();
-    if (isWSCConnected) {
-      setOpen(true);
-      return;
-    }
-    tradeFxn();
-  };
-
-  const transactionValidated = isBuyActive
-    ? buyValidity === TRANSACTION_VALIDITY.OK
-    : sellValidity === TRANSACTION_VALIDITY.OK;
-
-  const buttonDisabled =
-    isNaN(parseFloat(value)) ||
-    parseFloat(value) === 0 ||
-    isWrongChain ||
-    !transactionValidated;
+  });
 
   const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
@@ -407,6 +227,12 @@ export default function Stablecoin() {
                       unwrapAmount={
                         isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
                       }
+                      evmTokenAddress={process.env.REACT_APP_EVM_STABLECOIN_ADDRESS}
+                      cardanoWrapTokenUnit={process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS}
+                      buyFunctionName="buyStableCoins"
+                      sellFunctionName="sellStableCoins"
+                      titleBuy="Buy SC with WSC"
+                      titleSell="Sell SC with WSC"
                     />
                   ) : (
                     <BuySellButton
@@ -455,58 +281,4 @@ export default function Stablecoin() {
   );
 }
 
-const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
-  const { address: account } = useAccount();
-
-  const buyOptions = {
-    defaultWrapToken: {
-      unit: "lovelace",
-      amount: currentAmount // amountUnscaled
-    },
-    defaultUnwrapToken: {
-      unit: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
-      amount: unwrapAmount // amountUnscaled
-    },
-    titleModal: "Buy SC with WSC",
-    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
-    evmContractRequest: {
-      address: DJED_ADDRESS,
-      abi: djedArtifact.abi,
-      functionName: "buyStableCoins", //account, FEE_UI_UNSCALED, UI
-      args: [account, FEE_UI_UNSCALED, UI],
-      overrides: {
-        value: ethers.BigNumber.from(currentAmount ?? "0")
-      }
-    }
-  };
-
-  const sellOptions = {
-    defaultWrapToken: {
-      unit: process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS,
-      amount: currentAmount
-    },
-    defaultUnwrapToken: {
-      unit: "",
-      amount: unwrapAmount // totalBCUnscaled
-    },
-    titleModal: "Sell SC with WSC",
-    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
-    evmContractRequest: {
-      address: DJED_ADDRESS,
-      abi: djedArtifact.abi,
-      functionName: "sellStableCoins", //amount, account, FEE_UI_UNSCALED, UI
-      args: [currentAmount, account, FEE_UI_UNSCALED, UI],
-      overrides: {
-        value: ethers.BigNumber.from("0")
-      }
-    }
-  };
-
-  return (
-    <TransactionConfigWSCProvider
-      options={stepTxDirection === "buy" ? buyOptions : sellOptions}
-    >
-      <ConnectWSCButton disabled={disabled} />
-    </TransactionConfigWSCProvider>
-  );
-};
+// WSC button is now provided by src/routes/CoinWSCButton
