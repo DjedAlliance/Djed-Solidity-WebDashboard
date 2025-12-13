@@ -8,11 +8,9 @@
       <wide310x150logo src="/logo512.png"/>
       <TileColor>#000000</TileColor>
     </tile>
-    <notification>
       <polling-uri src=""/>
       <frequency>30</frequency>
       <cycle>1</cycle>
     </notification>
   </msapplication>
 </browserconfig>
-    

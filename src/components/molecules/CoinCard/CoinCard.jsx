@@ -29,10 +29,11 @@ const CoinCard = ({
             {priceAmount} {CHAIN_COIN}
           </h3>
           <span id={`${tokenName}-sell-label`}>Current Sell Price</span>
-          <h3 aria-labelledby={`${tokenName}-sell-label`} itemProp="lowPrice">
-            {sellPriceAmount} {CHAIN_COIN}
-          </h3>
-          <meta itemProp="priceCurrency" content="USD" />
+          +<h3 aria-labelledby={`${tokenName}-price-label`}>
+            +  {priceAmount} {CHAIN_COIN}
+            +</h3>
+          +<meta itemProp="price" content={String(priceAmount)} />
+          +<meta itemProp="priceCurrency" content={CHAIN_COIN} />
         </div>
       ) : (
         <div className="PriceInfo" itemProp="offers" itemScope itemType="https://schema.org/Offer">
