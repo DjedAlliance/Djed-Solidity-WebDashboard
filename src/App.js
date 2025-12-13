@@ -10,6 +10,7 @@ import { client } from "./utils/web3/wagmi";
 import { WagmiConfig } from "wagmi";
 import { useEffect } from "react";
 import { ConnectWSCProvider } from "milkomeda-wsc-ui-test-beta";
+import { updateSEO } from "./utils/SEO";
 
 const wscCustomTheme = {
   "--wsc-body-background": "#100901",
@@ -43,7 +44,8 @@ const wscCustomTheme = {
 };
 export default function App() {
   useEffect(() => {
-    document.title = `Djed on ${process.env.REACT_APP_BC}`;
+    // Initialize SEO for the current route
+    updateSEO(window.location.pathname);
 
     const gradientTheme = process.env.REACT_APP_GRADIENT_THEME || "gradient-theme-5";
     const colorTheme = process.env.REACT_APP_COLOR_THEME || "gold-dark";
