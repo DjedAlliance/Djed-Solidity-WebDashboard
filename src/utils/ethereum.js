@@ -196,16 +196,26 @@ export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDeci
       web3Promise(djed, "scPrice", 0),
       web3Promise(djed, "rcBuyingPrice", 0)
     ]);
-    const { treasuryFee, fee } = await getFees(djed);
+    const { treasuryFee = "0", fee = "0" } = (await getFees(djed)) || {};
 
     const totalFees = BigNumber.from(fee)
       .add(BigNumber.from(treasuryFee))
       .add(BigNumber.from(FEE_UI_UNSCALED));
     const scalingFactorBN = BigNumber.from(scalingFactor);
-    const substractedFees = scalingFactorBN.sub(totalFees);
+
+    // Guard against fee overflow (total fees >= scaling factor)
+    if (totalFees.gte(scalingFactorBN)) {
+      throw new Error("Invalid fee configuration: total fees >= scaling factor");
+    }
+    const subtractedFees = scalingFactorBN.sub(totalFees);
 
     const balance = BigNumber.from(unscaledBalanceBc);
-    const usableBalance = balance.mul(substractedFees).div(scalingFactorBN);
+    const usableBalance = balance.mul(subtractedFees).div(scalingFactorBN);
+
+    // Guard against zero prices (division by zero)
+    if (BigNumber.from(scPrice).isZero() || BigNumber.from(rcPrice).isZero()) {
+      throw new Error("Invalid oracle price: scPrice/rcPrice is zero");
+    }
 
     const scDecimalScaling = BigNumber.from(10).pow(scDecimals);
     const rcDecimalScaling = BigNumber.from(10).pow(rcDecimals);
@@ -231,9 +241,9 @@ export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDeci
   } catch (error) {
     console.error("getCoinBudgets error", error);
     return {
-      scaledBudgetSc: "0",
+      scaledBudgetSc: decimalScaling("0", scDecimals),
       unscaledBudgetSc: "0",
-      scaledBudgetRc: "0",
+      scaledBudgetRc: decimalScaling("0", rcDecimals),
       unscaledBudgetRc: "0"
     };
   }
@@ -453,13 +463,10 @@ export const sellRcTx = (djed, account, amount) => {
  * using isRatioBelowMax to ensure ratio stays below maximum.
  */
 export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
-  return new Promise((resolve) => {
-    if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBudgetRc))) {
-      resolve(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
-    } else {
-      resolve(TRANSACTION_VALIDITY.OK);
-    }
-  });
+  if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBudgetRc))) {
+    return Promise.resolve(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
+  }
+  return Promise.resolve(TRANSACTION_VALIDITY.OK);
 };
 
 /**
@@ -468,13 +475,10 @@ export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
  * using isRatioAboveMin to ensure ratio stays above minimum.
  */
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
-  return new Promise((resolve) => {
-    if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBalanceRc))) {
-      resolve(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
-    } else {
-      resolve(TRANSACTION_VALIDITY.OK);
-    }
-  });
+  if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBalanceRc))) {
+    return Promise.resolve(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
+  }
+  return Promise.resolve(TRANSACTION_VALIDITY.OK);
 };
 
 
