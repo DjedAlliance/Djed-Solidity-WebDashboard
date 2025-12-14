@@ -30,6 +30,39 @@
   }
 }
 
+@media only screen and (max-width: 768px) {
+  .wsc-button {
+    height: 45px;
+    padding: 0.4em 1em;
+    .text {
+      margin: 0 10px;
+      font-size: 13px;
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .wsc-button {
+    height: 40px;
+    padding: 0.35em 0.75em;
+    .text {
+      margin: 0 8px;
+      font-size: 12px;
+    }
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .wsc-button {
+    height: 36px;
+    padding: 0.3em 0.5em;
+    .text {
+      margin: 0 6px;
+      font-size: 11px;
+    }
+  }
+}
+
 .step-1-content{}
 .step-2-content{}
 .step-3-content{}

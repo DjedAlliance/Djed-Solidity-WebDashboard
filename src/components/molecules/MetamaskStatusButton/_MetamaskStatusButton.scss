@@ -30,6 +30,26 @@
   }
 }
 
+@media only screen and (max-width: 768px) {
+  .wrapper-connect-btn {
+    & > button {
+      height: 45px;
+      padding: 0.4em 1em !important;
+      font-size: 12px;
+    }
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .wrapper-connect-btn {
+    & > button {
+      height: 40px;
+      padding: 0.35em 0.75em !important;
+      font-size: 11px;
+    }
+  }
+}
+
 .only-mobile {
   display: none;
   @media (max-width: 768px) {
@@ -38,7 +58,8 @@
     text-align: center;
   }
 }
-.only-desktop{
+
+.only-desktop {
   display: block;
   @media (max-width: 768px) {
     display: none;
