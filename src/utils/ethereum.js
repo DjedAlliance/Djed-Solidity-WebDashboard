@@ -289,7 +289,6 @@ const getFees = async (djed) => {
       fee
     };
   } catch (error) {
-    console.log("error", error);
   }
 };
 
@@ -363,7 +362,6 @@ export const tradeDataPriceBuyRc = async (djed, rcDecimals, amountScaled) => {
       totalBCUnscaled
     };
   } catch (error) {
-    console.log("error", error);
   }
 };
 
@@ -391,7 +389,6 @@ export const tradeDataPriceSellRc = async (djed, rcDecimals, amountScaled) => {
       totalBCUnscaled: totalBCAmount.toString()
     };
   } catch (error) {
-    console.log("error", error);
   }
 };
 
@@ -442,7 +439,6 @@ export const tradeDataPriceBuySc = async (djed, scDecimals, amountScaled) => {
       totalBCUnscaled
     };
   } catch (error) {
-    console.log("error", error);
   }
 };
 
@@ -470,7 +466,6 @@ export const tradeDataPriceSellSc = async (djed, scDecimals, amountScaled) => {
       totalBCScaled: decimalScaling(totalBCAmount.toString(), BC_DECIMALS)
     };
   } catch (error) {
-    console.log("error", error);
   }
 };
 
@@ -593,6 +588,5 @@ export const calculateFutureScPrice = async ({
         : futurePrice.toString();
     }
   } catch (error) {
-    console.log("calculateFutureScPrice error ", error);
   }
 };
