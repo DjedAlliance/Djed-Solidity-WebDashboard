@@ -6,6 +6,9 @@ import ModalTransaction from "../components/organisms/Modals/ModalTransaction";
 import ModalPending from "../components/organisms/Modals/ModalPending";
 import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 
+import useTransactionFlow from "../hooks/useTransactionFlow";
+import WSCTradeButton from "../components/WSCTradeButton";
+
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
@@ -17,26 +20,17 @@ import {
 } from "../utils/helpers";
 import {
   buyScTx,
-  promiseTx,
   sellScTx,
   tradeDataPriceBuySc,
   tradeDataPriceSellSc,
   checkBuyableSc,
   checkSellableSc,
-  verifyTx,
   BC_DECIMALS,
   calculateTxFees,
   isTxLimitReached,
-  DJED_ADDRESS,
-  FEE_UI_UNSCALED,
-  UI
 } from "../utils/ethereum";
-import { BigNumber, ethers } from "ethers";
-import { useAccount } from "wagmi";
-import djedArtifact from "../artifacts/Djed.json";
+import { BigNumber } from "ethers";
 import {
-  ConnectWSCButton,
-  TransactionConfigWSCProvider,
   useModal as useWSCModal,
   useWSCProvider
 } from "milkomeda-wsc-ui-test-beta";
@@ -60,23 +54,26 @@ export default function Stablecoin() {
   } = useAppProvider();
   const { isWSCConnected } = useWSCProvider();
   const { setOpen } = useWSCModal();
-
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
+
+  const { txStatus, txError, executeTx } = useTransactionFlow({
+    web3,
+    signer,
+    account,
+    isWalletConnected
+  });
+  const txStatusPending = txStatus === "pending";
+  const txStatusRejected = txStatus === "rejected";
+  const txStatusSuccess = txStatus === "success";
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [txError, setTxError] = useState(null);
-  const [txStatus, setTxStatus] = useState("idle");
   const [buyValidity, setBuyValidity] = useState(
     TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
   );
   const [sellValidity, setSellValidity] = useState(
     TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
   );
-
-  const txStatusPending = txStatus === "pending";
-  const txStatusRejected = txStatus === "rejected";
-  const txStatusSuccess = txStatus === "success";
 
   const updateBuyTradeData = (amountScaled) => {
     const inputSanity = validatePositiveNumber(amountScaled);
@@ -197,60 +194,16 @@ export default function Stablecoin() {
     updateSellTradeData(amountScaled);
   };
 
-  const buySc = (total) => {
-    console.log("Attempting to buy SC for", total);
-    setTxStatus("pending");
-    promiseTx(isWalletConnected, buyScTx(djedContract, account, total), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          if (res) {
-            console.log("Buy SC success!");
-            setTxStatus("success");
-          } else {
-            console.log("Buy SC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Buy SC error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
-
-  const sellSc = (amount) => {
-    console.log("Attempting to sell SC in amount", amount);
-    setTxStatus("pending");
-    promiseTx(isWalletConnected, sellScTx(djedContract, account, amount), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          if (res) {
-            console.log("Sell SC success!");
-            setTxStatus("success");
-          } else {
-            console.log("Sell SC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Sell SC error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
-
   const currentAmount = isBuyActive
     ? tradeData.totalBCUnscaled
     : tradeData.amountUnscaled;
 
-  const tradeFxn = isBuyActive
-    ? buySc.bind(null, tradeData.totalBCUnscaled)
-    : sellSc.bind(null, tradeData.amountUnscaled);
-
+  const tradeFxn = () =>
+    executeTx(() =>
+      isBuyActive
+        ? buyScTx(djedContract, account, tradeData.totalBCUnscaled)
+        : sellScTx(djedContract, account, tradeData.amountUnscaled)
+    );
   const onSubmit = (e) => {
     if (!isWalletConnected) return;
     if (!termsAccepted) return;
@@ -267,10 +220,11 @@ export default function Stablecoin() {
     : sellValidity === TRANSACTION_VALIDITY.OK;
 
   const buttonDisabled =
-    isNaN(parseFloat(value)) ||
-    parseFloat(value) === 0 ||
-    isWrongChain ||
-    !transactionValidated;
+  isNaN(parseFloat(value)) ||
+  parseFloat(value) === 0 ||
+  isWrongChain ||
+  !transactionValidated ||
+  !termsAccepted;
 
   const scFloat = parseFloat(coinsDetails?.scaledNumberSc.replaceAll(",", ""));
   const scConverted = getScAdaEquivalent(coinsDetails, scFloat);
@@ -400,13 +354,20 @@ export default function Stablecoin() {
                     ) : null*/}
 
                   {isWSCConnected ? (
-                    <WSCButton
-                      disabled={value === null || isWrongChain || !termsAccepted}
+                    <WSCTradeButton
+                      disabled={buttonDisabled}
                       currentAmount={currentAmount}
-                      stepTxDirection={isBuyActive ? "buy" : "sell"}
                       unwrapAmount={
                         isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
                       }
+                      stepTxDirection={isBuyActive ? "buy" : "sell"}
+                      buyFunctionName="buyStableCoins"
+                      sellFunctionName="sellStableCoins"
+                      titleBuy="Buy SC with WSC"
+                      titleSell="Sell SC with WSC"
+                      evmTokenAddress={process.env.REACT_APP_EVM_STABLECOIN_ADDRESS}
+                      wrapUnitBuy="lovelace"
+                      wrapUnitSell={process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS}
                     />
                   ) : (
                     <BuySellButton
@@ -454,59 +415,3 @@ export default function Stablecoin() {
     </main>
   );
 }
-
-const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
-  const { address: account } = useAccount();
-
-  const buyOptions = {
-    defaultWrapToken: {
-      unit: "lovelace",
-      amount: currentAmount // amountUnscaled
-    },
-    defaultUnwrapToken: {
-      unit: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
-      amount: unwrapAmount // amountUnscaled
-    },
-    titleModal: "Buy SC with WSC",
-    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
-    evmContractRequest: {
-      address: DJED_ADDRESS,
-      abi: djedArtifact.abi,
-      functionName: "buyStableCoins", //account, FEE_UI_UNSCALED, UI
-      args: [account, FEE_UI_UNSCALED, UI],
-      overrides: {
-        value: ethers.BigNumber.from(currentAmount ?? "0")
-      }
-    }
-  };
-
-  const sellOptions = {
-    defaultWrapToken: {
-      unit: process.env.REACT_APP_CARDANO_STABLECOIN_ADDRESS,
-      amount: currentAmount
-    },
-    defaultUnwrapToken: {
-      unit: "",
-      amount: unwrapAmount // totalBCUnscaled
-    },
-    titleModal: "Sell SC with WSC",
-    evmTokenAddress: process.env.REACT_APP_EVM_STABLECOIN_ADDRESS,
-    evmContractRequest: {
-      address: DJED_ADDRESS,
-      abi: djedArtifact.abi,
-      functionName: "sellStableCoins", //amount, account, FEE_UI_UNSCALED, UI
-      args: [currentAmount, account, FEE_UI_UNSCALED, UI],
-      overrides: {
-        value: ethers.BigNumber.from("0")
-      }
-    }
-  };
-
-  return (
-    <TransactionConfigWSCProvider
-      options={stepTxDirection === "buy" ? buyOptions : sellOptions}
-    >
-      <ConnectWSCButton disabled={disabled} />
-    </TransactionConfigWSCProvider>
-  );
-};

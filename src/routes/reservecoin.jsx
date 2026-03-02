@@ -6,6 +6,9 @@ import ModalTransaction from "../components/organisms/Modals/ModalTransaction";
 import ModalPending from "../components/organisms/Modals/ModalPending";
 import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 
+import useTransactionFlow from "../hooks/useTransactionFlow";
+import WSCTradeButton from "../components/WSCTradeButton";
+
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
@@ -19,29 +22,20 @@ import {
 } from "../utils/helpers";
 import {
   buyRcTx,
-  promiseTx,
   sellRcTx,
   tradeDataPriceBuyRc,
   tradeDataPriceSellRc,
   checkBuyableRc,
   checkSellableRc,
-  verifyTx,
   BC_DECIMALS,
   calculateTxFees,
-  isTxLimitReached,
-  DJED_ADDRESS,
-  FEE_UI_UNSCALED,
-  UI
+  isTxLimitReached
 } from "../utils/ethereum";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 import {
-  ConnectWSCButton,
-  TransactionConfigWSCProvider,
   useWSCProvider,
   useModal as useWSCModal
 } from "milkomeda-wsc-ui-test-beta";
-import djedArtifact from "../artifacts/Djed.json";
-import { useAccount } from "wagmi";
 
 export default function ReserveCoin() {
   const {
@@ -64,11 +58,21 @@ export default function ReserveCoin() {
   const { isWSCConnected } = useWSCProvider();
   const { setOpen } = useWSCModal();
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
+  
+  const { txStatus, txError, executeTx } = useTransactionFlow({
+    web3,
+    signer,
+    account,
+    isWalletConnected
+  });
+
+  const txStatusPending = txStatus === "pending";
+  const txStatusRejected = txStatus === "rejected";
+  const txStatusSuccess = txStatus === "success";
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [txError, setTxError] = useState(null);
-  const [txStatus, setTxStatus] = useState("idle");
+  
   const [buyValidity, setBuyValidity] = useState(
     TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
   );
@@ -76,9 +80,6 @@ export default function ReserveCoin() {
     TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED
   );
 
-  const txStatusPending = txStatus === "pending";
-  const txStatusRejected = txStatus === "rejected";
-  const txStatusSuccess = txStatus === "success";
 
   const updateBuyTradeData = (amountScaled) => {
     const inputSanity = validatePositiveNumber(amountScaled);
@@ -220,57 +221,13 @@ export default function ReserveCoin() {
     updateSellTradeData(amountScaled);
   };
 
-  const buyRc = (total) => {
-    console.log("Attempting to buy RC for", total);
-    setTxStatus("pending");
-    // TODO: pass to buyRcTx a parameter to enforce gasLimit if we are using WSC
-    promiseTx(isWalletConnected, buyRcTx(djedContract, account, total), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          if (res) {
-            console.log("Buy RC success!");
-            setTxStatus("success");
-          } else {
-            console.log("Buy RC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
 
-  const sellRc = (amount) => {
-    console.log("Attempting to sell RC in amount", amount);
-    setTxStatus("pending");
-    promiseTx(isWalletConnected, sellRcTx(djedContract, account, amount), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          console.log(hash, "hash");
-          if (res) {
-            console.log("Sell RC success!", hash);
-            setTxStatus("success");
-          } else {
-            console.log("Sell RC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
-
-  const tradeFxn = isBuyActive
-    ? buyRc.bind(null, tradeData.totalBCUnscaled)
-    : sellRc.bind(null, tradeData.amountUnscaled);
+  const tradeFxn = () =>
+  executeTx(() =>
+    isBuyActive
+      ? buyRcTx(djedContract, account, tradeData.totalBCUnscaled)
+      : sellRcTx(djedContract, account, tradeData.amountUnscaled)
+  );
 
   const currentAmount = isBuyActive
     ? tradeData.totalBCUnscaled
@@ -416,15 +373,22 @@ export default function ReserveCoin() {
                   </p>
                     ) : null*/}
                   {isWSCConnected ? (
-                    <WSCButton
-                      disabled={value === null || isWrongChain || !termsAccepted}
-                      currentAmount={currentAmount}
-                      stepTxDirection={isBuyActive ? "buy" : "sell"}
-                      unwrapAmount={
-                        isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
-                      }
-                    />
-                  ) : (
+  <WSCTradeButton
+    disabled={buttonDisabled || !termsAccepted}
+    currentAmount={currentAmount}
+    unwrapAmount={
+      isBuyActive ? tradeData.amountUnscaled : tradeData.totalBCUnscaled
+    }
+    stepTxDirection={isBuyActive ? "buy" : "sell"}
+    buyFunctionName="buyReserveCoins"
+    sellFunctionName="sellReserveCoins"
+    titleBuy="Buy RC with WSC"
+    titleSell="Sell RC with WSC"
+    evmTokenAddress={process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS}
+    wrapUnitBuy="lovelace"
+    wrapUnitSell={process.env.REACT_APP_CARDANO_RESERVECOIN_ADDRESS}
+  />
+) : (
                     <BuySellButton
                       disabled={buttonDisabled}
                       buyOrSell={buyOrSell}
@@ -471,59 +435,3 @@ export default function ReserveCoin() {
     </main>
   );
 }
-
-const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) => {
-  const { address: account } = useAccount();
-
-  const buyOptions = {
-    defaultWrapToken: {
-      unit: "lovelace",
-      amount: currentAmount
-    },
-    defaultUnwrapToken: {
-      unit: process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS,
-      amount: unwrapAmount // amountUnscaled
-    },
-    titleModal: "Buy RC with WSC",
-    evmTokenAddress: process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS,
-    evmContractRequest: {
-      address: DJED_ADDRESS,
-      abi: djedArtifact.abi,
-      functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
-      args: [account, FEE_UI_UNSCALED, UI],
-      overrides: {
-        value: ethers.BigNumber.from(currentAmount ?? "0")
-      }
-    }
-  };
-
-  const sellOptions = {
-    defaultWrapToken: {
-      unit: process.env.REACT_APP_CARDANO_RESERVECOIN_ADDRESS,
-      amount: currentAmount
-    },
-    defaultUnwrapToken: {
-      unit: "",
-      amount: unwrapAmount // totalBCUnscaled
-    },
-    titleModal: "Sell RC with WSC",
-    evmTokenAddress: process.env.REACT_APP_EVM_RESERVECOIN_ADDRESS,
-    evmContractRequest: {
-      address: DJED_ADDRESS,
-      abi: djedArtifact.abi,
-      functionName: "sellReserveCoins", //amount, account, FEE_UI_UNSCALED, UI
-      args: [currentAmount, account, FEE_UI_UNSCALED, UI],
-      overrides: {
-        value: "0"
-      }
-    }
-  };
-
-  return (
-    <TransactionConfigWSCProvider
-      options={stepTxDirection === "buy" ? buyOptions : sellOptions}
-    >
-      <ConnectWSCButton disabled={disabled} />
-    </TransactionConfigWSCProvider>
-  );
-};
