@@ -6,6 +6,7 @@ import ModalTransaction from "../components/organisms/Modals/ModalTransaction";
 import ModalPending from "../components/organisms/Modals/ModalPending";
 import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 
+import { executeTx } from "../utils/txHelper";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
@@ -197,51 +198,31 @@ export default function Stablecoin() {
     updateSellTradeData(amountScaled);
   };
 
-  const buySc = (total) => {
-    console.log("Attempting to buy SC for", total);
-    setTxStatus("pending");
-    promiseTx(isWalletConnected, buyScTx(djedContract, account, total), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          if (res) {
-            console.log("Buy SC success!");
-            setTxStatus("success");
-          } else {
-            console.log("Buy SC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Buy SC error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
+  const buySc = (total) =>
+    executeTx({
+      isWalletConnected,
+      txFunction: buyScTx,
+      contract: djedContract,
+      account,
+      amount: total,
+      signer,
+      web3,
+      setTxStatus,
+      setTxError
+    });
 
-  const sellSc = (amount) => {
-    console.log("Attempting to sell SC in amount", amount);
-    setTxStatus("pending");
-    promiseTx(isWalletConnected, sellScTx(djedContract, account, amount), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          if (res) {
-            console.log("Sell SC success!");
-            setTxStatus("success");
-          } else {
-            console.log("Sell SC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Sell SC error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
+  const sellSc = (amount) =>
+    executeTx({
+      isWalletConnected,
+      txFunction: sellScTx,
+      contract: djedContract,
+      account,
+      amount,
+      signer,
+      web3,
+      setTxStatus,
+      setTxError
+    });
 
   const currentAmount = isBuyActive
     ? tradeData.totalBCUnscaled
