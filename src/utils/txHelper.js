@@ -11,9 +11,30 @@ export const executeTx = async ({
   setTxStatus,
   setTxError,
 }) => {
-  setTxStatus("pending");
-
+export const executeTx = async ({
+  isWalletConnected,
+  txFunction,
+  contract,
+  account,
+  amount,
+  signer,
+  web3,
+  setTxStatus,
+  setTxError,
+}) => {
   try {
+    if (!isWalletConnected) {
+      setTxError("Metamask not connected!");
+      setTxStatus("rejected");
+      return;
+    }
+    if (!signer) {
+      setTxError("Couldn't get Signer");
+      setTxStatus("rejected");
+      return;
+    }
+    setTxStatus("pending");
+
     const { hash } = await promiseTx(
       isWalletConnected,
       txFunction(contract, account, amount),
