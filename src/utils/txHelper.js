@@ -11,17 +11,6 @@ export const executeTx = async ({
   setTxStatus,
   setTxError,
 }) => {
-export const executeTx = async ({
-  isWalletConnected,
-  txFunction,
-  contract,
-  account,
-  amount,
-  signer,
-  web3,
-  setTxStatus,
-  setTxError,
-}) => {
   try {
     if (!isWalletConnected) {
       setTxError("Metamask not connected!");
