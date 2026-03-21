@@ -6,6 +6,7 @@ import ModalTransaction from "../components/organisms/Modals/ModalTransaction";
 import ModalPending from "../components/organisms/Modals/ModalPending";
 import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
 
+import { executeTx } from "../utils/txHelper";
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
@@ -220,53 +221,31 @@ export default function ReserveCoin() {
     updateSellTradeData(amountScaled);
   };
 
-  const buyRc = (total) => {
-    console.log("Attempting to buy RC for", total);
-    setTxStatus("pending");
-    // TODO: pass to buyRcTx a parameter to enforce gasLimit if we are using WSC
-    promiseTx(isWalletConnected, buyRcTx(djedContract, account, total), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          if (res) {
-            console.log("Buy RC success!");
-            setTxStatus("success");
-          } else {
-            console.log("Buy RC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
+  const buyRc = (total) =>
+    executeTx({
+      isWalletConnected,
+      txFunction: buyRcTx,
+      contract: djedContract,
+      account,
+      amount: total,
+      signer,
+      web3,
+      setTxStatus,
+      setTxError
+    });
 
-  const sellRc = (amount) => {
-    console.log("Attempting to sell RC in amount", amount);
-    setTxStatus("pending");
-    promiseTx(isWalletConnected, sellRcTx(djedContract, account, amount), signer)
-      .then(({ hash }) => {
-        verifyTx(web3, hash).then((res) => {
-          console.log(hash, "hash");
-          if (res) {
-            console.log("Sell RC success!", hash);
-            setTxStatus("success");
-          } else {
-            console.log("Sell RC reverted!");
-            setTxError("The transaction reverted.");
-            setTxStatus("rejected");
-          }
-        });
-      })
-      .catch((err) => {
-        console.error("Error:", err.message);
-        setTxStatus("rejected");
-        setTxError("MetaMask error. See developer console for details.");
-      });
-  };
+  const sellRc = (amount) =>
+    executeTx({
+      isWalletConnected,
+      txFunction: sellRcTx,
+      contract: djedContract,
+      account,
+      amount,
+      signer,
+      web3,
+      setTxStatus,
+      setTxError
+    });
 
   const tradeFxn = isBuyActive
     ? buyRc.bind(null, tradeData.totalBCUnscaled)
