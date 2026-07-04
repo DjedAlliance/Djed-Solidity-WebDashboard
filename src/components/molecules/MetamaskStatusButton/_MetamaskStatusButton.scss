@@ -13,34 +13,50 @@
   position: relative;
 
   & > button {
-    @include buttonBase(0.5em 1.25em, 8px);
     @include primary-text($body, $white, 600);
     background: $black-2;
     outline: none;
     cursor: pointer;
-
     border: 2px solid $black-3;
     height: 50px;
+    padding: 0.5em 1.25em;
+    border-radius: 8px;
+
     &:hover,
     &:focus {
       background: $black-2;
       border-color: inherit;
       color: #fff;
     }
+
+    @include on-tablet {
+      height: 45px;
+      padding: 0.4em 1em;
+      font-size: 12px;
+    }
+
+    @include on-mobile {
+      height: 40px;
+      padding: 0.35em 0.75em;
+      font-size: 11px;
+    }
   }
 }
 
 .only-mobile {
   display: none;
-  @media (max-width: 768px) {
+
+  @include on-tablet {
     display: block;
     padding: 20px 20px 12px;
     text-align: center;
   }
 }
-.only-desktop{
+
+.only-desktop {
   display: block;
-  @media (max-width: 768px) {
+
+  @include on-tablet {
     display: none;
   }
 }

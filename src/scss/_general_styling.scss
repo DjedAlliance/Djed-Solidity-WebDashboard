@@ -13,6 +13,44 @@ $grey-3: #b5b0b0;
 $grey-4: #bbbbbb;
 $grey-5: #5f606e;
 
+// Breakpoints for responsive design
+$breakpoint-sm: 425px;
+$breakpoint-md: 600px;
+$breakpoint-lg: 768px;
+$breakpoint-xl: 1024px;
+$breakpoint-xxl: 1440px;
+
+// Media query mixins for responsive design
+@mixin on-mobile {
+  @media only screen and (max-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin on-tablet-sm {
+  @media only screen and (max-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin on-tablet {
+  @media only screen and (max-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin on-desktop {
+  @media only screen and (max-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin on-desktop-lg {
+  @media only screen and (min-width: $breakpoint-xl + 1px) {
+    @content;
+  }
+}
+
 // $gold-dark: #d07d2c;
 // $gold-light: #f49422;
 

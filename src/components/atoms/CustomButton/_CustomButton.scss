@@ -9,10 +9,35 @@
   justify-content: space-between;
   color: $secondary-color;
   outline: none;
+  white-space: nowrap;
 
   .ButtonText {
     @include primary-text($body, $white, 600);
     margin: 0 1em;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .CustomButton {
+    height: 45px;
+    padding: 0.4em 1em;
+
+    .ButtonText {
+      font-size: 12px;
+      margin: 0 0.75em;
+    }
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .CustomButton {
+    height: 40px;
+    padding: 0.35em 0.75em;
+
+    .ButtonText {
+      font-size: 11px;
+      margin: 0 0.5em;
+    }
   }
 }
 

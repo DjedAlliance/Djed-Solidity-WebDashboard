@@ -47,3 +47,46 @@
     }
   }
 }
+
+@media only screen and (max-width: 768px) {
+  .BuySellCoin {
+    padding: 0.75em 0;
+
+    h3 {
+      @include primary-text($body, $white, 400);
+      font-size: 13px;
+    }
+
+    .FeeInfo,
+    .Alert {
+      @include primary-text(12px, $grey-4, 600);
+    }
+
+    .AdditionalInfo {
+      p {
+        @include number-text(11px, $grey-2, 400);
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .BuySellCoin {
+    padding: 0.5em 0;
+
+    h3 {
+      @include primary-text(12px, $white, 400);
+    }
+
+    .FeeInfo,
+    .Alert {
+      @include primary-text(11px, $grey-4, 600);
+    }
+
+    .AdditionalInfo {
+      p {
+        @include number-text(10px, $grey-2, 400);
+      }
+    }
+  }
+}

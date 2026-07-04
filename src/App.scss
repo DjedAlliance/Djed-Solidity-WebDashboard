@@ -13,41 +13,127 @@ iframe {
   align-items: center;
   margin-right: 2em;
   max-width: 180px;
+  flex-shrink: 0;
 
   img {
     width: 50px;
+    height: auto;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .logo {
+    max-width: 150px;
+    margin-right: 1em;
+
+    img {
+      width: 40px;
+    }
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .logo {
+    max-width: 120px;
+    margin-right: 0.5em;
+
+    img {
+      width: 35px;
+    }
   }
 }
 
 .site-layout-content {
   padding: 2em 0;
+  width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+  .site-layout-content {
+    padding: 1.5em 0;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .site-layout-content {
+    padding: 1em 0;
+  }
 }
 
 .ant-layout {
   background: var(--gradient-theme-5);
   padding-top: 2em;
-  height: 100vh;
+  min-height: 100vh;
   overflow-y: auto;
+}
+
+@media only screen and (max-width: 768px) {
+  .ant-layout {
+    padding-top: 1.5em;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .ant-layout {
+    padding-top: 1em;
+  }
 }
 
 .ant-layout-content {
   padding: 0 3em;
+  width: 100%;
+}
+
+@media only screen and (max-width: 1024px) {
+  .ant-layout-content {
+    padding: 0 2em;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .ant-layout-content {
+    padding: 0 1.5em;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .ant-layout-content {
+    padding: 0 1em;
+  }
 }
 
 .ant-layout-header {
   display: flex;
   background: transparent;
-  height: 40px;
-  line-height: 40px;
+  min-height: 60px;
+  padding: 0.75em 3em;
   justify-content: space-between;
-  padding: 0 3em;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1em;
+  width: 100%;
 
   .WalletConfig {
     display: flex;
+    gap: 0.5em;
+    align-items: center;
   }
 
   &.header-desktop {
     display: flex;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .ant-layout-header {
+    padding: 0.75em 2em;
+    min-height: 55px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .ant-layout-header {
+    padding: 0.75em 1.5em;
+    min-height: 50px;
   }
 }
 .header-mobile {
@@ -61,7 +147,19 @@ iframe {
 
 .ant-menu-horizontal {
   border-bottom: none;
-  width: 100%;
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 768px) {
+  .ant-menu-horizontal {
+    flex-basis: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    min-width: auto;
+  }
 }
 
 .ant-menu {
@@ -219,78 +317,126 @@ iframe {
 .ant-popover-arrow-content::before {
   background: $black-2;
 }
+
 .ant-popover-inner-content {
   background: $black-2;
   display: flex;
   flex-direction: column;
   gap: 8px;
+
   button.CustomButton {
     width: 100%;
     justify-content: start;
     margin: 0 !important;
-
   }
-
 }
 
-@media only screen and (max-width: 425px) {
-  .ant-layout-header,
-  .ant-layout-content {
-    padding: 0 2em;
+@media only screen and (max-width: 768px) {
+  .ant-layout-header {
+    min-height: auto;
+    padding: 1em 1.5em;
+
+    .ant-menu-horizontal {
+      font-size: 12px;
+    }
+
+    .ant-menu-horizontal>.ant-menu-item {
+      padding: 0 0.75em !important;
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .ant-layout-header {
+    &.header-desktop {
+      display: none !important;
+    }
   }
 
   .header-mobile {
-    display: flex;
+    display: flex !important;
     justify-content: space-between;
     align-items: center;
-    padding: 0 2em;
+    padding: 1em;
     color: white;
+    width: 100%;
+    background: transparent;
+    position: relative;
+    z-index: 1001;
+
+    .logo,
+    .menu-mobile-icon,
+    .anticon {
+      position: relative;
+      z-index: 1003;
+      cursor: pointer;
+    }
   }
+
   .menu-mobile-dropdown {
-    width: 300px;
-    background: rgba(0, 0, 0, 0.9);
-    top: 70px !important;
-    overflow: hidden;
+    position: fixed !important;
+    top: 72px !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    z-index: 1000 !important;
+
     .ant-dropdown-menu {
-      padding-top: 20px;
+      padding: 20px 0;
       background: var(--gradient-theme-5);
       border: 1px solid #5f606e;
+      border-top: none;
+      border-radius: 0;
+      width: 100%;
+
       .ant-dropdown-menu-item {
         color: $white;
-        padding: 20px 2em;
+        padding: 15px 1.5em;
         text-align: center;
+        font-size: 14px;
+
         &:hover {
           background: #2f3037;
         }
       }
+
       button {
-        margin: 2em auto;
-      }
-      .menu-mobile-icon {
-        font-size: 40px;
+        margin: 1.5em auto;
+        width: calc(100% - 2em);
       }
     }
   }
-  .ant-layout-header {
-    flex-wrap: wrap;
-    height: auto;
 
-    .logo {
-      justify-content: center;
-      margin-right: 0;
-    }
+  .ant-dropdown {
+    position: relative;
+    z-index: 1002;
+  }
+}
 
-    .ant-menu-horizontal {
-      width: min-content;
-    }
+@media only screen and (max-width: 425px) {
+  .header-mobile {
+    padding: 0.75em 1em;
+  }
 
-    &.header-desktop {
-      display: none;
-    }
-    .WalletConfig {
-      margin-top: 1.5em;
-      justify-content: center;
-      width: 100%;
+  .menu-mobile-dropdown {
+    top: 62px !important;
+
+    .ant-dropdown-menu {
+      padding: 15px 0;
+
+      .ant-dropdown-menu-item {
+        padding: 12px 1em;
+        font-size: 13px;
+      }
+
+      button {
+        margin: 1em auto;
+        height: 40px !important;
+        font-size: 12px !important;
+      }
     }
   }
 }
