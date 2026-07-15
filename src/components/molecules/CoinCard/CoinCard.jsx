@@ -1,7 +1,6 @@
 import React from "react";
 import CoinIndicator from "../../atoms/CoinIndictor/CoinIndicator";
 import "./_CoinCard.scss";
-// import { decimalScaling } from "../../../utils/helpers";
 
 const CHAIN_COIN = process.env.REACT_APP_CHAIN_COIN;
 
@@ -14,43 +13,50 @@ const CoinCard = ({
   tokenName,
   equivalence
 }) => {
-  // const invPrice = 1e6 / parseFloat(priceAmount?.replaceAll(",", ""));
-  // const invPriceScaled = decimalScaling(invPrice.toFixed(0).toString(10), 6);
-
   return (
-    <div className="CoinCard">
+    <article
+      className="CoinCard"
+      aria-label={`${coinName} statistics`}
+      itemScope
+      itemType="https://schema.org/Product"
+    >
       <CoinIndicator coinIcon={coinIcon} coinName={coinName} />
-      <hr />
+      <hr aria-hidden="true" />
       {sellPriceAmount && priceAmount !== sellPriceAmount ? (
-        <div className="PriceInfo">
-          <span>Current Buy Price</span>
-          <h3>
+        <div className="PriceInfo" itemProp="offers" itemScope itemType="https://schema.org/AggregateOffer">
+          <span id={`${tokenName}-buy-label`}>Current Buy Price</span>
+          <h3 aria-labelledby={`${tokenName}-buy-label`} itemProp="highPrice">
             {priceAmount} {CHAIN_COIN}
           </h3>
-          <span>Current Sell Price</span>
-          <h3>
-            {sellPriceAmount} {CHAIN_COIN}
+          <span id={`${tokenName}-sell-label`}>Current Sell Price</span>
+          <h3 aria-labelledby={`${tokenName}-price-label`}>
+            {priceAmount} {CHAIN_COIN}
           </h3>
+          <meta itemProp="price" content={String(priceAmount)} />
+          <meta itemProp="priceCurrency" content={CHAIN_COIN} />
         </div>
       ) : (
-        <div className="PriceInfo">
-          <span>Current Price</span>
-          <h3>
+        <div className="PriceInfo" itemProp="offers" itemScope itemType="https://schema.org/Offer">
+          <span id={`${tokenName}-price-label`}>Current Price</span>
+          <h3 aria-labelledby={`${tokenName}-price-label`} itemProp="price">
             {priceAmount} {CHAIN_COIN}
           </h3>
+          <meta itemProp="priceCurrency" content="USD" />
         </div>
       )}
       <div className="AdditionalInfo">
         <div className="InfoItem">
-          <span>Circulating Supply</span>
-          <p>
+          <span id={`${tokenName}-supply-label`}>Circulating Supply</span>
+          <p aria-labelledby={`${tokenName}-supply-label`}>
             {circulatingAmount} {tokenName}
           </p>
-          {equivalence ? <p>≈ {equivalence}</p> : null}
+          {equivalence ? <p aria-label="USD equivalent value">≈ {equivalence}</p> : null}
         </div>
       </div>
-    </div>
+      <meta itemProp="name" content={coinName} />
+    </article>
   );
 };
 
 export default CoinCard;
+
