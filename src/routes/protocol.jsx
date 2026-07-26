@@ -1,18 +1,15 @@
 import React from "react";
-//import { ArrowRightOutlined, PropertySafetyFilled } from "@ant-design/icons";
-//import { ReactComponent as Metamask } from "../images/metamask.svg";
-//import CustomButton from "../components/atoms/CustomButton/CustomButton";
-//import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
-
-import "./_protocol.scss";
 import ReservesCard from "../components/molecules/ReservesCard/ReservesCard";
+import { Helmet } from "react-helmet";
 import { useAppProvider } from "../context/AppProvider";
 import {
   getBcUsdEquivalent,
   getRcUsdEquivalent,
   getScAdaEquivalent
 } from "../utils/helpers";
+
+import "./_protocol.scss";
 
 export default function Protocol() {
   const { coinsDetails, systemParams } = useAppProvider();
@@ -28,16 +25,38 @@ export default function Protocol() {
 
   return (
     <main style={{ padding: "1rem 0" }}>
+      {/* SEO tags */}
+      <Helmet>
+        <title>Djed – Cardano’s Autonomous Stablecoin Protocol</title>
+        <meta
+          name="description"
+          content="Djed is a formally verified, autonomous, crypto-backed stablecoin protocol on Cardano. Learn how the Djed protocol powers StableCoins and ReserveCoins."
+        />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Djed",
+            "url": "https://djed.one",
+            "description": "Djed is a formally verified, autonomous stablecoin protocol on Cardano.",
+            "sameAs": [
+              "https://twitter.com/DjedProtocol",
+              "https://github.com/DjedAlliance"
+            ]
+          })}
+        </script>
+      </Helmet>
+
       <div className="ProtocolSection">
         <div className="Left">
-          <h1>
-            <strong>Djed on {process.env.REACT_APP_BC}</strong>
-          </h1>
+          <h1>Djed – Cardano’s Autonomous Stablecoin Protocol</h1>
+
           <div className="DescriptionContainer">
+            <h2>What is Djed?</h2>
             <p>
               Djed is a formally verified crypto-backed autonomous stablecoin protocol. It
-              has been researched since Q2 2020, its whitepaper has been released in
-              August 2021, and it has multiple{" "}
+              has been researched since Q2 2020, its whitepaper was released in August 2021,
+              and it has multiple{" "}
               <a href="https://github.com/DjedAlliance" target="_blank" rel="noreferrer">
                 implementations
               </a>{" "}
@@ -49,7 +68,7 @@ export default function Protocol() {
               >
                 deployments
               </a>
-              . Here you can interact with a{" "}
+              . You can interact with a{" "}
               <a
                 href={`${process.env.REACT_APP_EXPLORER}/address/${process.env.REACT_APP_DJED_ADDRESS}`}
                 target="_blank"
@@ -67,40 +86,43 @@ export default function Protocol() {
               </a>{" "}
               on {process.env.REACT_APP_BC}.
             </p>
+
+            <h2>How Djed Works</h2>
             <p>
               {process.env.REACT_APP_PROTOCOL_CHAIN_DESCRIPTION}. This asset is used by
               the Djed protocol to back <a href="/sc">StableCoins</a> and{" "}
-              <a href="/rc">ReserveCoins</a> and it is needed to buy any of these coins
-              and to pay for transaction fees on {process.env.REACT_APP_BC}.
+              <a href="/rc">ReserveCoins</a>. It is needed to buy these coins and pay
+              transaction fees on {process.env.REACT_APP_BC}.
             </p>
+
+            <h2>Fully Autonomous & Immutable</h2>
             <p>
-              This deployment is immutable, unstoppable, fully autonomous and
-              zero-governance. No one is able to change the deployed code or the
-              parameters of the deployment. No one is operating it. No one controls your
-              funds. Treat it as a foreign non-territorial self-sovereign autonomous
-              monetary authority whose currency follows a self-driving monetary policy.
+              This deployment is immutable, unstoppable, fully autonomous, and zero-governance.
+              No one can change the deployed code or parameters. No one operates it or controls your funds.
+              Treat it as a self-sovereign autonomous monetary authority whose currency follows a self-driving monetary policy.
             </p>
           </div>
         </div>
+
         <div className="Right">
           <h2 className="SubtTitle">
-            <strong>Protocol</strong> Status
+            <strong>Protocol Status</strong>
           </h2>
           <div className="CoinsContainer">
             <CoinCard
               coinIcon="/coin-icon-one.png"
               coinName={`${process.env.REACT_APP_SC_NAME}`}
-              priceAmount={coinsDetails?.scaledPriceSc} //"0.31152640"
-              circulatingAmount={coinsDetails?.scaledNumberSc} //"1,345,402.15"
+              priceAmount={coinsDetails?.scaledPriceSc}
+              circulatingAmount={coinsDetails?.scaledNumberSc}
               tokenName={`${process.env.REACT_APP_SC_SYMBOL}`}
               equivalence={`${scConverted} ${process.env.REACT_APP_CHAIN_COIN}`}
             />
             <CoinCard
               coinIcon="/coin-icon-two.png"
               coinName={`${process.env.REACT_APP_RC_NAME}`}
-              priceAmount={coinsDetails?.scaledBuyPriceRc} //"0.31152640"
+              priceAmount={coinsDetails?.scaledBuyPriceRc}
               sellPriceAmount={coinsDetails?.scaledSellPriceRc}
-              circulatingAmount={coinsDetails?.scaledNumberRc} //"1,345,402.15"
+              circulatingAmount={coinsDetails?.scaledNumberRc}
               tokenName={`${process.env.REACT_APP_RC_SYMBOL}`}
               equivalence={rcConverted}
             />
