@@ -78,6 +78,7 @@ Known deployments of this frontend can be used at:
 
 - [Milkomeda C1 - Mainnet](https://milkomeda-c1.djed.one)
 - [Milkomeda C1 - Testnet](https://milkomeda-c1-testnet.djed.one)
+- **Djed Tefnut - Sepolia Testnet** (configured in `env/sepolia-tefnut.env`)
 
 By utilizing this frontend application, users can conveniently engage with Djed deployments and explore the functionalities provided by the smart contracts.
 
@@ -100,6 +101,23 @@ npm install
 ```
 
  # Usage
+
+## Configure Environment
+
+Before starting, copy the desired environment configuration from the `env/` folder to the root as `.env`:
+
+**For Djed Tefnut on Sepolia:**
+```bash
+cp env/sepolia-tefnut.env .env
+```
+
+**For other networks:**
+```bash
+cp env/sepolia.env .env          # Djed Osiris on Sepolia
+cp env/milkomeda.env .env        # Milkomeda Mainnet
+cp env/milkomeda-testnet.env .env # Milkomeda Testnet
+```
+
 Start the development server:
 ```bash
 npm start
