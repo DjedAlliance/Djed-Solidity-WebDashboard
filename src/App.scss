@@ -26,12 +26,15 @@ iframe {
 .ant-layout {
   background: var(--gradient-theme-5);
   padding-top: 2em;
-  height: 100vh;
+  min-height: 100vh;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .ant-layout-content {
   padding: 0 3em;
+  flex: 1;
 }
 
 .ant-layout-header {
@@ -50,6 +53,7 @@ iframe {
     display: flex;
   }
 }
+
 .header-mobile {
   display: none;
 }
@@ -86,6 +90,7 @@ iframe {
 .ant-layout-header .ant-menu-item-disabled a {
   color: $grey-5 !important;
 }
+
 .ant-dropdown-menu-item-disabled a {
   color: $grey-5 !important;
 }
@@ -219,11 +224,13 @@ iframe {
 .ant-popover-arrow-content::before {
   background: $black-2;
 }
+
 .ant-popover-inner-content {
   background: $black-2;
   display: flex;
   flex-direction: column;
   gap: 8px;
+
   button.CustomButton {
     width: 100%;
     justify-content: start;
@@ -234,6 +241,7 @@ iframe {
 }
 
 @media only screen and (max-width: 425px) {
+
   .ant-layout-header,
   .ant-layout-content {
     padding: 0 2em;
@@ -246,31 +254,38 @@ iframe {
     padding: 0 2em;
     color: white;
   }
+
   .menu-mobile-dropdown {
     width: 300px;
     background: rgba(0, 0, 0, 0.9);
     top: 70px !important;
     overflow: hidden;
+
     .ant-dropdown-menu {
       padding-top: 20px;
       background: var(--gradient-theme-5);
       border: 1px solid #5f606e;
+
       .ant-dropdown-menu-item {
         color: $white;
         padding: 20px 2em;
         text-align: center;
+
         &:hover {
           background: #2f3037;
         }
       }
+
       button {
         margin: 2em auto;
       }
+
       .menu-mobile-icon {
         font-size: 40px;
       }
     }
   }
+
   .ant-layout-header {
     flex-wrap: wrap;
     height: auto;
@@ -287,6 +302,7 @@ iframe {
     &.header-desktop {
       display: none;
     }
+
     .WalletConfig {
       margin-top: 1.5em;
       justify-content: center;
@@ -294,6 +310,7 @@ iframe {
     }
   }
 }
+
 .ant-message {
   z-index: 1100;
 }

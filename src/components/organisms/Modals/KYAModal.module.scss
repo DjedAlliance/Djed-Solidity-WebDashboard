@@ -1,0 +1,174 @@
+@import "../../../scss/_general_styling.scss";
+
+.kyaModal {
+    :global(.ant-modal-content) {
+        background: $black-2;
+        color: $white;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+    }
+
+    :global(.ant-modal-body) {
+        padding: 0;
+        max-height: 80vh;
+    }
+}
+
+.closeIcon {
+    color: $grey-5;
+    font-size: 18px;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: $white;
+    }
+}
+
+.modalContent {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.title {
+    @include primary-text($h1, $white, 600);
+    margin: 0;
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scrollableContent {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    max-height: calc(80vh - 140px);
+
+    /* Custom scrollbar styling */
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    p {
+        @include primary-text($body, $grey-4, 400);
+        margin-bottom: 16px;
+        line-height: 1.6;
+    }
+
+    .subtitle {
+        @include primary-text($h3, $white, 600);
+        margin: 24px 0 12px 0;
+    }
+
+    .list {
+        @include primary-text($body, $grey-4, 400);
+        margin: 12px 0 16px 20px;
+        padding-left: 0;
+        line-height: 1.6;
+
+        li {
+            margin-bottom: 8px;
+        }
+    }
+
+    .link {
+        color: var(--gold-dark);
+        text-decoration: none;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: var(--gold-light);
+            text-decoration: underline;
+        }
+    }
+
+    .warning {
+        @include primary-text($body, $warning-color, 500);
+        margin: 20px 0;
+        padding: 12px;
+        background: rgba(254, 192, 4, 0.1);
+        border-left: 3px solid $warning-color;
+        border-radius: 4px;
+    }
+
+    .agreement {
+        @include primary-text($body, $white, 500);
+        margin-top: 20px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+    }
+}
+
+.footer {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.acceptButton {
+    @include primary-text($button, $white, 600);
+    @include buttonBase(12px 32px, 8px);
+    background: var(--gold-dark);
+    border: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: var(--gold-light);
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--gold-light);
+        outline-offset: 2px;
+    }
+}
+
+@media (max-width: 768px) {
+    .kyaModal {
+        :global(.ant-modal) {
+            max-width: calc(100vw - 32px);
+            margin: 16px;
+        }
+
+        :global(.ant-modal-body) {
+            max-height: calc(100vh - 100px);
+        }
+    }
+
+    .title {
+        padding: 20px 16px 12px 16px;
+        font-size: $h2;
+    }
+
+    .scrollableContent {
+        max-height: calc(100vh - 200px);
+        padding: 16px;
+    }
+
+    .footer {
+        padding: 12px 16px;
+    }
+
+    .acceptButton {
+        width: 100%;
+    }
+}

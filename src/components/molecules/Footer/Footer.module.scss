@@ -1,0 +1,69 @@
+@import "../../../scss/_general_styling.scss";
+
+.footer {
+  width: 100%;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: "Montserrat", sans-serif;
+  background: transparent;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  max-width: 1440px;
+  margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+  }
+}
+
+.copyright {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: $grey-5;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+}
+
+.link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $grey-5;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  
+  &:hover,
+  &:focus {
+    color: var(--gold-dark);
+    text-decoration: underline;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--gold-dark);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.separator {
+  font-size: 0.875rem;
+  color: $grey-5;
+  user-select: none;
+  opacity: 0.5;
+}
