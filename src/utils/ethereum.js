@@ -191,12 +191,62 @@ export const getAccountDetails = async (
 };
 
 export const getCoinBudgets = async (djed, unscaledBalanceBc, scDecimals, rcDecimals) => {
-  return {
-    scaledBudgetSc: null,
-    unscaledBudgetSc: null,
-    scaledBudgetRc: null,
-    unscaledBudgetRc: null
-  };
+  try {
+    const [scPrice, rcPrice] = await Promise.all([
+      web3Promise(djed, "scPrice", 0),
+      web3Promise(djed, "rcBuyingPrice", 0)
+    ]);
+    const { treasuryFee = "0", fee = "0" } = (await getFees(djed)) || {};
+
+    const totalFees = BigNumber.from(fee)
+      .add(BigNumber.from(treasuryFee))
+      .add(BigNumber.from(FEE_UI_UNSCALED));
+    const scalingFactorBN = BigNumber.from(scalingFactor);
+
+    // Guard against fee overflow (total fees >= scaling factor)
+    if (totalFees.gte(scalingFactorBN)) {
+      throw new Error("Invalid fee configuration: total fees >= scaling factor");
+    }
+    const subtractedFees = scalingFactorBN.sub(totalFees);
+
+    const balance = BigNumber.from(unscaledBalanceBc);
+    const usableBalance = balance.mul(subtractedFees).div(scalingFactorBN);
+
+    // Guard against zero prices (division by zero)
+    if (BigNumber.from(scPrice).isZero() || BigNumber.from(rcPrice).isZero()) {
+      throw new Error("Invalid oracle price: scPrice/rcPrice is zero");
+    }
+
+    const scDecimalScaling = BigNumber.from(10).pow(scDecimals);
+    const rcDecimalScaling = BigNumber.from(10).pow(rcDecimals);
+
+    const unscaledBudgetScBN = usableBalance
+      .mul(scDecimalScaling)
+      .div(BigNumber.from(scPrice));
+    const unscaledBudgetRcBN = usableBalance
+      .mul(rcDecimalScaling)
+      .div(BigNumber.from(rcPrice));
+
+    const unscaledBudgetSc = unscaledBudgetScBN.toString();
+    const unscaledBudgetRc = unscaledBudgetRcBN.toString();
+    const scaledBudgetSc = decimalScaling(unscaledBudgetSc, scDecimals);
+    const scaledBudgetRc = decimalScaling(unscaledBudgetRc, rcDecimals);
+
+    return {
+      scaledBudgetSc,
+      unscaledBudgetSc,
+      scaledBudgetRc,
+      unscaledBudgetRc
+    };
+  } catch (error) {
+    console.error("getCoinBudgets error", error);
+    return {
+      scaledBudgetSc: decimalScaling("0", scDecimals),
+      unscaledBudgetSc: "0",
+      scaledBudgetRc: decimalScaling("0", rcDecimals),
+      unscaledBudgetRc: "0"
+    };
+  }
 };
 
 export const promiseTx = (isWalletConnected, tx, signer) => {
@@ -407,14 +457,30 @@ export const sellRcTx = (djed, account, amount) => {
   return buildTx(account, DJED_ADDRESS, 0, data);
 };
 
-// TODO: Check reserve ratio!
+/**
+ * Validates RC buy transaction amount against available budget.
+ * Note: Reserve ratio validation is performed in the UI layer (reservecoin.jsx)
+ * using isRatioBelowMax to ensure ratio stays below maximum.
+ */
 export const checkBuyableRc = (djed, unscaledAmountRc, unscaledBudgetRc) => {
-  return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
+  if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBudgetRc))) {
+    return Promise.resolve(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
+  }
+  return Promise.resolve(TRANSACTION_VALIDITY.OK);
 };
 
+/**
+ * Validates RC sell transaction amount against user's balance.
+ * Note: Reserve ratio validation is performed in the UI layer (reservecoin.jsx)
+ * using isRatioAboveMin to ensure ratio stays above minimum.
+ */
 export const checkSellableRc = (djed, unscaledAmountRc, unscaledBalanceRc) => {
-  return new Promise((r) => r(TRANSACTION_VALIDITY.OK));
+  if (BigNumber.from(unscaledAmountRc).gt(BigNumber.from(unscaledBalanceRc))) {
+    return Promise.resolve(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
+  }
+  return Promise.resolve(TRANSACTION_VALIDITY.OK);
 };
+
 
 // stablecoin
 
