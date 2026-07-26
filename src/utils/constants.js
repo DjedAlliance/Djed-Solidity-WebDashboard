@@ -13,6 +13,8 @@ export const TRANSACTION_VALIDITY = {
   INSUFFICIENT_BC: "Insufficient balance",
   INSUFFICIENT_SC: "Insufficient StableCoin balance",
   INSUFFICIENT_RC: "Insufficient ReserveCoin balance",
+  RESERVE_RATIO_ALREADY_LOW: "Apologies, but selling Reserve Coin is currently restricted due to the reserve ratio being below the minimum requirement. Proceeding with the transaction would further decrease the reserve ratio.",
+  RESERVE_RATIO_WOULD_DROP_LOW: "Transaction is invalid: Reserve ratio would drop below the minimum",
   RESERVE_RATIO_LOW: "Reserve ratio would drop below the minimum",
   RESERVE_RATIO_HIGH: "Reserve ratio would rise above the maximum",
   TRANSACTION_LIMIT_REACHED: "Transaction limit reached"
