@@ -40,6 +40,19 @@ module.exports = {
         }
       ];
 
+      // Configure HtmlWebpackPlugin to inject custom environment variables
+      const htmlWebpackPlugin = webpackConfig.plugins.find(
+        (plugin) => plugin.constructor.name === "HtmlWebpackPlugin"
+      );
+
+      if (htmlWebpackPlugin) {
+        htmlWebpackPlugin.options.templateParameters = {
+          PUBLIC_URL: process.env.PUBLIC_URL || "",
+          REACT_APP_DEPLOYMENT_URL: process.env.REACT_APP_DEPLOYMENT_URL || "",
+          REACT_APP_LOGO_PATH: process.env.REACT_APP_LOGO_PATH || ""
+        };
+      }
+
       return webpackConfig;
     }
   }
