@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MetamaskConnectButton from "../components/molecules/MetamaskConnectButton/MetamaskConnectButton";
 import CoinCard from "../components/molecules/CoinCard/CoinCard";
 import OperationSelector from "../components/organisms/OperationSelector/OperationSelector";
 import ModalTransaction from "../components/organisms/Modals/ModalTransaction";
 import ModalPending from "../components/organisms/Modals/ModalPending";
 import BuySellButton from "../components/molecules/BuySellButton/BuySellButton";
+import { Dropdown } from 'antd';
 
 import "./_CoinSection.scss";
 import { useAppProvider } from "../context/AppProvider";
 import useBuyOrSell from "../utils/hooks/useBuyOrSell";
-import { TRANSACTION_VALIDITY } from "../utils/constants";
 import {
   calculateBcUsdEquivalent,
   calculateRcUsdEquivalent,
@@ -33,7 +33,7 @@ import {
   FEE_UI_UNSCALED,
   UI
 } from "../utils/ethereum";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 import {
   ConnectWSCButton,
   TransactionConfigWSCProvider,
@@ -42,6 +42,9 @@ import {
 } from "milkomeda-wsc-ui-test-beta";
 import djedArtifact from "../artifacts/Djed.json";
 import { useAccount } from "wagmi";
+import { updateBuyTradeData, updateSellTradeData } from './commonTradeFunctions';
+import { TRANSACTION_VALIDITY } from '../utils/constants';
+import { ethers } from 'ethers';
 
 export default function ReserveCoin() {
   const {
@@ -66,7 +69,6 @@ export default function ReserveCoin() {
   const { buyOrSell, isBuyActive, setBuyOrSell } = useBuyOrSell();
   const [tradeData, setTradeData] = useState({});
   const [value, setValue] = useState(null);
-  const [termsAccepted, setTermsAccepted] = useState(false);
   const [txError, setTxError] = useState(null);
   const [txStatus, setTxStatus] = useState("idle");
   const [buyValidity, setBuyValidity] = useState(
@@ -80,144 +82,14 @@ export default function ReserveCoin() {
   const txStatusRejected = txStatus === "rejected";
   const txStatusSuccess = txStatus === "success";
 
-  const updateBuyTradeData = (amountScaled) => {
-    const inputSanity = validatePositiveNumber(amountScaled);
-    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
-      setBuyValidity(inputSanity);
-      return;
-    }
-    const getTradeData = async () => {
-      try {
-        const data = await tradeDataPriceBuyRc(
-          djedContract,
-          decimals.rcDecimals,
-          amountScaled
-        );
-        const futureSCPrice = await getFutureScPrice({
-          amountBC: data.totalUnscaled,
-          amountSC: 0
-        });
-
-        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
-        const isRatioBelowMaximum = isRatioBelowMax({
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
-            BigNumber.from(data.totalUnscaled).add(f)
-          )
-        });
-        const bcUsdEquivalent = calculateBcUsdEquivalent(
-          coinsDetails,
-          parseFloat(data.totalScaled.replaceAll(",", ""))
-        ).replaceAll(",", "");
-
-        setTradeData(data);
-        if (!isWalletConnected) {
-          setBuyValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-        } else if (isWrongChain) {
-          setBuyValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (
-          isTxLimitReached(
-            bcUsdEquivalent,
-            coinsDetails.unscaledNumberSc,
-            systemParams.thresholdSupplySC
-          )
-        ) {
-          setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
-        } else if (
-          stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
-            stringToBigNumber(data.totalBCUnscaled, BC_DECIMALS)
-          )
-        ) {
-          setBuyValidity(TRANSACTION_VALIDITY.INSUFFICIENT_BC);
-        } else if (!isRatioBelowMaximum) {
-          setBuyValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_HIGH);
-        } else {
-          checkBuyableRc(
-            djedContract,
-            data.amountUnscaled,
-            coinBudgets?.unscaledBudgetRc
-          ).then((res) => setBuyValidity(res));
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-    getTradeData();
-  };
-
-  const updateSellTradeData = (amountScaled) => {
-    const inputSanity = validatePositiveNumber(amountScaled);
-    if (inputSanity !== TRANSACTION_VALIDITY.OK) {
-      setSellValidity(inputSanity);
-      return;
-    }
-    const getTradeData = async () => {
-      try {
-        const data = await tradeDataPriceSellRc(
-          djedContract,
-          decimals.rcDecimals,
-          amountScaled
-        );
-        const rcUsdEquivalent = calculateRcUsdEquivalent(
-          coinsDetails,
-          parseFloat(data.amountScaled.replaceAll(",", ""))
-        ).replaceAll(",", "");
-        const futureSCPrice = await getFutureScPrice({
-          amountBC: data.totalUnscaled,
-          amountSC: 0
-        });
-        const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
-        const isRatioAboveMinimum = isRatioAboveMin({
-          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).sub(
-            BigNumber.from(data.totalUnscaled).sub(f)
-          )
-        });
-
-        setTradeData(data);
-        if (!isWalletConnected) {
-          setSellValidity(TRANSACTION_VALIDITY.WALLET_NOT_CONNECTED);
-        } else if (isWrongChain) {
-          setSellValidity(TRANSACTION_VALIDITY.WRONG_NETWORK);
-        } else if (
-          isTxLimitReached(
-            rcUsdEquivalent,
-            coinsDetails.unscaledNumberSc,
-            systemParams.thresholdSupplySC
-          )
-        ) {
-          setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
-        } else if (
-          stringToBigNumber(accountDetails.unscaledBalanceRc, decimals.rcDecimals).lt(
-            stringToBigNumber(data.amountUnscaled, decimals.rcDecimals)
-          )
-        ) {
-          setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
-        } else if (!isRatioAboveMinimum) {
-          setSellValidity(TRANSACTION_VALIDITY.RESERVE_RATIO_LOW);
-        } else {
-          checkSellableRc(
-            djedContract,
-            data.amountUnscaled,
-            accountDetails?.unscaledBalanceRc
-          ).then((res) => setSellValidity(res));
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-    getTradeData();
-  };
-
   const onChangeBuyInput = (amountScaled) => {
     setValue(amountScaled);
-    updateBuyTradeData(amountScaled);
+    updateBuyTradeData(amountScaled, djedContract, decimals, coinsDetails, systemParams, accountDetails, coinBudgets, getFutureScPrice, setBuyValidity, setTradeData, isWalletConnected, isWrongChain);
   };
 
   const onChangeSellInput = (amountScaled) => {
     setValue(amountScaled);
-    updateSellTradeData(amountScaled);
+    updateSellTradeData(amountScaled, djedContract, decimals, coinsDetails, systemParams, accountDetails, getFutureScPrice, setSellValidity, setTradeData, isWalletConnected, isWrongChain);
   };
 
   const buyRc = (total) => {
@@ -278,7 +150,6 @@ export default function ReserveCoin() {
 
   const onSubmit = (e) => {
     if (!isWalletConnected) return;
-    if (!termsAccepted) return;
     e.preventDefault();
     if (isWSCConnected) {
       setOpen(true);
@@ -299,6 +170,12 @@ export default function ReserveCoin() {
 
   const rcFloat = parseFloat(coinsDetails?.scaledNumberRc.replaceAll(",", ""));
   const rcConverted = getRcUsdEquivalent(coinsDetails, rcFloat);
+
+  useEffect(() => {
+    return () => {
+      // cleanup logic
+    };
+  }, []);
 
   return (
     <main style={{ padding: "1rem 0" }}>
@@ -385,39 +262,13 @@ export default function ReserveCoin() {
                 isSellDisabled={Number(coinsDetails?.scaledNumberRc) === 0}
               />
             </div>
-            <input
-              type="checkbox"
-              id="accept-terms"
-              name="accept-terms"
-              onChange={() => setTermsAccepted(!termsAccepted)}
-              checked={termsAccepted}
-              required
-            />
-            <label htmlFor="accept-terms" className="accept-terms">
-              I agree to the{" "}
-              <a href="/terms-of-use" target="_blank" rel="noreferrer">
-                Terms of Use
-              </a>
-              .
-            </label>
-
             <div className="ConnectWallet">
               <br />
               {isWalletConnected ? (
                 <>
-                  {/*value != null ? (
-                  <p className="Disclaimer">
-                    This transaction is expected to{" "}
-                    {transactionValidated ? (
-                      <strong>succeed.</strong>
-                    ) : (
-                      <strong>fail!</strong>
-                    )}
-                  </p>
-                    ) : null*/}
                   {isWSCConnected ? (
                     <WSCButton
-                      disabled={value === null || isWrongChain || !termsAccepted}
+                      disabled={value === null || isWrongChain}
                       currentAmount={currentAmount}
                       stepTxDirection={isBuyActive ? "buy" : "sell"}
                       unwrapAmount={
@@ -523,7 +374,9 @@ const WSCButton = ({ disabled, currentAmount, unwrapAmount, stepTxDirection }) =
     <TransactionConfigWSCProvider
       options={stepTxDirection === "buy" ? buyOptions : sellOptions}
     >
-      <ConnectWSCButton disabled={disabled} />
+      <Dropdown open={false} onOpenChange={() => {}} menu={{}}>
+        <ConnectWSCButton disabled={disabled} />
+      </Dropdown>
     </TransactionConfigWSCProvider>
   );
 };
