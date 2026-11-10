@@ -91,6 +91,13 @@ export function scaledUnscaledPromise(promise, scaling) {
 }
 
 export function percentageScale(value, scaling, showSymbol = false) {
+  if (
+    value &&
+    (value.toString() === ethers.constants.MaxUint256.toString() ||
+      (value.eq && value.eq(ethers.constants.MaxUint256)))
+  ) {
+    return "∞";
+  }
   const calculatedValue = decimalScaling(value.toString(10), scaling - 2, 2);
   if (showSymbol) {
     return calculatedValue + "%";
