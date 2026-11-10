@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import { TRANSACTION_VALIDITY } from "../constants";
 import { SCALING_DECIMALS } from "../ethereum";
 import {
@@ -78,6 +79,14 @@ describe("Percentage scale", () => {
 
     const amountUnscaled = decimalUnscaling(amount, decimals - 2);
     expect(percentageScale(amountUnscaled, decimals)).toEqual(expectedResult);
+  });
+
+  it("Percentage scale MaxUint256 returns infinite", () => {
+    const decimals = SCALING_DECIMALS;
+    expect(percentageScale(ethers.constants.MaxUint256, decimals)).toEqual("∞");
+    expect(percentageScale(ethers.constants.MaxUint256.toString(), decimals)).toEqual(
+      "∞"
+    );
   });
 });
 

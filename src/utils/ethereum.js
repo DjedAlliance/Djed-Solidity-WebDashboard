@@ -14,7 +14,13 @@ import {
   web3Promise,
   percentageScale
 } from "./helpers";
-import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY, BC_TOKEN_DECIMALS, HIGH_PRECISION_DECIMALS, REFRESH_PERIOD_MS } from "./constants";
+import {
+  TRANSACTION_USD_LIMIT,
+  TRANSACTION_VALIDITY,
+  BC_TOKEN_DECIMALS,
+  HIGH_PRECISION_DECIMALS,
+  REFRESH_PERIOD_MS
+} from "./constants";
 import { BigNumber } from "ethers";
 
 const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
@@ -104,19 +110,26 @@ export const getCoinDetails = async (
   let unscaledSellPriceRc = emptyValue;
   let percentReserveRatio = emptyValue;
 
-  //Check total stablecoin supply
+  // Check total reservecoin supply
   if (!BigNumber.from(unscaledNumberRc).isZero()) {
     [scaledSellPriceRc, unscaledSellPriceRc] = await scaledUnscaledPromise(
       web3Promise(djed, "rcTargetPrice", 0),
       BC_DECIMALS
     );
   }
-  //Check total reservecoin supply
-  if (!BigNumber.from(unscaledNumberSc).isZero()) {
+  // Check total stablecoin supply for reserve ratio
+  try {
     percentReserveRatio = await percentScaledPromise(
       web3Promise(djed, "ratio"),
       SCALING_DECIMALS
     );
+  } catch (error) {
+    // Fallback for legacy deployed contracts where ratio() reverts when supply is zero
+    if (BigNumber.from(unscaledNumberSc).isZero()) {
+      percentReserveRatio = "∞";
+    } else {
+      console.error("Failed to fetch reserve ratio", error);
+    }
   }
   return {
     scaledNumberSc,
