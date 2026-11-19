@@ -239,11 +239,13 @@ export const AppProvider = ({ children }) => {
   );
 
   const isRatioBelowMax = ({ scPrice, reserveBc }) => {
-    const scDecimals = BigNumber.from(decimals.scDecimals);
-    const totalScSupply = BigNumber.from(coinsDetails?.unscaledNumberSc);
-    const reserveRatioMax = BigNumber.from(systemParams?.reserveRatioMaxUnscaled);
+    const scDecimals = BigNumber.from(decimals?.scDecimals || 6);
+    const totalScSupply = BigNumber.from(coinsDetails?.unscaledNumberSc || 0);
+    const reserveRatioMax = BigNumber.from(systemParams?.reserveRatioMaxUnscaled || 0);
     const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
-    const thresholdSupplySC = BigNumber.from(systemParams.thresholdSupplySC);
+    const thresholdSupplySC = systemParams?.thresholdSupplySC
+      ? BigNumber.from(systemParams.thresholdSupplySC)
+      : BigNumber.from(0);
     return calculateIsRatioBelowMax({
       scPrice,
       reserveBc,
@@ -255,14 +257,17 @@ export const AppProvider = ({ children }) => {
   };
 
   const isRatioAboveMin = ({ scPrice, totalScSupply, reserveBc }) => {
-    const scDecimals = BigNumber.from(decimals.scDecimals);
-    const reserveRatioMin = BigNumber.from(systemParams?.reserveRatioMinUnscaled);
+    const scDecimals = BigNumber.from(decimals?.scDecimals || 6);
+    const resolvedTotalScSupply = BigNumber.from(
+      totalScSupply || coinsDetails?.unscaledNumberSc || 0
+    );
+    const reserveRatioMin = BigNumber.from(systemParams?.reserveRatioMinUnscaled || 0);
     const scDecimalScalingFactor = BigNumber.from(10).pow(scDecimals);
 
     return calculateIsRatioAboveMin({
       scPrice,
       reserveBc,
-      totalScSupply,
+      totalScSupply: resolvedTotalScSupply,
       reserveRatioMin,
       scDecimalScalingFactor
     });

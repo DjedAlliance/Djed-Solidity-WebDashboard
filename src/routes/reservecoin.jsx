@@ -100,8 +100,8 @@ export default function ReserveCoin() {
 
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioBelowMaximum = isRatioBelowMax({
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).add(
+          scPrice: BigNumber.from(futureSCPrice || 0),
+          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc || 0).add(
             BigNumber.from(data.totalUnscaled).add(f)
           )
         });
@@ -118,13 +118,13 @@ export default function ReserveCoin() {
         } else if (
           isTxLimitReached(
             bcUsdEquivalent,
-            coinsDetails.unscaledNumberSc,
-            systemParams.thresholdSupplySC
+            coinsDetails?.unscaledNumberSc || "0",
+            systemParams?.thresholdSupplySC || "0"
           )
         ) {
           setBuyValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else if (
-          stringToBigNumber(accountDetails.unscaledBalanceBc, BC_DECIMALS).lt(
+          stringToBigNumber(accountDetails?.unscaledBalanceBc || "0", BC_DECIMALS).lt(
             stringToBigNumber(data.totalBCUnscaled, BC_DECIMALS)
           )
         ) {
@@ -168,9 +168,9 @@ export default function ReserveCoin() {
         });
         const { f } = calculateTxFees(data.totalUnscaled, systemParams?.feeUnscaled, 0);
         const isRatioAboveMinimum = isRatioAboveMin({
-          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc),
-          scPrice: BigNumber.from(futureSCPrice),
-          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc).sub(
+          totalScSupply: BigNumber.from(coinsDetails?.unscaledNumberSc || 0),
+          scPrice: BigNumber.from(futureSCPrice || 0),
+          reserveBc: BigNumber.from(coinsDetails?.unscaledReserveBc || 0).sub(
             BigNumber.from(data.totalUnscaled).sub(f)
           )
         });
@@ -183,15 +183,16 @@ export default function ReserveCoin() {
         } else if (
           isTxLimitReached(
             rcUsdEquivalent,
-            coinsDetails.unscaledNumberSc,
-            systemParams.thresholdSupplySC
+            coinsDetails?.unscaledNumberSc || "0",
+            systemParams?.thresholdSupplySC || "0"
           )
         ) {
           setSellValidity(TRANSACTION_VALIDITY.TRANSACTION_LIMIT_REACHED);
         } else if (
-          stringToBigNumber(accountDetails.unscaledBalanceRc, decimals.rcDecimals).lt(
-            stringToBigNumber(data.amountUnscaled, decimals.rcDecimals)
-          )
+          stringToBigNumber(
+            accountDetails?.unscaledBalanceRc || "0",
+            decimals.rcDecimals
+          ).lt(stringToBigNumber(data.amountUnscaled, decimals.rcDecimals))
         ) {
           setSellValidity(TRANSACTION_VALIDITY.INSUFFICIENT_RC);
         } else if (!isRatioAboveMinimum) {
