@@ -2,6 +2,8 @@ import { BigNumber } from "ethers";
 import {
   appendFees,
   BC_DECIMALS,
+  calculateIsRatioBelowMax,
+  calculateIsRatioAboveMin,
   calculateTxFees,
   deductFees,
   convertToBC,
@@ -232,5 +234,42 @@ describe("Calculate SELL RC", () => {
     const amountRC = "1000";
     const expectedResult = "1693970540876964151539";
     testSellRC(amountRC, expectedResult);
+  });
+});
+
+describe("Reserve Ratio calculations in initial and active states", () => {
+  it("calculateIsRatioBelowMax returns true when totalScSupply is zero (initial state)", () => {
+    const isBelowMax = calculateIsRatioBelowMax({
+      reserveBc: BigNumber.from("1000000000000000000"),
+      scPrice: BigNumber.from("10000000000000000000"),
+      totalScSupply: BigNumber.from("0"),
+      reserveRatioMax: BigNumber.from("800000000000000000000000"),
+      scDecimalScalingFactor: BigNumber.from("1000000"),
+      thresholdSupplySC: BigNumber.from("0")
+    });
+    expect(isBelowMax).toBe(true);
+  });
+
+  it("calculateIsRatioBelowMax returns true when totalScSupply is null/undefined", () => {
+    const isBelowMax = calculateIsRatioBelowMax({
+      reserveBc: BigNumber.from("1000000000000000000"),
+      scPrice: BigNumber.from("10000000000000000000"),
+      totalScSupply: null,
+      reserveRatioMax: BigNumber.from("800000000000000000000000"),
+      scDecimalScalingFactor: BigNumber.from("1000000"),
+      thresholdSupplySC: BigNumber.from("0")
+    });
+    expect(isBelowMax).toBe(true);
+  });
+
+  it("calculateIsRatioAboveMin returns true when totalScSupply is zero (initial state)", () => {
+    const isAboveMin = calculateIsRatioAboveMin({
+      reserveBc: BigNumber.from("1000000000000000000"),
+      scPrice: BigNumber.from("10000000000000000000"),
+      totalScSupply: BigNumber.from("0"),
+      reserveRatioMin: BigNumber.from("400000000000000000000000"),
+      scDecimalScalingFactor: BigNumber.from("1000000")
+    });
+    expect(isAboveMin).toBe(true);
   });
 });

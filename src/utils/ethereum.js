@@ -14,12 +14,18 @@ import {
   web3Promise,
   percentageScale
 } from "./helpers";
-import { TRANSACTION_USD_LIMIT, TRANSACTION_VALIDITY, BC_TOKEN_DECIMALS, HIGH_PRECISION_DECIMALS, REFRESH_PERIOD_MS } from "./constants";
+import {
+  TRANSACTION_USD_LIMIT,
+  TRANSACTION_VALIDITY,
+  BC_TOKEN_DECIMALS,
+  HIGH_PRECISION_DECIMALS,
+  REFRESH_PERIOD_MS
+} from "./constants";
 import { BigNumber } from "ethers";
 
 const BLOCKCHAIN_URI = process.env.REACT_APP_BLOCKCHAIN_URI;
 export const DJED_ADDRESS = process.env.REACT_APP_DJED_ADDRESS;
-const FEE_UI = process.env.REACT_APP_FEE_UI;
+const FEE_UI = process.env.REACT_APP_FEE_UI || "0.2";
 export const UI = process.env.REACT_APP_UI;
 
 export const BC_DECIMALS = BC_TOKEN_DECIMALS;
@@ -513,12 +519,15 @@ export const calculateIsRatioBelowMax = ({
   scDecimalScalingFactor,
   thresholdSupplySC
 }) => {
+  if (!totalScSupply || BigNumber.from(totalScSupply).isZero()) {
+    return true;
+  }
   return (
     reserveBc
       .mul(BigNumber.from(scalingFactor))
       .mul(scDecimalScalingFactor)
       .lt(totalScSupply.mul(scPrice).mul(reserveRatioMax)) ||
-    totalScSupply.lte(thresholdSupplySC)
+    Boolean(thresholdSupplySC && totalScSupply.lte(thresholdSupplySC))
   );
 };
 
@@ -539,6 +548,9 @@ export const calculateIsRatioAboveMin = ({
   reserveRatioMin,
   scDecimalScalingFactor
 }) => {
+  if (!totalScSupply || BigNumber.from(totalScSupply).isZero()) {
+    return true;
+  }
   return reserveBc
     .mul(BigNumber.from(scalingFactor))
     .mul(scDecimalScalingFactor)
